@@ -1,0 +1,33 @@
+# Production vars #
+###################
+vars.yaml
+vars.yml
+vars_temp.yml
+vars_temp.yaml
+
+# Temp path #
+#############
+_site
+*/_site/*
+
+# OS generated files #
+######################
+.DS_Store
+ehthumbs.db
+Icon
+Thumbs.db
+.tmtags
+.idea
+tags
+vendor.tags
+tmtagsHistory
+*.sublime-project
+*.sublime-workspace
+.bundle
+build
+dist
+*.egg-info
+
+# enable resources #
+####################
+!/resources/*
