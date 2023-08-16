@@ -47,7 +47,6 @@ jobs:
 
       - name: Test Site
         run: |
-          echo "_site$BASE_URL"
           bash tools/test.sh -d "_site$BASE_URL"
 
       - name: Deploy
