@@ -15,7 +15,7 @@ timezone: America/Sao_Paulo
 
 # jekyll-seo-tag settings › https://github.com/jekyll/jekyll-seo-tag/blob/master/docs/usage.md
 # --------------------------
-title: M4v3r1ck - By Helvio Junior                          # the main title
+title: Helvio Junior                          # the main title
 
 tagline: CyberSecurity researcher. "I’m just a child who has never grown up. I still keep asking these 'how' & 'why' questions. Occasionally, I find an answer. Stephen Hawking"   # it will display as the sub-title
 
@@ -28,6 +28,9 @@ url: 'https://www.helviojunior.com.br'
 github:
   username: helviojunior             # change to your github username
 
+linkedin:
+  username: helviojunior            # change to your twitter username
+
 twitter:
   username: helvioju            # change to your twitter username
 
@@ -39,7 +42,7 @@ social:
   links:
     # The first element serves as the copyright owner's link
     - https://github.com/helviojunior       # change to your github homepage
-    - https://www.linkedin.com/in/helviojunior/
+    - https://www.linkedin.com/in/helviojunior
     - https://twitter.com/helvioju      # change to your twitter homepage
     
 
