@@ -17,7 +17,7 @@ timezone: America/Sao_Paulo
 # --------------------------
 title: Helvio Junior                          # the main title
 
-tagline: CyberSecurity researcher. "I’m just a child who has never grown up. I still keep asking these 'how' & 'why' questions. Occasionally, I find an answer. Stephen Hawking"   # it will display as the sub-title
+tagline: Cyber security researcher, speaker, low level and binary exploitation entusiast. <br /><br />"I’m just a child who has never grown up. I still keep asking these 'how' & 'why' questions. Occasionally, I find an answer. Stephen Hawking"   # it will display as the sub-title
 
 description: >-                        # used by seo meta and the atom feed
   Helvio junior (aka M4v3r1ck), Cyber security researcher, low level and binary exploitation entusiast.
