@@ -43,7 +43,7 @@ jobs:
 
       - name: Test Site
         run: |
-          bash tools/test.sh "_site$BASE_URL"
+          bash tools/test.sh -d "_site$BASE_URL"
 
       - name: Deploy
         run: |
