@@ -19,9 +19,9 @@
   --tb-odd-bg: #fbfcfd;
   --tb-border-color: #eaeaea;
   --button-bg: #fff;
-  --btn-backtotop-bg: #a63234;
+  --btn-backtotop-bg: var(--btn-active-bg);
   --btn-backtotop-color: var(--text-color);
-  --btn-backtotop-border-color: #a63234;
+  --btn-backtotop-border-color: var(--btn-active-border-color);
   --btn-box-shadow: #eaeaea;
   --checkbox-color: #c5c5c5;
   --checkbox-checked-color: #07a8f7;
