@@ -36,8 +36,8 @@ permalink: "/it/backup-com-dd-dd-backup-without-empty-space/"
 <p>Execute o comando abaixo substituindo o X pelo seu dispositivo</p>
 <p>[sourcecode language="shell"]fdisk -l /dev/sdX[/sourcecode]</p>
 <p>O retorno do comando será similar ao mostrado abaixo</p>
-<p><a href="http://www.helviojunior.com.br/wp-content/uploads/2013/06/fdisk.png"><img class=" wp-image-665 alignnone" alt="fdisk" src="{{ site.baseurl }}/assets/2013/06/fdisk.png" width="460" height="158" /></a></p>
-<p><a href="http://www.helviojunior.com.br/wp-content/uploads/2013/06/fdisk.png"><br />
+<p><a href="{{ site.baseurl }}/assets/2013/06/fdisk.png"><img class=" wp-image-665 alignnone" alt="fdisk" src="{{ site.baseurl }}/assets/2013/06/fdisk.png" width="460" height="158" /></a></p>
+<p><a href="{{ site.baseurl }}/assets/2013/06/fdisk.png"><br />
 </a>O retorno do comando mostra os blocos utilizados por cada partição bem como o bloco inicial, final e o tamanho do bloco.</p>
 <p>Neste retorno a ultima partição <strong>/dev/sdb2 </strong>tem o seu final no bloco 6266879, desta forma o comando dd necessita realizar o backup até este bloco, porém por preciosismo faremos o backup de um bloco a mais.</p>
 <p><strong>Backup sem gzip</strong></p>

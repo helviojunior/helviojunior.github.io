@@ -33,7 +33,7 @@ meta:
   _yoast_wpseo_opengraph-description: Neste artigo iremos dissecar a biblioteca da
     Metasploit chamada Block API responsável por localizar em tempo de execução o
     endereço das funções dentro dos módulos carregados na aplicação.
-  _yoast_wpseo_opengraph-image: http://www.helviojunior.com.br/wp-content/uploads/2021/08/36c41ddc969a4761a25396a46edbf8a3.png
+  _yoast_wpseo_opengraph-image: {{site.baseurl}}/assets/2021/08/36c41ddc969a4761a25396a46edbf8a3.png
   _yoast_wpseo_opengraph-image-id: '2272'
   _yoast_wpseo_primary_category: '80'
   _av_alb_posts_elements_state: a:0:{}
@@ -59,13 +59,13 @@ Arquitetura Windows e Linux
 
 De forma simplificada a imagem abaixo ilustra a arquitetura do sistema operacional Linux
 
-[![]({{ site.baseurl }}/assets/2021/08/8359a0a3ce9f4b8c8645c9cedffca97e.png)](http://www.helviojunior.com.br/wp-content/uploads/2021/08/8359a0a3ce9f4b8c8645c9cedffca97e.png)
+[![]({{site.baseurl}}/assets/2021/08/8359a0a3ce9f4b8c8645c9cedffca97e.png)]({{site.baseurl}}/assets/2021/08/8359a0a3ce9f4b8c8645c9cedffca97e.png)
 
 Fonte: [https://infoslack.com/devops/linux-101-arquitetura](https://infoslack.com/devops/linux-101-arquitetura)
 
 Bem como temos a figura abaixo ilustrando a arquitetura do Windows
 
-[![]({{ site.baseurl }}/assets/2021/08/36c41ddc969a4761a25396a46edbf8a3.png)](http://www.helviojunior.com.br/wp-content/uploads/2021/08/36c41ddc969a4761a25396a46edbf8a3.png)
+[![]({{site.baseurl}}/assets/2021/08/36c41ddc969a4761a25396a46edbf8a3.png)]({{site.baseurl}}/assets/2021/08/36c41ddc969a4761a25396a46edbf8a3.png)
 
 Fonte: Pavel, Y at all. Windows Internals Part 1: 1. ed. Washington: Microsoft, 2017. Pg 47
 
@@ -105,7 +105,7 @@ Conceitos e referencias complementares
 
 Durante este estudo iremos falar de diversos assuntos e daremos ênfase/aprofundamento somente naquilo que é pertinente para o nosso estudo, sendo assim para um melhor entendimento e aprofundamento recomendo a consulta aos seguintes materiais:
 
-*   Windows PE Format: PE é o acronimo de Portable Executable, que na prática é qualquer binário executável no windows incluindo .exe, .dll. Especificações técnicas: [https://docs.microsoft.com/en-us/windows/win32/debug/pe-format e https://www.aldeid.com/wiki/PE-Portable-executable](https://docs.microsoft.com/en-us/windows/win32/debug/pe-format e https://www.aldeid.com/wiki/PE-Portable-executable)
+*   Windows PE Format: PE é o acronimo de Portable Executable, que na prática é qualquer binário executável no windows incluindo .exe, .dll. Especificações técnicas: [https://docs.microsoft.com/en-us/windows/win32/debug/pe-format](https://docs.microsoft.com/en-us/windows/win32/debug/pe-format) e https://www.aldeid.com/wiki/PE-Portable-executable])https://www.aldeid.com/wiki/PE-Portable-executable)
 *   Intel® 64 and IA-32 Architectures Software Developer Manuals: Este manual traz de forma detalhada diversas questões de desenvolvimento para Intel, mas o foco que utilizamos é para o entendimento das principais instruções Assembly utilizadas neste artigo: [https://software.intel.com/content/www/us/en/develop/articles/intel-sdm.html](https://software.intel.com/content/www/us/en/develop/articles/intel-sdm.html)
 *   WinDBG: Neste artigo utilizaremos o WinDBG como debugger disponível em: [https://docs.microsoft.com/en-us/windows-hardware/drivers/debugger/debugger-download-tools](https://docs.microsoft.com/en-us/windows-hardware/drivers/debugger/debugger-download-tools)
 *   [https://www.youtube.com/watch?v=ySKEF8MHcZA](https://www.youtube.com/watch?v=ySKEF8MHcZA)
@@ -117,25 +117,25 @@ Instalando WinDbg
 
 Para realizar a instalação do WinDBG faça o download do SDK do Windows 10 disponível em: [https://docs.microsoft.com/en-us/windows-hardware/drivers/debugger/debugger-download-tools](https://docs.microsoft.com/en-us/windows-hardware/drivers/debugger/debugger-download-tools)
 
-[![]({{ site.baseurl }}/assets/2021/08/63543e7e146c45a298bd1f122c0f5ccf.png)](http://www.helviojunior.com.br/wp-content/uploads/2021/08/63543e7e146c45a298bd1f122c0f5ccf.png)
+[![]({{site.baseurl}}/assets/2021/08/63543e7e146c45a298bd1f122c0f5ccf.png)]({{site.baseurl}}/assets/2021/08/63543e7e146c45a298bd1f122c0f5ccf.png)
 
 Após instalado realize a configuração do local de armazenamento e download dos símbolos de debug.
 
 Abra o WinDBG x68 e vá em File > Symbol File Path e adicione o conteúdo abaixo
 
 ```bash
-srv\*c:\\symbols\*c:\\symbols\*http://msdl.microsoft.com/download/symbols  
+srv\*c:\symbols\*c:\symbols\*http://msdl.microsoft.com/download/symbols  
 ```
 
-[![]({{ site.baseurl }}/assets/2021/08/8996097d1a4d4be9b6ef0fb04a5f3859.png)](http://www.helviojunior.com.br/wp-content/uploads/2021/08/8996097d1a4d4be9b6ef0fb04a5f3859.png)
+[![]({{site.baseurl}}/assets/2021/08/8996097d1a4d4be9b6ef0fb04a5f3859.png)]({{site.baseurl}}/assets/2021/08/8996097d1a4d4be9b6ef0fb04a5f3859.png)
 
 Carregue uma aplicação qualquer em 32 bits como
 
 ```bash
-C:\\Windows\\SysWOW64\\notepad.exe  
+C:\Windows\SysWOW64\notepad.exe  
 ```
 
-[![]({{ site.baseurl }}/assets/2021/08/f50155a62904444dae9b7655288ae33f.png)](http://www.helviojunior.com.br/wp-content/uploads/2021/08/f50155a62904444dae9b7655288ae33f.png)
+[![]({{site.baseurl}}/assets/2021/08/f50155a62904444dae9b7655288ae33f.png)]({{site.baseurl}}/assets/2021/08/f50155a62904444dae9b7655288ae33f.png)
 
 Recarregue todos os simbolos
 
@@ -143,7 +143,7 @@ Recarregue todos os simbolos
 .reload /f  
 ```
 
-[![]({{ site.baseurl }}/assets/2021/08/388d8891016e4654a101bc40fb85bc0b.png)](http://www.helviojunior.com.br/wp-content/uploads/2021/08/388d8891016e4654a101bc40fb85bc0b.png)
+[![]({{site.baseurl}}/assets/2021/08/388d8891016e4654a101bc40fb85bc0b.png)]({{site.baseurl}}/assets/2021/08/388d8891016e4654a101bc40fb85bc0b.png)
 
 Process Internals
 -----------------
@@ -152,7 +152,7 @@ Cada processo windows é representado por um bloco EPROCESS (Executive Process),
 
 A Figura abaixo simplifica o diagrama das estruturas do processo e threads.
 
-[![]({{ site.baseurl }}/assets/2021/08/d817862488ea47d683756ffa2da72a85.png)](http://www.helviojunior.com.br/wp-content/uploads/2021/08/d817862488ea47d683756ffa2da72a85.png)  
+[![]({{site.baseurl}}/assets/2021/08/d817862488ea47d683756ffa2da72a85.png)]({{site.baseurl}}/assets/2021/08/d817862488ea47d683756ffa2da72a85.png)  
 Fonte: Russinovich, M at all. Windows Internals: 5. ed. Washington: Microsoft, 2009. Pg 336
 
 Para nosso estudo vale ressaltar uma tabela extremamente importante que é a TEB (Thread Environment Block), por compatibilidade também conhecida como TIB (Thread Information Block). A TEB pode ser utilizada para obter uma série de informações do processo sem a necessidade de realizar chamadas para as APIs Win32. Entre outras informações armazena o endereço do SEH e o endereço da tabela PEB (Process Environment Block), que por sua vez através da PEB pode-se obter acesso a IAT (Import Address Table) e muito mais.  
@@ -178,7 +178,7 @@ Neste exemplo iremos utilizar a função ExitProcess documentada em [https://doc
 
 Tendo sua sintaxe como abaixo:
 
-```bash
+```c
 void ExitProcess(  
 UINT uExitCode  
 );  
@@ -186,7 +186,7 @@ UINT uExitCode
 
 #### Código C
 
-```bash
+```c
 #include <Windows.h>  
 #include <stdio.h>
 
@@ -203,13 +203,13 @@ A block_api espera como entrada no topo da pilha o hash da função desejada seg
 
 Para o cálculo do hash da função utilizaremos uma aplicação desenvolvida por mim disponível em [https://github.com/helviojunior/addrfinder](https://github.com/helviojunior/addrfinder)
 
-[![]({{ site.baseurl }}/assets/2021/08/8e005921686341d4a9de29bd0d4dd1ef.png)](http://www.helviojunior.com.br/wp-content/uploads/2021/08/8e005921686341d4a9de29bd0d4dd1ef.png)
+[![]({{site.baseurl}}/assets/2021/08/8e005921686341d4a9de29bd0d4dd1ef.png)]({{site.baseurl}}/assets/2021/08/8e005921686341d4a9de29bd0d4dd1ef.png)
 
 Note que o hash da função **ExitProcess** é **0x56A2B5F0**, este hash não se altera mesmo em releases diferentes do windows.
 
 #### Assembly - utilizando a block_api
 
-```bash
+```asm
 [BITS 32]
 
 global _start
@@ -233,7 +233,7 @@ call get_block_api
 %include "../block_api.asm"  
 ```
 
-[![]({{ site.baseurl }}/assets/2021/08/5033fcd6f11140fcb573c532cee9d279.png)](http://www.helviojunior.com.br/wp-content/uploads/2021/08/5033fcd6f11140fcb573c532cee9d279.png)
+[![]({{site.baseurl}}/assets/2021/08/5033fcd6f11140fcb573c532cee9d279.png)]({{site.baseurl}}/assets/2021/08/5033fcd6f11140fcb573c532cee9d279.png)
 
 Como podemos observar no código acima na linha 22 realizamos a inclusão do arquivo da biblioteca (exatamente o mesmo arquivo listado no link do github acima)
 
@@ -250,54 +250,54 @@ E posteriormente executamos a block_api através da instrução **call edi**
 
 Para a montagem (conversão dos mnemônico ASM para binário/hexa) utilizaremos o NASM e para a execução utilizaremos o ShellcodeTester (Disponível em [https://github.com/helviojunior/shellcodetester](https://github.com/helviojunior/shellcodetester))
 
-[![]({{ site.baseurl }}/assets/2021/08/117c5675f98f4c608304ce20b0fde377.png)](http://www.helviojunior.com.br/wp-content/uploads/2021/08/117c5675f98f4c608304ce20b0fde377.png)
+[![]({{site.baseurl}}/assets/2021/08/117c5675f98f4c608304ce20b0fde377.png)]({{site.baseurl}}/assets/2021/08/117c5675f98f4c608304ce20b0fde377.png)
 
 Podemos ver que a montagem ocorreu com sucesso, agora podemos abrir no shellcode tester Arquivo > Abrir e selecione o **exit.o**
 
 Selecione as opções **32 bits** e **Adicionar um breakpoint antes do shellcode** e clique em Executar
 
-[![]({{ site.baseurl }}/assets/2021/08/a96eebb6fc5c4d229fbb4c5c1ef41feb.png)](http://www.helviojunior.com.br/wp-content/uploads/2021/08/a96eebb6fc5c4d229fbb4c5c1ef41feb.png)
+[![]({{site.baseurl}}/assets/2021/08/a96eebb6fc5c4d229fbb4c5c1ef41feb.png)]({{site.baseurl}}/assets/2021/08/a96eebb6fc5c4d229fbb4c5c1ef41feb.png)
 
 Neste momento aparecerá um alerta para anexar o debugger
 
-[![]({{ site.baseurl }}/assets/2021/08/850cad29f9314944ad4706bfacb19041.png)](http://www.helviojunior.com.br/wp-content/uploads/2021/08/850cad29f9314944ad4706bfacb19041.png)
+[![]({{site.baseurl}}/assets/2021/08/850cad29f9314944ad4706bfacb19041.png)]({{site.baseurl}}/assets/2021/08/850cad29f9314944ad4706bfacb19041.png)
 
 **NÃO clique em OK**, vá no Windbg clique em File > Attach to Process
 
-[![]({{ site.baseurl }}/assets/2021/08/c99d8980034544f4ad90054bbaff8da7.png)](http://www.helviojunior.com.br/wp-content/uploads/2021/08/c99d8980034544f4ad90054bbaff8da7.png)
+[![]({{site.baseurl}}/assets/2021/08/c99d8980034544f4ad90054bbaff8da7.png)]({{site.baseurl}}/assets/2021/08/c99d8980034544f4ad90054bbaff8da7.png)
 
 Selecione o processo **runner.exe**
 
-[![]({{ site.baseurl }}/assets/2021/08/bedaad542bd641378f9b533b3094fb93.png)](http://www.helviojunior.com.br/wp-content/uploads/2021/08/bedaad542bd641378f9b533b3094fb93.png)
+[![]({{site.baseurl}}/assets/2021/08/bedaad542bd641378f9b533b3094fb93.png)]({{site.baseurl}}/assets/2021/08/bedaad542bd641378f9b533b3094fb93.png)
 
 Na linha de comando do WinDbg digite g (de GO) para continuar a execução e pressione enter
 
-[![]({{ site.baseurl }}/assets/2021/08/76b862ca0c354dd4b08d5f795c3abc15.png)](http://www.helviojunior.com.br/wp-content/uploads/2021/08/76b862ca0c354dd4b08d5f795c3abc15.png)
+[![]({{site.baseurl}}/assets/2021/08/76b862ca0c354dd4b08d5f795c3abc15.png)]({{site.baseurl}}/assets/2021/08/76b862ca0c354dd4b08d5f795c3abc15.png)
 
 Após isso a mensagem **Debuggee is running...** deve aparecer
 
-[![]({{ site.baseurl }}/assets/2021/08/a7d19e909f3941b5ba4e62f0952d074d.png)](http://www.helviojunior.com.br/wp-content/uploads/2021/08/a7d19e909f3941b5ba4e62f0952d074d.png)
+[![]({{site.baseurl}}/assets/2021/08/a7d19e909f3941b5ba4e62f0952d074d.png)]({{site.baseurl}}/assets/2021/08/a7d19e909f3941b5ba4e62f0952d074d.png)
 
 Agora volte no alerta e pressione OK
 
-[![]({{ site.baseurl }}/assets/2021/08/850cad29f9314944ad4706bfacb19041.png)](http://www.helviojunior.com.br/wp-content/uploads/2021/08/850cad29f9314944ad4706bfacb19041.png)
+[![]({{site.baseurl}}/assets/2021/08/850cad29f9314944ad4706bfacb19041.png)]({{site.baseurl}}/assets/2021/08/850cad29f9314944ad4706bfacb19041.png)
 
 Neste momento uma mensagem aparecerá na console do WinDBG
 
-[![]({{ site.baseurl }}/assets/2021/08/19703e5c46704abda4add7881e27b36b.png)](http://www.helviojunior.com.br/wp-content/uploads/2021/08/19703e5c46704abda4add7881e27b36b.png)
+[![]({{site.baseurl}}/assets/2021/08/19703e5c46704abda4add7881e27b36b.png)]({{site.baseurl}}/assets/2021/08/19703e5c46704abda4add7881e27b36b.png)
 
 Análise do nosso shellcode
 --------------------------
 
 Antes de chegar efetivamente na biblioteca da block api nós temos algumas instruções das quais podemos colocar lado a lado com nosso código
 
-[![]({{ site.baseurl }}/assets/2021/08/bd6ffc8df5b345508a8b063e73cea5b3.png)](http://www.helviojunior.com.br/wp-content/uploads/2021/08/bd6ffc8df5b345508a8b063e73cea5b3.png)
+[![]({{site.baseurl}}/assets/2021/08/bd6ffc8df5b345508a8b063e73cea5b3.png)]({{site.baseurl}}/assets/2021/08/bd6ffc8df5b345508a8b063e73cea5b3.png)
 
 Como o foco é na execução da própria block_api vamos até o ponto da chamada **call edi**
 
 Neste momento temos no registrador EDI o endereço da block_api
 
-[![]({{ site.baseurl }}/assets/2021/08/19c8531c17944b009ff8244113f6172f.png)](http://www.helviojunior.com.br/wp-content/uploads/2021/08/19c8531c17944b009ff8244113f6172f.png)
+[![]({{site.baseurl}}/assets/2021/08/19c8531c17944b009ff8244113f6172f.png)]({{site.baseurl}}/assets/2021/08/19c8531c17944b009ff8244113f6172f.png)
 
 E começaremos a nossa análise deste ponto
 
@@ -310,7 +310,7 @@ Para facilitar o processo de análise vou colocando o código da block_api confo
 
 Como comentado anteriormente há uma série de tabelas existentes e utilizadas em nosso aplicativo, sendo assim segue um diagrama com o fluxo que realizaremos na próximas instruções
 
-[![]({{ site.baseurl }}/assets/2021/08/fb50b1ae0c2247498d36b0864c28432a.png)](http://www.helviojunior.com.br/wp-content/uploads/2021/08/fb50b1ae0c2247498d36b0864c28432a.png)
+[![]({{site.baseurl}}/assets/2021/08/fb50b1ae0c2247498d36b0864c28432a.png)]({{site.baseurl}}/assets/2021/08/fb50b1ae0c2247498d36b0864c28432a.png)
 
 Primeiramente utilizaremos o registrador de segmento FS em seu offset 0x30 para obter o endereço relativo (offset) de memória da tabela TEB, posteriormente pegaremos de dentro da TEB em seu offset 0x0C o endereço da tabela LDR e por fim dentro da tabela LDR pegaremos o endereço de memória do primeiro elemento da array InMemoryOrderModuleList.
 
@@ -356,7 +356,7 @@ Copia o VRA da PEB para dentro do registrador EDX
 
 Dentro do windbg podemos visualizar essa informação com o comando abaixo
 
-```bash
+```txt
 0:009> dt nt!_TEB @$teb  
 ntdll!_TEB  
 +0x000 NtTib : _NT_TIB  
@@ -384,13 +384,13 @@ ntdll!_TEB
 
 E confirmando a informação após a execução da instrução
 
-[![]({{ site.baseurl }}/assets/2021/08/21769f1837a241d0b7dcf1cc39f28526.png)](http://www.helviojunior.com.br/wp-content/uploads/2021/08/21769f1837a241d0b7dcf1cc39f28526.png)
+[![]({{site.baseurl}}/assets/2021/08/21769f1837a241d0b7dcf1cc39f28526.png)]({{site.baseurl}}/assets/2021/08/21769f1837a241d0b7dcf1cc39f28526.png)
 
 #### mov edx, [edx+0xc]
 
 Copia o VRA da LDR para dentro do registrador EDX
 
-```bash
+```txt
 0:009> dt nt!_PEB 0x010da000  
 ntdll!_PEB  
 +0x000 InheritedAddressSpace : 0 ''  
@@ -419,13 +419,13 @@ ntdll!_PEB
 +0x028 ProcessInitializing : 0y0  
 ```
 
-[![]({{ site.baseurl }}/assets/2021/08/637cc9ff49334ee78bcf36a095d040ea.png)](http://www.helviojunior.com.br/wp-content/uploads/2021/08/637cc9ff49334ee78bcf36a095d040ea.png)
+[![]({{site.baseurl}}/assets/2021/08/637cc9ff49334ee78bcf36a095d040ea.png)]({{site.baseurl}}/assets/2021/08/637cc9ff49334ee78bcf36a095d040ea.png)
 
 #### mov edx, [edx+0x14]
 
 Copia o VRA do primeiro elemento da array **InMemoryOrderModuleList** da tabela LDR para o registrador EDX.
 
-```bash
+```txt
 0:009> dt _PEB_LDR_DATA 0x77d40c40  
 ntdll!_PEB_LDR_DATA  
 +0x000 Length : 0x30  
@@ -439,13 +439,13 @@ ntdll!_PEB_LDR_DATA
 +0x02c ShutdownThreadId : (null)  
 ```
 
-[![]({{ site.baseurl }}/assets/2021/08/8d5afbd757e84622bee6ac7587f5d806.png)](http://www.helviojunior.com.br/wp-content/uploads/2021/08/8d5afbd757e84622bee6ac7587f5d806.png)
+[![]({{site.baseurl}}/assets/2021/08/8d5afbd757e84622bee6ac7587f5d806.png)]({{site.baseurl}}/assets/2021/08/8d5afbd757e84622bee6ac7587f5d806.png)
 
 Neste ponto temos em **EDX** o VRA do primeiro elemento da lista duplamente encadeada **InMemoryOrderModuleList**.
 
-[![]({{ site.baseurl }}/assets/2021/08/263625546a4046e3b33d92971fae19ea.png)](http://www.helviojunior.com.br/wp-content/uploads/2021/08/263625546a4046e3b33d92971fae19ea.png)
+[![]({{site.baseurl}}/assets/2021/08/263625546a4046e3b33d92971fae19ea.png)]({{site.baseurl}}/assets/2021/08/263625546a4046e3b33d92971fae19ea.png)
 
-```bash
+```txt
 0:009> dt _LIST_ENTRY (0x77d40c40 + 0x14)  
 ntdll!_LIST_ENTRY  
 [ 0x13d32a8 - 0x140d718 ]  
@@ -454,9 +454,9 @@ ntdll!_LIST_ENTRY
 
 ```
 
-Essa informação não parece muito útil, mas conforme podemos visualizar na documentação ([https://docs.microsoft.com/en-us/windows/win32/api/winternl/ns-winternl-peb_ldr_data](https://docs.microsoft.com/en-us/windows/win32/api/winternl/ns-winternl-peb_ldr_data)) a estrutura LIST_ENTRY faz parte de uma estrutura maior chamada _LDR_DATA_TABLE_ENTRY
+Essa informação não parece muito útil, mas conforme podemos visualizar na documentação ([https://docs.microsoft.com/en-us/windows/win32/api/winternl/ns-winternl-peb_ldr_data](https://docs.microsoft.com/en-us/windows/win32/api/winternl/ns-winternl-peb_ldr_data)) a estrutura LIST_ENTRY faz parte de uma estrutura maior chamada `_LDR_DATA_TABLE_ENTRY`
 
-```bash
+```txt
 typedef struct _LIST_ENTRY {  
 struct _LIST_ENTRY \*Flink;  
 struct _LIST_ENTRY \*Blink;  
@@ -480,9 +480,9 @@ ULONG TimeDateStamp;
 } LDR_DATA_TABLE_ENTRY, \*PLDR_DATA_TABLE_ENTRY;  
 ```
 
-Para realizar o dump da estrutura temos de subtrair 0x08 do endereço da _LIST_ENTRY com o objetivo de encontrar o início da estrutura _LDR_DATA_TABLE_ENTRY
+Para realizar o dump da estrutura temos de subtrair 0x08 do endereço da `_LIST_ENTRY` com o objetivo de encontrar o início da estrutura `_LDR_DATA_TABLE_ENTRY`
 
-```bash
+```txt
 0:009> dt _LDR_DATA_TABLE_ENTRY (013d32a8 - 0x8)  
 ntdll!_LDR_DATA_TABLE_ENTRY  
 +0x000 InLoadOrderLinks : _LIST_ENTRY [ 0x13d31b8 - 0x77d40c4c ]  
@@ -491,17 +491,17 @@ ntdll!_LDR_DATA_TABLE_ENTRY
 +0x018 DllBase : 0x00f40000 Void  
 +0x01c EntryPoint : (null)  
 +0x020 SizeOfImage : 0xa2000  
-+0x024 FullDllName : _UNICODE_STRING "C:\\Tools\\ShellcodeTester\\Runner.exe"  
++0x024 FullDllName : _UNICODE_STRING "C:\Tools\ShellcodeTester\Runner.exe"  
 +0x02c BaseDllName : _UNICODE_STRING "Runner.exe"  
 +0x034 FlagGroup : [4] "???"  
 +0x034 Flags : 0x14022c4  
 ```
 
-[![]({{ site.baseurl }}/assets/2021/08/d7bfcd1e25424cdfa2e17772de1c8dd2.png)](http://www.helviojunior.com.br/wp-content/uploads/2021/08/d7bfcd1e25424cdfa2e17772de1c8dd2.png)
+[![]({{site.baseurl}}/assets/2021/08/d7bfcd1e25424cdfa2e17772de1c8dd2.png)]({{site.baseurl}}/assets/2021/08/d7bfcd1e25424cdfa2e17772de1c8dd2.png)
 
 ### Função next_mod
 
-```bash
+```asm
 next_mod: ;  
 mov esi, [edx+0x28] ; Get pointer to modules name (unicode string)  
 movzx ecx, word [edx+0x26] ; Set ECX to the length we want to check  
@@ -512,12 +512,12 @@ xor edi, edi ; Clear EDI which will store the hash of the module name
 
 Copia o VMA do nome do módulo
 
-```bash
+```txt
 0:009> du @esi  
 013d1eb6 "Runner.exe"  
 ```
 
-[![]({{ site.baseurl }}/assets/2021/08/8a5a33bf66554437b4d62050bd0ffcf8.png)](http://www.helviojunior.com.br/wp-content/uploads/2021/08/8a5a33bf66554437b4d62050bd0ffcf8.png)
+[![]({{site.baseurl}}/assets/2021/08/8a5a33bf66554437b4d62050bd0ffcf8.png)]({{site.baseurl}}/assets/2021/08/8a5a33bf66554437b4d62050bd0ffcf8.png)
 
 #### movzx ecx, word [edx+0x26]
 
@@ -528,7 +528,7 @@ Em nosso cenário:
 *   Runner.exe = 10 Caracteres + 1 null byte
 *   11 \* 2 = 22
 
-[![]({{ site.baseurl }}/assets/2021/08/3339f66e40354ec6bcf91b0dc4c6335e.png)](http://www.helviojunior.com.br/wp-content/uploads/2021/08/3339f66e40354ec6bcf91b0dc4c6335e.png)
+[![]({{site.baseurl}}/assets/2021/08/3339f66e40354ec6bcf91b0dc4c6335e.png)]({{site.baseurl}}/assets/2021/08/3339f66e40354ec6bcf91b0dc4c6335e.png)
 
 #### xor edi, edi
 
@@ -536,7 +536,7 @@ Zera o EDI para utilizar como local de armazenamento do hash do nome do módulo
 
 ### Função loop_modname
 
-```bash
+```asm
 loop_modname: ;  
 xor eax, eax ; Clear EAX  
 lodsb ; Read in the next byte of the name  
@@ -561,7 +561,7 @@ Compara o byte recebido com o caractere 'a'
 
 Antes de vermos a comparação propriamente dita vamos analisar a tabela ASCII
 
-[![]({{ site.baseurl }}/assets/2021/08/1c806d639e2e4ce89a3fa1bc9a6c2bae.png)](http://www.helviojunior.com.br/wp-content/uploads/2021/08/1c806d639e2e4ce89a3fa1bc9a6c2bae.png)
+[![]({{site.baseurl}}/assets/2021/08/1c806d639e2e4ce89a3fa1bc9a6c2bae.png)]({{site.baseurl}}/assets/2021/08/1c806d639e2e4ce89a3fa1bc9a6c2bae.png)
 
 Observe na tabela ASCII que o alfabeto minúsculo vai do hexa-decimal 0x61 até 0x7a e o maiúsculo vai de 0x41 a 0x5a, então:
 
@@ -583,7 +583,7 @@ Esta é uma função grande que na verdade realiza as seguintes operaçÕes:
 
 Desta forma iremos analisar parte por parte dessa função (em pequenos códigos)
 
-```bash
+```asm
 not_lowercase: ;  
 ror edi, 0xd ; Rotate right our hash value  
 add edi, eax ; Add the next byte of the name  
@@ -622,7 +622,7 @@ Salva na pilha o hash do nome do módulo atual
 
 Essa fase da função irá buscar as informações das funções exportadas de dentro do módulo atual.
 
-```bash
+```asm
 ; Proceed to iterate the export address table,  
 mov edx, [edx+0x10] ; Get this modules base address  
 mov eax, [edx+0x3c] ; Get PE header  
@@ -639,17 +639,17 @@ add ebx, edx ; Add the modules base address
 
 #### mov edx, [edx+0x10]
 
-Neste momento ainda temos no EDX o endereço da estrutura _LIST_ENTRY do módulo atual, sendo assim em seu offset 0x10 tem-se o BaseAddress do módulo, desta forma esta instrução copia o BaseAddress do módulo que está sendo analisado para o Registrador EDX
+Neste momento ainda temos no EDX o endereço da estrutura `_LIST_ENTRY` do módulo atual, sendo assim em seu offset 0x10 tem-se o BaseAddress do módulo, desta forma esta instrução copia o BaseAddress do módulo que está sendo analisado para o Registrador EDX
 
-[![]({{ site.baseurl }}/assets/2021/08/472981a7d03842059a6aa08dc1264726.png)](http://www.helviojunior.com.br/wp-content/uploads/2021/08/472981a7d03842059a6aa08dc1264726.png)
+[![]({{site.baseurl}}/assets/2021/08/472981a7d03842059a6aa08dc1264726.png)]({{site.baseurl}}/assets/2021/08/472981a7d03842059a6aa08dc1264726.png)
 
-Note que para realizar o parse da estrutura _LDR_DATA_TABLE_ENTRY temos de subtrair 0x08, então o Offset que aparece na imagem é 0x18, ou seja 0x10 + 0x08. Onde temos o valor 0x00f40000
+Note que para realizar o parse da estrutura `_LDR_DATA_TABLE_ENTRY` temos de subtrair 0x08, então o Offset que aparece na imagem é 0x18, ou seja 0x10 + 0x08. Onde temos o valor 0x00f40000
 
 Valor este que podemos confirma de mais outros 2 modos
 
-[![]({{ site.baseurl }}/assets/2021/08/b5d48cd0bece439d8eca9dad186b0dfc.png)](http://www.helviojunior.com.br/wp-content/uploads/2021/08/b5d48cd0bece439d8eca9dad186b0dfc.png)
+[![]({{site.baseurl}}/assets/2021/08/b5d48cd0bece439d8eca9dad186b0dfc.png)]({{site.baseurl}}/assets/2021/08/b5d48cd0bece439d8eca9dad186b0dfc.png)
 
-```bash
+```txt
 0:009> dd @edx + 10  
 013d32b8 00f40000 00000000 000a2000 00480046  
 013d32c8 013d1e84 00160014 013d1eb6 014022c4  
@@ -672,21 +672,21 @@ Neste momento temos em EDX o BaseAddress do módulo que está sendo verificado.
 
 Para facilitar o entendimento vamos adentrar nas tabelas que iremos resgatar as informações
 
-[![]({{ site.baseurl }}/assets/2021/08/b9a2470b34804531b292d9276ac26780.png)](http://www.helviojunior.com.br/wp-content/uploads/2021/08/b9a2470b34804531b292d9276ac26780.png)
+[![]({{site.baseurl}}/assets/2021/08/b9a2470b34804531b292d9276ac26780.png)]({{site.baseurl}}/assets/2021/08/b9a2470b34804531b292d9276ac26780.png)
 
 #### MS-DOS PE HEader
 
 https://www.aldeid.com/wiki/PE-Portable-executable
 
-[![]({{ site.baseurl }}/assets/2021/08/76ca63c41bf6481e9884ffd78bc9730a.png)](http://www.helviojunior.com.br/wp-content/uploads/2021/08/76ca63c41bf6481e9884ffd78bc9730a.png)
+[![]({{site.baseurl}}/assets/2021/08/76ca63c41bf6481e9884ffd78bc9730a.png)]({{site.baseurl}}/assets/2021/08/76ca63c41bf6481e9884ffd78bc9730a.png)
 
 #### PE HEader
 
 BaseAssress + 0x3c = Início do PE Header
 
-[![]({{ site.baseurl }}/assets/2021/08/5fa512a8337a42f2a2a48f2b29147736.png)](http://www.helviojunior.com.br/wp-content/uploads/2021/08/5fa512a8337a42f2a2a48f2b29147736.png)
+[![]({{site.baseurl}}/assets/2021/08/5fa512a8337a42f2a2a48f2b29147736.png)]({{site.baseurl}}/assets/2021/08/5fa512a8337a42f2a2a48f2b29147736.png)
 
-[![]({{ site.baseurl }}/assets/2021/08/6fee8b530ed94e9e8f3a7060f0883a51.png)](http://www.helviojunior.com.br/wp-content/uploads/2021/08/6fee8b530ed94e9e8f3a7060f0883a51.png)
+[![]({{site.baseurl}}/assets/2021/08/6fee8b530ed94e9e8f3a7060f0883a51.png)]({{site.baseurl}}/assets/2021/08/6fee8b530ed94e9e8f3a7060f0883a51.png)
 
 #### Export Table
 
@@ -694,13 +694,13 @@ BaseAssress + 0x3c = Início do PE Header
 
 A tabela de exports está no offset 0x78 a partir do início do PE Header. Cada módulo (Executável/DLL) conterá o seu próprio PE Header e consequentemente a sua tabela de exportação.
 
-[![]({{ site.baseurl }}/assets/2021/08/e65af62396474ecaa86ea23feaade247.png)](http://www.helviojunior.com.br/wp-content/uploads/2021/08/e65af62396474ecaa86ea23feaade247.png)
+[![]({{site.baseurl}}/assets/2021/08/e65af62396474ecaa86ea23feaade247.png)]({{site.baseurl}}/assets/2021/08/e65af62396474ecaa86ea23feaade247.png)
 
 ### Função not_lowercase - parte 2 continuação
 
 Temos na imagem o parse dos dados da DOS_HEADER
 
-```bash
+```txt
 0:009> dt ntdll!_IMAGE_DOS_HEADER 00f40000  
 +0x000 e_magic : 0x5a4d  
 +0x002 e_cblp : 0x90  
@@ -725,28 +725,28 @@ Temos na imagem o parse dos dados da DOS_HEADER
 Evaluate expression: 128 = 00000080  
 ```
 
-[![]({{ site.baseurl }}/assets/2021/08/c1869b05a5bd4058856189c64a200c77.png)](http://www.helviojunior.com.br/wp-content/uploads/2021/08/c1869b05a5bd4058856189c64a200c77.png)
+[![]({{site.baseurl}}/assets/2021/08/c1869b05a5bd4058856189c64a200c77.png)]({{site.baseurl}}/assets/2021/08/c1869b05a5bd4058856189c64a200c77.png)
 
 #### mov eax, [edx+0x3c]
 
 Copia RVA do PE Header para o registrador EAX
 
-[![]({{ site.baseurl }}/assets/2021/08/c0c2939453d0432caaa0e6df186057a5.png)](http://www.helviojunior.com.br/wp-content/uploads/2021/08/c0c2939453d0432caaa0e6df186057a5.png)
+[![]({{site.baseurl}}/assets/2021/08/c0c2939453d0432caaa0e6df186057a5.png)]({{site.baseurl}}/assets/2021/08/c0c2939453d0432caaa0e6df186057a5.png)
 
 Podemos observar que o EAX teve seu valor definido como 0x80, ou seja o PE Header está em Base Address + 0x80 como vemos no output abaixo
 
-```bash
+```txt
 0:009> dt ntdll!_IMAGE_NT_HEADERS 00f40000 + 0x80  
 +0x000 Signature : 0x4550  
 +0x004 FileHeader : _IMAGE_FILE_HEADER  
 +0x018 OptionalHeader : _IMAGE_OPTIONAL_HEADER  
 ```
 
-[![]({{ site.baseurl }}/assets/2021/08/cd76b4aa6eda47228e542fa09a92e7d7.png)](http://www.helviojunior.com.br/wp-content/uploads/2021/08/cd76b4aa6eda47228e542fa09a92e7d7.png)
+[![]({{site.baseurl}}/assets/2021/08/cd76b4aa6eda47228e542fa09a92e7d7.png)]({{site.baseurl}}/assets/2021/08/cd76b4aa6eda47228e542fa09a92e7d7.png)
 
 Adicionalmente podemos observar os cabeçalhos adicionais no Offset 0x80 em relação ao PE Header
 
-```bash
+```txt
 0:009> dt ntdll!_IMAGE_OPTIONAL_HEADER 00f40000 + 0x80 + 0x18  
 +0x000 Magic : 0x10b  
 +0x002 MajorLinkerVersion : 0x30 '0'  
@@ -781,7 +781,7 @@ Adicionalmente podemos observar os cabeçalhos adicionais no Offset 0x80 em rela
 +0x060 DataDirectory : [16] _IMAGE_DATA_DIRECTORY  
 ```
 
-[![]({{ site.baseurl }}/assets/2021/08/9eb697ab4e664ea6b9b9e8e19f93a37b.png)](http://www.helviojunior.com.br/wp-content/uploads/2021/08/9eb697ab4e664ea6b9b9e8e19f93a37b.png)
+[![]({{site.baseurl}}/assets/2021/08/9eb697ab4e664ea6b9b9e8e19f93a37b.png)]({{site.baseurl}}/assets/2021/08/9eb697ab4e664ea6b9b9e8e19f93a37b.png)
 
 Dentro dos cabeçalhos adicionais podemos encontrar que a Export table (DataDirectory) encontra-se no Offset 0x60 relativo aos cabeçalhos adicionais.
 
@@ -795,19 +795,19 @@ Adiciona o RVA com o BaseAddress do módulo atual para obter o VMA do PE Header 
 
 Copia o RVA da tabela de exports para o registrador EAX
 
-[![]({{ site.baseurl }}/assets/2021/08/c4da462e06744a94b3d1e2ead1bc3d1d.png)](http://www.helviojunior.com.br/wp-content/uploads/2021/08/c4da462e06744a94b3d1e2ead1bc3d1d.png)
+[![]({{site.baseurl}}/assets/2021/08/c4da462e06744a94b3d1e2ead1bc3d1d.png)]({{site.baseurl}}/assets/2021/08/c4da462e06744a94b3d1e2ead1bc3d1d.png)
 
 Como pode-se observar este é um cenário onde o módulo atual não detém nenhuma função exportada. Sendo assim iremos adicionar um breakpoint neste ponto do código para podermos executar o código até que chegue no módulo desejado. Como a função exitprocess está dentro do módulo kernel32.dll vamos executar o código até chegar neste ponto dentro do módulo kernel32.dll.
 
-[![]({{ site.baseurl }}/assets/2021/08/711ed42a3fd44518960877bcbb2f48bb.png)](http://www.helviojunior.com.br/wp-content/uploads/2021/08/711ed42a3fd44518960877bcbb2f48bb.png)
+[![]({{site.baseurl}}/assets/2021/08/711ed42a3fd44518960877bcbb2f48bb.png)]({{site.baseurl}}/assets/2021/08/711ed42a3fd44518960877bcbb2f48bb.png)
 
 Note que agora vamos executar o comando g, e a execução segue até nosso breakpoint, posteriormente podemos inspecionar qual é o módulo que estamos tratando com o comando **lm a @edx** uma vez que temos em ECX o BaseAddress do módulo atual
 
-[![]({{ site.baseurl }}/assets/2021/08/7997667cafec4e4e88a171ae43c7f922.png)](http://www.helviojunior.com.br/wp-content/uploads/2021/08/7997667cafec4e4e88a171ae43c7f922.png)
+[![]({{site.baseurl}}/assets/2021/08/7997667cafec4e4e88a171ae43c7f922.png)]({{site.baseurl}}/assets/2021/08/7997667cafec4e4e88a171ae43c7f922.png)
 
 Uma vez que chegamos a kernel32.dll, podemos continuar a verificação.
 
-[![]({{ site.baseurl }}/assets/2021/08/08564e0c70724f328f260baea7f34fdc.png)](http://www.helviojunior.com.br/wp-content/uploads/2021/08/08564e0c70724f328f260baea7f34fdc.png)
+[![]({{site.baseurl}}/assets/2021/08/08564e0c70724f328f260baea7f34fdc.png)]({{site.baseurl}}/assets/2021/08/08564e0c70724f328f260baea7f34fdc.png)
 
 #### test eax, eax
 
@@ -819,27 +819,27 @@ Existe a tabela, ou seja EAX é diferente de zero, então o JMP não vai ocorrer
 
 Jump near if 0, verifica se o resultado da ultima operação matemática foi zero, se sim, realiza o salto. De forma que verificará se não há tabela de exports salta para a função get_next_mod1, caso contrário continua para a proxima instrução
 
-[![]({{ site.baseurl }}/assets/2021/08/bd1ee4dbb0494fb397452b53f7fc56f2.png)](http://www.helviojunior.com.br/wp-content/uploads/2021/08/bd1ee4dbb0494fb397452b53f7fc56f2.png)
+[![]({{site.baseurl}}/assets/2021/08/bd1ee4dbb0494fb397452b53f7fc56f2.png)]({{site.baseurl}}/assets/2021/08/bd1ee4dbb0494fb397452b53f7fc56f2.png)
 
 #### add eax, edx
 
 Adiciona o RVA com o BaseAddress do módulo atual para obter o VMA da tabela de exportação e o salva no registrador EAX
 
-[![]({{ site.baseurl }}/assets/2021/08/ddbd3d34d7754dc7bf6da2911c34a0fb.png)](http://www.helviojunior.com.br/wp-content/uploads/2021/08/ddbd3d34d7754dc7bf6da2911c34a0fb.png)
+[![]({{site.baseurl}}/assets/2021/08/ddbd3d34d7754dc7bf6da2911c34a0fb.png)]({{site.baseurl}}/assets/2021/08/ddbd3d34d7754dc7bf6da2911c34a0fb.png)
 
 #### push eax
 
 Salva na pilha o VMA da tabela de exports do módulo atual
 
-[![]({{ site.baseurl }}/assets/2021/08/31d074c5b9c94b2a806bd8d6a78728a7.png)](http://www.helviojunior.com.br/wp-content/uploads/2021/08/31d074c5b9c94b2a806bd8d6a78728a7.png)
+[![]({{site.baseurl}}/assets/2021/08/31d074c5b9c94b2a806bd8d6a78728a7.png)]({{site.baseurl}}/assets/2021/08/31d074c5b9c94b2a806bd8d6a78728a7.png)
 
 #### mov ecx, [eax+0x18]
 
 Uma vez que temos em EAX o VMA da tabela de exporta copia o número de funções exportadas para o registrador ECX
 
-[![]({{ site.baseurl }}/assets/2021/08/8dc9a7d1e4e747d0b5d0e5610294ff3b.png)](http://www.helviojunior.com.br/wp-content/uploads/2021/08/8dc9a7d1e4e747d0b5d0e5610294ff3b.png)
+[![]({{site.baseurl}}/assets/2021/08/8dc9a7d1e4e747d0b5d0e5610294ff3b.png)]({{site.baseurl}}/assets/2021/08/8dc9a7d1e4e747d0b5d0e5610294ff3b.png)
 
-[![]({{ site.baseurl }}/assets/2021/08/9db1702461b648c2b5b3f05eec7b2304.png)](http://www.helviojunior.com.br/wp-content/uploads/2021/08/9db1702461b648c2b5b3f05eec7b2304.png)
+[![]({{site.baseurl}}/assets/2021/08/9db1702461b648c2b5b3f05eec7b2304.png)]({{site.baseurl}}/assets/2021/08/9db1702461b648c2b5b3f05eec7b2304.png)
 
 #### mov ebx, [eax+0x20]
 
@@ -853,7 +853,7 @@ Neste momento temos em EBX o endereço de memória com o nome da primeira funç�
 
 ### Função get_next_func
 
-```bash
+```asm
 ; Computing the module hash + function hash  
 get_next_func: ;  
 test ecx, ecx ; Changed from jecxz to accomodate the larger offset produced by random jmps below  
@@ -872,7 +872,7 @@ Realiza uma verificação entre ECX e ECX
 
 Jump near if 0, salta para a função get_next_mod caso o resultado da ultima operação matematica seja zero, ou seja, caso ECX (que é nosso contador de funções) tenha chegado a zero, salta para o ponto de código responsável por iniciar o processo de verificação do próximo módulo. Caso seja ECX maior que zero, continua a execução para a proxima instrução.
 
-[![]({{ site.baseurl }}/assets/2021/08/9cf736a54e064aefbb9720a26e91121a.png)](http://www.helviojunior.com.br/wp-content/uploads/2021/08/9cf736a54e064aefbb9720a26e91121a.png)
+[![]({{site.baseurl}}/assets/2021/08/9cf736a54e064aefbb9720a26e91121a.png)]({{site.baseurl}}/assets/2021/08/9cf736a54e064aefbb9720a26e91121a.png)
 
 ECX diferente de zero, então o JMP não irá ocorrer
 
@@ -880,25 +880,25 @@ ECX diferente de zero, então o JMP não irá ocorrer
 
 Decrementa 01 de ECX
 
-#### mov esi, [ebx+ecx\*4]
+#### mov esi, [ebx + ecx * 4]
 
 Resgata o RVA do nome da função. Onde:
 
 * EBX: Contém o VMA do início da array que detém o nome das funções  
 * ECX: índice numérico dentro da função  
-* ECX \* 4: índico numérico multiplicado por 4 Bytes (32 bits) que representa cada endereço que contém o nome da função
+* ECX * 4: índico numérico multiplicado por 4 Bytes (32 bits) que representa cada endereço que contém o nome da função
 
 #### add esi, edx
 
 Adiciona o RVA com o BaseAddress do módulo atual para obter o VMA da do nome da função e o salva no registrador EAX
 
-[![]({{ site.baseurl }}/assets/2021/08/41dad8cb4ece46e8932b9dc629527137.png)](http://www.helviojunior.com.br/wp-content/uploads/2021/08/41dad8cb4ece46e8932b9dc629527137.png)
+[![]({{site.baseurl}}/assets/2021/08/41dad8cb4ece46e8932b9dc629527137.png)]({{site.baseurl}}/assets/2021/08/41dad8cb4ece46e8932b9dc629527137.png)
 
 Como no decorrer dest loop iremos decrementando o ECX, na pratica vamos varrendo a lista de traz p/ frente, sendo assim na primeira intereção tremos o nome da última função do array.
 
-[![]({{ site.baseurl }}/assets/2021/08/60bfdfab2d57477d884782fe7b53e6dd.png)](http://www.helviojunior.com.br/wp-content/uploads/2021/08/60bfdfab2d57477d884782fe7b53e6dd.png)
+[![]({{site.baseurl}}/assets/2021/08/60bfdfab2d57477d884782fe7b53e6dd.png)]({{site.baseurl}}/assets/2021/08/60bfdfab2d57477d884782fe7b53e6dd.png)
 
-[![]({{ site.baseurl }}/assets/2021/08/a82745678fc44ebbb9b3b9a943b6db86.png)](http://www.helviojunior.com.br/wp-content/uploads/2021/08/a82745678fc44ebbb9b3b9a943b6db86.png)
+[![]({{site.baseurl}}/assets/2021/08/a82745678fc44ebbb9b3b9a943b6db86.png)]({{site.baseurl}}/assets/2021/08/a82745678fc44ebbb9b3b9a943b6db86.png)
 
 #### xor edi, edi
 
@@ -906,7 +906,7 @@ Zera o registrador EDI para utiliza-lo como armazenamento do hash da função
 
 ### Função loop_funcname
 
-```bash
+```txt
 loop_funcname: ;  
 xor eax, eax ; Clear EAX  
 lodsb ; Read in the next byte of the ASCII function name  
@@ -950,7 +950,7 @@ Compara o byte copiado pela função lodsb salvo em AL com o registrador AH (que
 
 #### jne loop_funcname
 
-Jump near if not equal, verifica se o resultado da última comparação não é iguial, ou seja, se o último byte copiado em AL é diferente de zero, caso seja diferente de zero retorna para o início da função loop_funcname para continuar copiando os bytes do nome da função e assim calculando o hash. Caso tenha chegado no terminador de string \\0 (NULL Byte) continua para a próxima instrução
+Jump near if not equal, verifica se o resultado da última comparação não é iguial, ou seja, se o último byte copiado em AL é diferente de zero, caso seja diferente de zero retorna para o início da função loop_funcname para continuar copiando os bytes do nome da função e assim calculando o hash. Caso tenha chegado no terminador de string \0 (NULL Byte) continua para a próxima instrução
 
 #### add edi, [ebp-8]
 
@@ -962,11 +962,11 @@ Compara se o hash cálculado é igual ao hash desejado. Onde:
 * EDI: Hash cálculado com o nome do módulo + Nome da função  
 * EBP + 0x24: Posição da memória que detém o Hash da função desejada. Em nosso exemplo, este Hash foi adicionado na pilha com o PUSH 0x56A2B5F0 que é o hash da função ExitProcess
 
-[![]({{ site.baseurl }}/assets/2021/08/1eb1b42fa6714ad58a8e3e811f1f27db.png)](http://www.helviojunior.com.br/wp-content/uploads/2021/08/1eb1b42fa6714ad58a8e3e811f1f27db.png)
+[![]({{site.baseurl}}/assets/2021/08/1eb1b42fa6714ad58a8e3e811f1f27db.png)]({{site.baseurl}}/assets/2021/08/1eb1b42fa6714ad58a8e3e811f1f27db.png)
 
 Vamos então colocar um breakpoint nessa função para verificar após o cálculo do hash do nome de cada função + o hash do módulo, tendo então o hash final da função para posteriormente poder verificar se é igual ao desejado.
 
-[![]({{ site.baseurl }}/assets/2021/08/0e00a89fcb68481aad7fa79e32224480.png)](http://www.helviojunior.com.br/wp-content/uploads/2021/08/0e00a89fcb68481aad7fa79e32224480.png)
+[![]({{site.baseurl}}/assets/2021/08/0e00a89fcb68481aad7fa79e32224480.png)]({{site.baseurl}}/assets/2021/08/0e00a89fcb68481aad7fa79e32224480.png)
 
 #### jnz get_next_func
 
@@ -976,37 +976,37 @@ Jump near if not zero, caso a comparação anterior aponte como hash diferentes 
 
 Restaura para o registrador EAX o VMA da tabela de exports do módulo atual. Este valor foi salvo na pilha através do PUSH EAX realizado anteriormente.
 
-[![]({{ site.baseurl }}/assets/2021/08/11ba7a2da13e4e9abdccf6d1fc7f8a34.png)](http://www.helviojunior.com.br/wp-content/uploads/2021/08/11ba7a2da13e4e9abdccf6d1fc7f8a34.png)
+[![]({{site.baseurl}}/assets/2021/08/11ba7a2da13e4e9abdccf6d1fc7f8a34.png)]({{site.baseurl}}/assets/2021/08/11ba7a2da13e4e9abdccf6d1fc7f8a34.png)
 
 Colocamos um breakpoint nessa instrução, pois só chegaremos nela no momento em que os hashes forem iguais e posteriormente liberei a execução.
 
-[![]({{ site.baseurl }}/assets/2021/08/dadd5c5e07d046d2b792a7625c6bc5b0.png)](http://www.helviojunior.com.br/wp-content/uploads/2021/08/dadd5c5e07d046d2b792a7625c6bc5b0.png)
+[![]({{site.baseurl}}/assets/2021/08/dadd5c5e07d046d2b792a7625c6bc5b0.png)]({{site.baseurl}}/assets/2021/08/dadd5c5e07d046d2b792a7625c6bc5b0.png)
 
-[![]({{ site.baseurl }}/assets/2021/08/fe1adf21706641a7bd213526c575cd32.png)](http://www.helviojunior.com.br/wp-content/uploads/2021/08/fe1adf21706641a7bd213526c575cd32.png)
+[![]({{site.baseurl}}/assets/2021/08/fe1adf21706641a7bd213526c575cd32.png)]({{site.baseurl}}/assets/2021/08/fe1adf21706641a7bd213526c575cd32.png)
 
 #### mov ebx, [eax+0x24]
 
 Relembrando a estrutura da Export table
 
-[![]({{ site.baseurl }}/assets/2021/08/e65af62396474ecaa86ea23feaade247-1.png)](http://www.helviojunior.com.br/wp-content/uploads/2021/08/e65af62396474ecaa86ea23feaade247-1.png)
+[![]({{site.baseurl}}/assets/2021/08/e65af62396474ecaa86ea23feaade247-1.png)]({{site.baseurl}}/assets/2021/08/e65af62396474ecaa86ea23feaade247-1.png)
 
 Temos no offset 0x24 o array AddressOfNameOrdinals, sendo assim esta instrução copia o VMA do array AddressOfNameOrdinals para o registrador EBX
 
-[![]({{ site.baseurl }}/assets/2021/08/dade3a9912334bcfb6573adb18d485f0.png)](http://www.helviojunior.com.br/wp-content/uploads/2021/08/dade3a9912334bcfb6573adb18d485f0.png)
+[![]({{site.baseurl}}/assets/2021/08/dade3a9912334bcfb6573adb18d485f0.png)]({{site.baseurl}}/assets/2021/08/dade3a9912334bcfb6573adb18d485f0.png)
 
-[![]({{ site.baseurl }}/assets/2021/08/7235f7e1e42345fbb5fbae23607b7d81.png)](http://www.helviojunior.com.br/wp-content/uploads/2021/08/7235f7e1e42345fbb5fbae23607b7d81.png)
+[![]({{site.baseurl}}/assets/2021/08/7235f7e1e42345fbb5fbae23607b7d81.png)]({{site.baseurl}}/assets/2021/08/7235f7e1e42345fbb5fbae23607b7d81.png)
 
 #### add ebx, edx
 
 Adiciona o RVA com o BaseAddress do módulo atual para obter o VMA da do array AddressOfNameOrdinals e o salva no registrador EBX
 
-#### mov cx, [ebx+2\*ecx]
+#### mov cx, [ebx + 2 * ecx]
 
 Em ECX temos o índice da função desejada dentro da array AddressOfNames, como os arrays AddressOfNames e AddressOfNameOrdinals utilizam o mesmo índice podemos reaproveita-lo para endontrar o RVA da função dentro do array AddressOfNameOrdinals. Dentro da array AddressOfNames utiliamos ECX \* 4 para saltar em cada um dos registros da array, pois cada registro dentro da AddressOfNames é um valor DWORD, ja na array AddressOfNameOrdinals cada registro é um WORD, sendo assim iremos multiplicar por 0x02 para saltar em cada registro. Conforme podemos observar na tabela de exports do módulo kernel32.dll
 
-[![]({{ site.baseurl }}/assets/2021/08/7315b13c4f8948799c7b7da081ec7d7e.png)](http://www.helviojunior.com.br/wp-content/uploads/2021/08/7315b13c4f8948799c7b7da081ec7d7e.png)
+[![]({{site.baseurl}}/assets/2021/08/7315b13c4f8948799c7b7da081ec7d7e.png)]({{site.baseurl}}/assets/2021/08/7315b13c4f8948799c7b7da081ec7d7e.png)
 
-#### mov ebx, [eax+0x1c]
+#### mov ebx, [eax + 0x1c]
 
 Antes de utilizar o novo índice calculado anteriormente iremos pegar o RVA do AddressOfFunctions no índice 0x1c da Export table e o salva no registrador EBX
 
@@ -1014,7 +1014,7 @@ Antes de utilizar o novo índice calculado anteriormente iremos pegar o RVA do A
 
 Adiciona o RVA com o BaseAddress do módulo atual para obter o VMA da do array AddressOfFunctions e o salva no registrador EBX
 
-#### mov eax, [ebx+4\*ecx]
+#### mov eax, [ebx + 4 * ecx]
 
 Resgata o RVA da função desejada dentro da array AddressOfFunctions utilizando o offset resgatado da array AddressOfNameOrdinals. Onde:
 
@@ -1028,11 +1028,11 @@ Adiciona o RVA com o BaseAddress do módulo atual para obter o VMA da função d
 
 Nota: Este ja é o endereço de execução da função e pode ser usado pela instrução **call eax** (por exemplo).
 
-[![]({{ site.baseurl }}/assets/2021/08/9f1a8e78225b4bb08c7b0502a31ddeaa.png)](http://www.helviojunior.com.br/wp-content/uploads/2021/08/9f1a8e78225b4bb08c7b0502a31ddeaa.png)
+[![]({{site.baseurl}}/assets/2021/08/9f1a8e78225b4bb08c7b0502a31ddeaa.png)]({{site.baseurl}}/assets/2021/08/9f1a8e78225b4bb08c7b0502a31ddeaa.png)
 
 ### Funçao finish
 
-```bash
+```txt
 finish:  
 mov [esp+0x24], eax ; Overwrite the old EAX value with the desired api address for the upcoming popad  
 pop ebx ; Clear off the current modules hash  
@@ -1078,7 +1078,7 @@ Salta para o endereço da função em que se deseja executar. Do ponto de vista 
 
 ### Funções adicionais
 
-```bash
+```txt
 get_next_mod: ;  
 pop eax ; Pop off the current (now the previous) modules EAT  
 get_next_mod1: ;  
@@ -1102,7 +1102,7 @@ Deseja aprender passo a passo como realizar a criação de um Shellcode? Então 
 
 Link do treinamento: [https://sec4us.com.br/treinamentos/shellcoding-para-desenvolvimento-de-exploits/](https://sec4us.com.br/treinamentos/shellcoding-para-desenvolvimento-de-exploits/)
 
-[![]({{ site.baseurl }}/assets/2021/08/image)](https://sec4us.com.br/treinamentos/shellcoding-para-desenvolvimento-de-exploits/)
+[![]({{site.baseurl}}/assets/2021/08/image)](https://sec4us.com.br/treinamentos/shellcoding-para-desenvolvimento-de-exploits/)
 
 Fontes:
 -------

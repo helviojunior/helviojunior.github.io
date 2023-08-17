@@ -51,12 +51,12 @@ permalink: "/it/security/estabelecendo-vpn-site-to-site-ipsec-natt-openswan/"
 <p>Antes de mais nada é importante frisar que os IPs validos e inválidos deste ambiente são fictícios e escolhidos aleatoriamente, não representando qualquer ambiente real meu ou de cliente.</p>
 <p>Para os dois servidores de VPN foi utilizado o Ubuntu 12.0.4, e o OpenSwan do repositório do ubuntu.</p>
 <p>Esta imagem abaixo demonstra detalhadamente todo o nosso ambiente.</p>
-<p><a href="http://www.helviojunior.com.br/wp-content/uploads/2014/10/Lab.png"><img class="alignnone wp-image-1095" src="{{ site.baseurl }}/assets/2014/10/Lab.png" alt="Ambiente VPN site to site" width="581" height="219" /></a></p>
+<p><a href="{{ site.baseurl }}/assets/2014/10/Lab.png"><img class="alignnone wp-image-1095" src="{{ site.baseurl }}/assets/2014/10/Lab.png" alt="Ambiente VPN site to site" width="581" height="219" /></a></p>
 <p>Nela podemos observar que há 2 servidores de VPN, um na matriz e um na filial, e que o servidor da filial está atrás de um Roteador que está fazendo NAT. Este é um ambiente bem comum quando a filial está utilizando uma internet de baixo custo onde a operadora fornece o modem (como por exemplo ADSL) e este modem é quem recebe o IP válido e distribui uma rede inválida (comumente 192.168.x.x) para as maquinas internas.</p>
 <h2>Configuração de rede dos servidores de VPN</h2>
 <p><span style="line-height: 1.5;">Segue abaixo a configuração de rede de cada um dos servidores VPN</span></p>
-<p>[caption id="attachment_1074" align="alignnone" width="405"]<a href="http://www.helviojunior.com.br/wp-content/uploads/2014/10/metwork-matriz.png"><img class=" wp-image-1074" src="{{ site.baseurl }}/assets/2014/10/metwork-matriz.png" alt="metwork-matriz" width="405" height="255" /></a> Configuração de rede do servidor de VPN da Matriz[/caption]</p>
-<p>[caption id="attachment_1075" align="alignnone" width="405"]<a href="http://www.helviojunior.com.br/wp-content/uploads/2014/10/network-filial.png"><img class=" wp-image-1075" src="{{ site.baseurl }}/assets/2014/10/network-filial.png" alt="network-filial" width="405" height="255" /></a> Configuração de rede do servidor de VPN da Filial[/caption]</p>
+<p>[caption id="attachment_1074" align="alignnone" width="405"]<a href="{{ site.baseurl }}/assets/2014/10/metwork-matriz.png"><img class=" wp-image-1074" src="{{ site.baseurl }}/assets/2014/10/metwork-matriz.png" alt="metwork-matriz" width="405" height="255" /></a> Configuração de rede do servidor de VPN da Matriz[/caption]</p>
+<p>[caption id="attachment_1075" align="alignnone" width="405"]<a href="{{ site.baseurl }}/assets/2014/10/network-filial.png"><img class=" wp-image-1075" src="{{ site.baseurl }}/assets/2014/10/network-filial.png" alt="network-filial" width="405" height="255" /></a> Configuração de rede do servidor de VPN da Filial[/caption]</p>
 <h2>Instalando OpenSwan</h2>
 <p>O processo de instalação do OpenSwan é o mesmo para os dois equipamentos, desta forma execute os passos abaixo nos 2.</p>
 <p>Instalando o OpenSwan e OpenSSL</p>
@@ -65,7 +65,7 @@ apt-get update<br />
 apt-get install openssl openswan<br />
 [/sourcecode]</p>
 <p>Neste processo será questionado se deseja criar um certificado digital para este servidor. Pode selecionar a opção <strong>&lt;NO&gt;</strong><br />
-<a href="http://www.helviojunior.com.br/wp-content/uploads/2014/10/openswan-01.png"><img class="alignnone wp-image-1082" src="{{ site.baseurl }}/assets/2014/10/openswan-01.png" alt="openswan-01" width="405" height="255" /></a></p>
+<a href="{{ site.baseurl }}/assets/2014/10/openswan-01.png"><img class="alignnone wp-image-1082" src="{{ site.baseurl }}/assets/2014/10/openswan-01.png" alt="openswan-01" width="405" height="255" /></a></p>
 <p>Edite o arquivo <strong>/etc/ipsec.conf</strong> (em ambos equipamentos) para que ele fique com o seguinte conteúdo:</p>
 <p>[sourcecode language="shell"]version 2.0<br />
 config setup<br />
@@ -290,8 +290,8 @@ ipsec auto --up vpn1<br />
 <p><strong>Utilizando a CA atual para assinar o certificado</strong></p>
 <p>Para realizar este processo utilizando a sua CA atual será necessário ter o arquivo <strong>.pfx</strong> ou <strong>.p12</strong> da sua CA. Caso sua CA seja windows e você não saiba como realizar este procedimento no post <a title="Instalando autoridade certificadora raiz (CA Root) com windows" href="http://www.helviojunior.com.br/it/security/instalando-autoridade-certificadora-raiz-ca-root-com-windows/"><strong>Instalando CA Root com Windows</strong></a> eu ensino como realiza-lo.</p>
 <p><strong>Gerando certificado</strong></p>
-<p>Realize o download do aplicativo BuildCert (<a href="http://www.helviojunior.com.br/wp-content/uploads/2014/10/BuildCert.zip" target="_blank" rel="noopener">clicando aqui</a>) e descompacte em qualquer lugar em seu PC. O Aplicativo terá a seguinte estrutura de arquivos, por mais que pareça que há duplicados todos são necessários.</p>
-<p><a href="http://www.helviojunior.com.br/wp-content/uploads/2014/10/BuildCertTree.png"><img class="alignnone wp-image-1108" src="{{ site.baseurl }}/assets/2014/10/BuildCertTree.png" alt="BuildCertTree" width="131" height="209" /></a></p>
+<p>Realize o download do aplicativo BuildCert (<a href="{{ site.baseurl }}/assets/2014/10/BuildCert.zip" target="_blank" rel="noopener">clicando aqui</a>) e descompacte em qualquer lugar em seu PC. O Aplicativo terá a seguinte estrutura de arquivos, por mais que pareça que há duplicados todos são necessários.</p>
+<p><a href="{{ site.baseurl }}/assets/2014/10/BuildCertTree.png"><img class="alignnone wp-image-1108" src="{{ site.baseurl }}/assets/2014/10/BuildCertTree.png" alt="BuildCertTree" width="131" height="209" /></a></p>
 <p>Modo de utilização</p>
 <p>[sourcecode language="shell"]BuildCert.exe [common_name_ca] [common_name_cert] [password_ca] [password_cert]<br />
 [/sourcecode]</p>
@@ -306,11 +306,11 @@ BuildCert.exe cavpn.tutorial filial.tutorial 123456 123456<br />
 <li><strong>.key:</strong> chave privada do certificado</li>
 <li><strong>.pfx:</strong> arquivo PKCS#12 contendo o certificado X509 + a chave privada</li>
 </ol>
-<p><a style="line-height: 1.5;" href="http://www.helviojunior.com.br/wp-content/uploads/2014/10/certs.png"><img class="alignnone size-full wp-image-1111" src="{{ site.baseurl }}/assets/2014/10/certs.png" alt="certs" width="168" height="193" /></a></p>
+<p><a style="line-height: 1.5;" href="{{ site.baseurl }}/assets/2014/10/certs.png"><img class="alignnone size-full wp-image-1111" src="{{ site.baseurl }}/assets/2014/10/certs.png" alt="certs" width="168" height="193" /></a></p>
 <p>Segue os prints dos certificados</p>
-<p>[caption id="attachment_1112" align="alignnone" width="251"]<a href="http://www.helviojunior.com.br/wp-content/uploads/2014/10/ca1.png"><img class=" wp-image-1112" src="{{ site.baseurl }}/assets/2014/10/ca1.png" alt="ca1" width="251" height="313" /></a> Certificado da CA (Autoassinado)[/caption]</p>
-<p>[caption id="attachment_1113" align="alignnone" width="251"]<a href="http://www.helviojunior.com.br/wp-content/uploads/2014/10/ca2.png"><img class=" wp-image-1113" src="{{ site.baseurl }}/assets/2014/10/ca2.png" alt="ca2" width="251" height="313" /></a> Certificado da matriz assinado pela CA[/caption]</p>
-<p>[caption id="attachment_1114" align="alignnone" width="251"]<a href="http://www.helviojunior.com.br/wp-content/uploads/2014/10/ca3.png"><img class=" wp-image-1114" src="{{ site.baseurl }}/assets/2014/10/ca3.png" alt="ca3" width="251" height="313" /></a> Certificado da filial assinado pela CA[/caption]</p>
+<p>[caption id="attachment_1112" align="alignnone" width="251"]<a href="{{ site.baseurl }}/assets/2014/10/ca1.png"><img class=" wp-image-1112" src="{{ site.baseurl }}/assets/2014/10/ca1.png" alt="ca1" width="251" height="313" /></a> Certificado da CA (Autoassinado)[/caption]</p>
+<p>[caption id="attachment_1113" align="alignnone" width="251"]<a href="{{ site.baseurl }}/assets/2014/10/ca2.png"><img class=" wp-image-1113" src="{{ site.baseurl }}/assets/2014/10/ca2.png" alt="ca2" width="251" height="313" /></a> Certificado da matriz assinado pela CA[/caption]</p>
+<p>[caption id="attachment_1114" align="alignnone" width="251"]<a href="{{ site.baseurl }}/assets/2014/10/ca3.png"><img class=" wp-image-1114" src="{{ site.baseurl }}/assets/2014/10/ca3.png" alt="ca3" width="251" height="313" /></a> Certificado da filial assinado pela CA[/caption]</p>
 <p>Pronto, os certificados foram gerados e estão prontos para serem utilizados no OpenSwan</p>
 <h3>Gerando certificados com o OpenSSL</h3>
 <p>Outro modo de gerar os certificados é utilizando diretamente o OpenSSL.</p>
@@ -335,21 +335,21 @@ echo &quot;00&quot; &gt; serial<br />
 openssl req -x509 -days 3650 -config /etc/ipsec.d/openssl.cnf -newkey rsa:2048 -keyout private/cavpn.tutorial.key -out cacerts/cavpn.tutorial.cer<br />
 [/sourcecode]</p>
 <p>Na execução deste comando diversas informações serão solicitadas, porém 2 delas são importantes, 1 - Senha da CA, essa senha será solicitada para assinar os certificados da matriz e da filial; 2 - CommonName, ou seja o nome da CA. Preencha estes dados conforme desejado ou seguindo o exemplo abaixo</p>
-<p><a href="http://www.helviojunior.com.br/wp-content/uploads/2014/10/cert1.png"><img class="alignnone wp-image-1143" src="{{ site.baseurl }}/assets/2014/10/cert1.png" alt="cert1" width="540" height="391" /></a></p>
+<p><a href="{{ site.baseurl }}/assets/2014/10/cert1.png"><img class="alignnone wp-image-1143" src="{{ site.baseurl }}/assets/2014/10/cert1.png" alt="cert1" width="540" height="391" /></a></p>
 <p>Gere a requisição e assine o certificado da matriz</p>
 <p>[sourcecode language="shell"]openssl req -config /etc/ipsec.d/openssl.cnf -newkey rsa:1024 -keyout private/matriz.tutorial.key -out certs/matriz.tutorial.req<br />
 openssl ca -in certs/matriz.tutorial.req -config /etc/ipsec.d/openssl.cnf -days 730 -out certs/matriz.tutorial.cer -notext<br />
 openssl rsa -in private/matriz.tutorial.key -out private/matriz.tutorial.key<br />
 [/sourcecode]</p>
 <p>Diversas informações serão solicitadas porém a mais importante é o CommonName que precisa ser o <strong>matriz.tutorial</strong> para que os próximos scripts funcionem corretamente<br />
-<a href="http://www.helviojunior.com.br/wp-content/uploads/2014/10/cert-matriz.png"><img class="alignnone wp-image-1140" src="{{ site.baseurl }}/assets/2014/10/cert-matriz.png" alt="cert-matriz" width="540" height="404" /></a></p>
+<a href="{{ site.baseurl }}/assets/2014/10/cert-matriz.png"><img class="alignnone wp-image-1140" src="{{ site.baseurl }}/assets/2014/10/cert-matriz.png" alt="cert-matriz" width="540" height="404" /></a></p>
 <p>Gere a requisição e assine o certificado da filial</p>
 <p>[sourcecode language="shell"]openssl req -config /etc/ipsec.d/openssl.cnf -newkey rsa:1024 -keyout private/filial.tutorial.key -out certs/filial.tutorial.req<br />
 openssl ca -in certs/filial.tutorial.req -config /etc/ipsec.d/openssl.cnf -days 730 -out certs/filial.tutorial.cer -notext<br />
 openssl rsa -in private/filial.tutorial.key -out private/filial.tutorial.key<br />
 [/sourcecode]</p>
 <p>Diversas informações serão solicitadas porém a mais importante é o CommonName que precisa ser o <strong>filial.tutorial</strong> para que os próximos scripts funcionem corretamente<br />
-<a href="http://www.helviojunior.com.br/wp-content/uploads/2014/10/cert-filial.png"><img class="alignnone wp-image-1141" src="{{ site.baseurl }}/assets/2014/10/cert-filial.png" alt="cert-filial" width="540" height="391" /></a></p>
+<a href="{{ site.baseurl }}/assets/2014/10/cert-filial.png"><img class="alignnone wp-image-1141" src="{{ site.baseurl }}/assets/2014/10/cert-filial.png" alt="cert-filial" width="540" height="391" /></a></p>
 <p>Pronto, os certificados estão gerados e pronto para serem utilizados.</p>
 <h2>Configurando os tunneis ipsec para utilizar os certificados digitais</h2>
 <p>Agora que temos todos os certificados a mão podemos iniciar a configuração do OpenSwan para estabelecer a VPN utilizando os certificados digitais, estes passos são individuais para cada servidor.</p>

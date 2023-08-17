@@ -47,7 +47,7 @@ permalink: "/it/resgatando-ip-valido-do-agente-zabbix/"
 [/sourcecode]</p>
 <p>Caso as permissões dos seus arquivos web estejam para outro usuário que não o root, defina as permissões para o usuário especificado.</p>
 <p>Realize o teste de acesso com a url do seu servidor web ex.: http://meuservidor.com.br/zabbix/ip/</p>
-<p><a href="http://www.helviojunior.com.br/wp-content/uploads/2013/07/IP_001.png"><img class="alignnone size-full wp-image-740" alt="IP_001" src="{{ site.baseurl }}/assets/2013/07/IP_001.png" width="364" height="111" /></a></p>
+<p><a href="{{ site.baseurl }}/assets/2013/07/IP_001.png"><img class="alignnone size-full wp-image-740" alt="IP_001" src="{{ site.baseurl }}/assets/2013/07/IP_001.png" width="364" height="111" /></a></p>
 <p><strong>Configurando o agente</strong></p>
 <p>O Zabbix suporta diversos sistemas operacional como cliente (Linux, Windows MAC e etc...), porem para o objetivo deste tutorial a unica diferença entre eles será a forma de instalação do aplicativo cURL e o caminho de chamada deste na configuração do agente,  desta forma serão mostrados como realizar em windows e linux.</p>
 <p>Linux</p>
@@ -74,5 +74,5 @@ UserParameter=net.ipaddress,c:\zabbix\commands\curl -s http://meuservidor.com.br
 <li>Update interval: 180</li>
 </ul>
 <p>Quanto ao item <strong>Update interval</strong> vale a pena considerar qual é o tempo ideal para o seu ambiente para não sobrecarregar o seu servidor do zabbix.</p>
-<p><a href="http://www.helviojunior.com.br/wp-content/uploads/2013/07/IP_002.png"><img class=" wp-image-753 alignnone" alt="IP_002" src="{{ site.baseurl }}/assets/2013/07/IP_002.png" width="389" height="285" /></a></p>
+<p><a href="{{ site.baseurl }}/assets/2013/07/IP_002.png"><img class=" wp-image-753 alignnone" alt="IP_002" src="{{ site.baseurl }}/assets/2013/07/IP_002.png" width="389" height="285" /></a></p>
 <p>Basta salvar o item que automaticamente o IP do host será capturado na próxima verificação.</p>

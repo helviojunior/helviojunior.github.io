@@ -31,7 +31,7 @@ permalink: "/it/monitoramento/zabbix/instalando-zabbix-proxy-openwrt/"
 <p>O que é o Zabbix Proxy?</p>
 <p>Zabbix proxy é uma espécie de agente remoto de monitoramento, onde pode-se monitorar ambientes remotos com diversos dispositivos, a vantagem disso é que se os dispositivos forem monitorados diretamente, pode ocasionar perda de dados, alertas falsos, lentidão e etc. Com isso, é comum que o Zabbix apresente gráficos incompletos, triggers acionadas erroneamente, entre outros problemas.</p>
 <p>A partir da versão 1.6 o Zabbix disponibiliza o monitoramento por meio do proxy, onde apenas um Agente-Gerente envia as informações para o servidor Zabbix, conforme ilustração abaixo:</p>
-<p style="text-align: center;"><a href="http://www.helviojunior.com.br/wp-content/uploads/2013/05/Proxy00.png"><img class=" wp-image-518 aligncenter" alt="Proxy00" src="{{ site.baseurl }}/assets/2013/05/Proxy00.png" width="488" height="191" /></a></p>
+<p style="text-align: center;"><a href="{{ site.baseurl }}/assets/2013/05/Proxy00.png"><img class=" wp-image-518 aligncenter" alt="Proxy00" src="{{ site.baseurl }}/assets/2013/05/Proxy00.png" width="488" height="191" /></a></p>
 <p>Agora que entendemos um pouco mais sobre o Zabbix Proxy, vamos a motivação deste artigo: O proxy pode ser executado em diversas distribuições Linux, mas ter um computador alocado somente para o Zabbix proxy é um recurso caro, desta forma fui atrás de opções mais baratas e descobri que ele pode ser executado no OpenWRT (<a href="https://openwrt.org/">https://openwrt.org/</a>). O OpenWRT é uma distribuição Linux para dispositivos embarcados, ou seja, uma distribuição super enxuta, e suporta diversos dispositivos de baixo custo como roteadores Wifi (Dlink, Linksys, TP-link e etc).</p>
 <p><!--more--></p>
 <p>Neste ponto começaram os meus desafios, como instalar e fazer isso funcionar. Depois de apanhar um monte consegui fazer tudo rodar em um dispositivo com 4Mb de memória flash (onde os dados são armazenados) e 32 Mb de memória RAM. Desta forma resolvi compartilhar o passo a passo.</p>
@@ -41,7 +41,7 @@ permalink: "/it/monitoramento/zabbix/instalando-zabbix-proxy-openwrt/"
 <p>O Howto original de como realizar este procedimento pode ser encontrado em <a href="http://wiki.openwrt.org/doc/howto/obtain.firmware.generate">http://wiki.openwrt.org/doc/howto/obtain.firmware.generate</a>. Como serei bem específico neste post segue abaixo os passos que realizei.</p>
 <p>A criação da imagem necessita ser realizada em uma outra maquina que não o nosso dispositivo Dlink. No meu caso a maquina está rodando um Ubuntu server.</p>
 <p>Para este ambiente criei um diretório dentro do <strong>/root</strong> nomeado openwrt.</p>
-<p style="text-align: center;"><a href="http://www.helviojunior.com.br/wp-content/uploads/2013/05/001.png"><img class="aligncenter  wp-image-519" alt="001" src="{{ site.baseurl }}/assets/2013/05/001.png" width="540" height="135" /></a></p>
+<p style="text-align: center;"><a href="{{ site.baseurl }}/assets/2013/05/001.png"><img class="aligncenter  wp-image-519" alt="001" src="{{ site.baseurl }}/assets/2013/05/001.png" width="540" height="135" /></a></p>
 <p><strong>Download do gerador de imagem OpwnWRT</strong></p>
 <ul>
 <li>Acesse o endereço <a href="http://backfire.openwrt.org/10.03.1/">http://backfire.openwrt.org/10.03.1/</a></li>
@@ -63,9 +63,9 @@ cd /root/openwrt/OpenWrt-ImageBuilder-brcm47xx-for-Linux-i686<br />
 mkdir pkg<br />
 wget http://downloads.openwrt.org/snapshots/trunk/brcm47xx/packages/zabbix-proxy_2.0.5-1_brcm47xx.ipk<br />
 [/sourcecode]</p>
-<p style="text-align: center;"><a href="http://www.helviojunior.com.br/wp-content/uploads/2013/05/002.png"><img class="aligncenter  wp-image-520" alt="002" src="{{ site.baseurl }}/assets/2013/05/002.png" width="540" height="135" /></a></p>
+<p style="text-align: center;"><a href="{{ site.baseurl }}/assets/2013/05/002.png"><img class="aligncenter  wp-image-520" alt="002" src="{{ site.baseurl }}/assets/2013/05/002.png" width="540" height="135" /></a></p>
 <ul>
-<li>Dentro deste mesmo diretório crie um arquivo nomeado Packages com o seguinte conteúdo. Ou faça o download deste arquivo aqui (<a href="http://www.helviojunior.com.br/wp-content/uploads/2013/05/Packages.zip">Packages</a>)</li>
+<li>Dentro deste mesmo diretório crie um arquivo nomeado Packages com o seguinte conteúdo. Ou faça o download deste arquivo aqui (<a href="{{ site.baseurl }}/assets/2013/05/Packages.zip">Packages</a>)</li>
 </ul>
 <p>[sourcecode language="text"]<br />
 Package: zabbix-proxy<br />
@@ -83,13 +83,13 @@ Size: 222216<br />
 MD5Sum: d6e25fdd0a4924f7038248b4b191f649<br />
 Description:  Zabbix proxy<br />
 [/sourcecode]</p>
-<p style="text-align: center;"><a href="http://www.helviojunior.com.br/wp-content/uploads/2013/05/003.png"><img class="aligncenter  wp-image-521" alt="003" src="{{ site.baseurl }}/assets/2013/05/003.png" width="540" height="302" /></a></p>
+<p style="text-align: center;"><a href="{{ site.baseurl }}/assets/2013/05/003.png"><img class="aligncenter  wp-image-521" alt="003" src="{{ site.baseurl }}/assets/2013/05/003.png" width="540" height="302" /></a></p>
 <p>Configurando o gerador de imagem para utilizar este diretório como repositório adicional de pacotes</p>
 <ul>
 <li>Dentro do diretório <b>/root/openwrt/OpenWrt-ImageBuilder-brcm47xx-for-Linux-i686</b> edite o arquivo <strong>repositories.conf</strong></li>
 <li>Adicione a linha <strong>src custom file:///root/opwndrt/OpenWrt-ImageBuilder-brcm47xx-for-Linux-i686/pkg</strong></li>
 </ul>
-<p style="text-align: center;"><a href="http://www.helviojunior.com.br/wp-content/uploads/2013/05/005.png"><img class="aligncenter  wp-image-523" alt="005" src="{{ site.baseurl }}/assets/2013/05/005.png" width="540" height="199" /></a></p>
+<p style="text-align: center;"><a href="{{ site.baseurl }}/assets/2013/05/005.png"><img class="aligncenter  wp-image-523" alt="005" src="{{ site.baseurl }}/assets/2013/05/005.png" width="540" height="199" /></a></p>
 <p>Visualizando os perfis de geração de imagem disponível</p>
 <p>Execute o comando</p>
 <p>[sourcecode language="shell"]make info[/sourcecode]</p>
@@ -128,12 +128,12 @@ Packages: kmod-usb-core kmod-usb-ohci kmod-usb2 kmod-usb-storage kmod-scsi-core 
 <ul>
 <li>Dentro do diretório <b>/root/openwrt/OpenWrt-ImageBuilder-brcm47xx-for-Linux-i686</b> execute o comando <b>make image PROFILE=None PACKAGES="libc libsqlite3 zabbix-proxy fping"</b></li>
 </ul>
-<p style="text-align: center;"><a href="http://www.helviojunior.com.br/wp-content/uploads/2013/05/006.png"><img class="aligncenter  wp-image-524" alt="006" src="{{ site.baseurl }}/assets/2013/05/006.png" width="540" height="97" /></a></p>
+<p style="text-align: center;"><a href="{{ site.baseurl }}/assets/2013/05/006.png"><img class="aligncenter  wp-image-524" alt="006" src="{{ site.baseurl }}/assets/2013/05/006.png" width="540" height="97" /></a></p>
 <ul>
 <li>Este processo demora alguns</li>
 </ul>
 <p>Se tudo ocorreu como esperado será criado um diretório nomeado <b>bin/brcm47xx/</b> e haverá dentro dele as imagens.</p>
-<p style="text-align: center;"><a href="http://www.helviojunior.com.br/wp-content/uploads/2013/05/007.png"><img class="aligncenter  wp-image-525" alt="007" src="{{ site.baseurl }}/assets/2013/05/007.png" width="540" height="250" /></a></p>
+<p style="text-align: center;"><a href="{{ site.baseurl }}/assets/2013/05/007.png"><img class="aligncenter  wp-image-525" alt="007" src="{{ site.baseurl }}/assets/2013/05/007.png" width="540" height="250" /></a></p>
 <p>No meu caso utilizei a imagem <b>openwrt-brcm47xx-squashfs.trx</b>  gerada para gravar em meu Dlink DIR-320.</p>
 <p>Caso seu dispositivo já esteja com o OpenWRT, copie via SCP a imagem para o /tmp, acesse este diretório e execute o comando abaixo para gravar a imagem</p>
 <p>[sourcecode language="shell"]<br />
@@ -142,25 +142,25 @@ mtd -r write openwrt-brcm47xx-squashfs.trx Linux[/sourcecode]</p>
 <p>Basta realizar a gravação e pronto, o dispositivo já está com o <strong>OpenWRT</strong> + <strong>Zabbix-proxy</strong>.</p>
 <p>Como a imagem que gravamos é bem enxuta não há configuração web do dispositivo mostrarei como realizar o acesso ao dispositivo, troca de senha padrão do ssh e configuração da interface de rede.</p>
 <p>Após a gravação desta imagem e reboot do dispositivo, o mesmo terá configurado em sua interface de rede o ip <strong>192.168.1.1</strong>, e não estará entregando IP via DHCP, desta forma configure um ip desta faixa na sua interface de rede, conforme imagem abaixo:</p>
-<p style="text-align: center;"><a href="http://www.helviojunior.com.br/wp-content/uploads/2013/05/008.png"><img class="aligncenter  wp-image-526" alt="008" src="{{ site.baseurl }}/assets/2013/05/008.png" width="331" height="370" /></a></p>
+<p style="text-align: center;"><a href="{{ site.baseurl }}/assets/2013/05/008.png"><img class="aligncenter  wp-image-526" alt="008" src="{{ site.baseurl }}/assets/2013/05/008.png" width="331" height="370" /></a></p>
 <p>Acesse o dispositivo através de telnet, no meu caso utilizei o aplicativo Putty para isso.</p>
-<p style="text-align: center;"><a href="http://www.helviojunior.com.br/wp-content/uploads/2013/05/009.png"><img class="aligncenter  wp-image-527" alt="009" src="{{ site.baseurl }}/assets/2013/05/009.png" width="373" height="359" /></a></p>
+<p style="text-align: center;"><a href="{{ site.baseurl }}/assets/2013/05/009.png"><img class="aligncenter  wp-image-527" alt="009" src="{{ site.baseurl }}/assets/2013/05/009.png" width="373" height="359" /></a></p>
 <p>Se tudo estiver correto a imagem abaixo será apresentada, caso não acesse verifique sua configuração de rede e conectividade até o dispositivo com o OpenWRT.</p>
-<p style="text-align: center;"><a href="http://www.helviojunior.com.br/wp-content/uploads/2013/05/010.png"><img class="aligncenter  wp-image-528" alt="010" src="{{ site.baseurl }}/assets/2013/05/010.png" width="540" height="340" /></a></p>
+<p style="text-align: center;"><a href="{{ site.baseurl }}/assets/2013/05/010.png"><img class="aligncenter  wp-image-528" alt="010" src="{{ site.baseurl }}/assets/2013/05/010.png" width="540" height="340" /></a></p>
 <p>Digite o comando passwd para alterar a senha de root</p>
 <p>Agora o dispositivo já pode ser acessado via SSH com o usuário root e a senha definida no passo anterior.</p>
-<p style="text-align: center;"><a href="http://www.helviojunior.com.br/wp-content/uploads/2013/05/011.png"><img class="aligncenter  wp-image-529" alt="011" src="{{ site.baseurl }}/assets/2013/05/011.png" width="373" height="141" /></a></p>
+<p style="text-align: center;"><a href="{{ site.baseurl }}/assets/2013/05/011.png"><img class="aligncenter  wp-image-529" alt="011" src="{{ site.baseurl }}/assets/2013/05/011.png" width="373" height="141" /></a></p>
 <p><strong>Alterando a configuração de rede</strong></p>
 <ul>
 <li>Edite o arquivo <strong>/etc/config/network</strong></li>
 <li>Localize a sessão LAN conforme a imagem abaixo:</li>
 </ul>
-<p style="text-align: center;"><a href="http://www.helviojunior.com.br/wp-content/uploads/2013/05/012.png"><img class="aligncenter  wp-image-530" alt="012" src="{{ site.baseurl }}/assets/2013/05/012.png" width="540" height="340" /></a></p>
+<p style="text-align: center;"><a href="{{ site.baseurl }}/assets/2013/05/012.png"><img class="aligncenter  wp-image-530" alt="012" src="{{ site.baseurl }}/assets/2013/05/012.png" width="540" height="340" /></a></p>
 <ul>
 <li>Edite a configuração com as informações da sua rede</li>
 <li>No meu caso ficou assim</li>
 </ul>
-<p style="text-align: center;"><a href="http://www.helviojunior.com.br/wp-content/uploads/2013/05/013.png"><img class="aligncenter  wp-image-531" alt="013" src="{{ site.baseurl }}/assets/2013/05/013.png" width="540" height="340" /></a></p>
+<p style="text-align: center;"><a href="{{ site.baseurl }}/assets/2013/05/013.png"><img class="aligncenter  wp-image-531" alt="013" src="{{ site.baseurl }}/assets/2013/05/013.png" width="540" height="340" /></a></p>
 <ul>
 <li>Onde meu IP é <strong>192.168.0.30</strong>, roteador padrão <strong>192.168.0.1</strong> e dns <strong>192.168.0.1</strong></li>
 <li>Reinicie as configurações de rede com o comando <b>/etc/init.d/network restart</b> ou reinicie seu dispositivo com o comando <b>reboot</b></li>

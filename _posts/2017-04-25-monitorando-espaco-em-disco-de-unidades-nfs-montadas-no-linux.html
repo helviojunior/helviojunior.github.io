@@ -43,15 +43,15 @@ permalink: "/it/monitoramento/zabbix/monitorando-espaco-em-disco-de-unidades-nfs
 <p>[sourcecode language="shell"]UserParameter=vfs.nfs.discovery,echo &quot;{  \&quot;data\&quot;:[&quot; &amp;&amp; cnt=1 &amp;&amp; cat /etc/mtab | grep -v pipefs | grep nfs | while read -r line; do if [ &quot;$cnt&quot; -gt &quot;1&quot; ]; then echo &quot;,&quot;; fi; FSNAME=$(echo $line|awk '{print $2}'|sed -e 's/\\/\\\\/g' -e 's|/|\\/|g') &amp;&amp; FSTYPE=$(echo $line|awk '{print $3}') &amp;&amp; echo &quot; { \&quot;{#NFSNAME}\&quot;:\&quot;${FSNAME}\&quot;,\&quot;{#NFSTYPE}\&quot;:\&quot;${FSTYPE}\&quot;,\&quot;{#NFSDEV}\&quot;:\&quot;${FSDEV}\&quot;,\&quot;{#BDNAME}\&quot;:\&quot;${BDNAME}\&quot;}&quot;; cnt=$(($cnt+1)); done &amp;&amp; echo &quot;] }&quot;<br />
 [/sourcecode]</p>
 <p>Reinicie o agente</p>
-<p>Agora no servidor Asterisk realize a importação do template (<a href="http://www.helviojunior.com.br/wp-content/uploads/2017/04/zbx_template_os_linux.zip">disponível aqui</a>), este arquivo somente irá atualizar o template <strong>Template OS Linux</strong> para adicionar o novo item de discovery (para descobrir as unidades NFS) bem como inserir os itens de monitoramento, alerta e gráfico para essas unidades.</p>
+<p>Agora no servidor Asterisk realize a importação do template (<a href="{{ site.baseurl }}/assets/2017/04/zbx_template_os_linux.zip">disponível aqui</a>), este arquivo somente irá atualizar o template <strong>Template OS Linux</strong> para adicionar o novo item de discovery (para descobrir as unidades NFS) bem como inserir os itens de monitoramento, alerta e gráfico para essas unidades.</p>
 <p>Segue abaixo como realizar a importação:</p>
 <p>Clique em Configuration &gt; Templates &gt; Import</p>
 <p>&nbsp;</p>
-<p><a href="http://www.helviojunior.com.br/wp-content/uploads/2017/04/nfs.import.template.jpg"><img class="alignnone wp-image-1649 size-large" src="{{ site.baseurl }}/assets/2017/04/nfs.import.template-1030x99.jpg" alt="nfs.import.template" width="1030" height="99" /></a></p>
+<p><a href="{{ site.baseurl }}/assets/2017/04/nfs.import.template.jpg"><img class="alignnone wp-image-1649 size-large" src="{{ site.baseurl }}/assets/2017/04/nfs.import.template-1030x99.jpg" alt="nfs.import.template" width="1030" height="99" /></a></p>
 <p>Realize o download do arquivo, descompacte o conteudo e selecione o arquivo XML.</p>
 <p>Logo após clique em Import.</p>
-<p><a href="http://www.helviojunior.com.br/wp-content/uploads/2017/04/nfs.import.template2.jpg"><img class="alignnone size-full wp-image-1650" src="{{ site.baseurl }}/assets/2017/04/nfs.import.template2.jpg" alt="nfs.import.template2" width="612" height="587" /></a></p>
+<p><a href="{{ site.baseurl }}/assets/2017/04/nfs.import.template2.jpg"><img class="alignnone size-full wp-image-1650" src="{{ site.baseurl }}/assets/2017/04/nfs.import.template2.jpg" alt="nfs.import.template2" width="612" height="587" /></a></p>
 <p>Pronto!</p>
 <p>Caso não tenha dado erro sua importação ocorreu com sucesso, caso deseje ver os itens inseridos basta ir no <strong>Template OS Linux</strong> conforme imagem abaixo.</p>
-<p><a href="http://www.helviojunior.com.br/wp-content/uploads/2017/04/nfs.import.template3.jpg"><img class="alignnone size-large wp-image-1651" src="{{ site.baseurl }}/assets/2017/04/nfs.import.template3-1030x274.jpg" alt="nfs.import.template3" width="1030" height="274" /></a></p>
+<p><a href="{{ site.baseurl }}/assets/2017/04/nfs.import.template3.jpg"><img class="alignnone size-large wp-image-1651" src="{{ site.baseurl }}/assets/2017/04/nfs.import.template3-1030x274.jpg" alt="nfs.import.template3" width="1030" height="274" /></a></p>
 <p>&nbsp;</p>

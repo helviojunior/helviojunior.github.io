@@ -38,11 +38,11 @@ permalink: "/it/building-a-ddns-server/"
 <p>Sendo assim este post objetiva ensinar como fazer este mesmo processo  usando um servidor web IIS, seu servidor de DNS (qualquer um) e no lado do cliente um app qualquer que acesse uma url como wget, curl ou até um navegador como Internet Explorer, Chrome, etc...</p>
 <h2>Passo 1 - Criando servidor Web</h2>
 <p>Antes de iniciar se certifique que haja instalado o .NET 4.0 em seu servidor.</p>
-<p>Realize o download do arquivo <a title="DDNSWeb.zip" href="http://www.helviojunior.com.br/wp-content/uploads/2015/01/DDNSWeb.zip">DDNSWeb.zip</a> e extraia em seu servidor web em nosso ambiente faremos isso em <strong>c:\Inetpub\DDNSWeb\. </strong></p>
+<p>Realize o download do arquivo <a title="DDNSWeb.zip" href="{{ site.baseurl }}/assets/2015/01/DDNSWeb.zip">DDNSWeb.zip</a> e extraia em seu servidor web em nosso ambiente faremos isso em <strong>c:\Inetpub\DDNSWeb\. </strong></p>
 <p>Agora acesse a console do IIS, e crie o site conforme o exemplo abaixo</p>
-<p><a href="http://www.helviojunior.com.br/wp-content/uploads/2015/01/site.png"><img class="alignnone  wp-image-1292" alt="site" src="{{ site.baseurl }}/assets/2015/01/site.png" width="419" height="403" /></a></p>
+<p><a href="{{ site.baseurl }}/assets/2015/01/site.png"><img class="alignnone  wp-image-1292" alt="site" src="{{ site.baseurl }}/assets/2015/01/site.png" width="419" height="403" /></a></p>
 <p>Após isso se certifique que o ResourcePool do seu site está definido para utilizar o .NET 4.0</p>
-<p><a href="http://www.helviojunior.com.br/wp-content/uploads/2015/01/site2.png"><img class="alignnone  wp-image-1279" alt="site2" src="{{ site.baseurl }}/assets/2015/01/site2.png" width="514" height="288" /></a></p>
+<p><a href="{{ site.baseurl }}/assets/2015/01/site2.png"><img class="alignnone  wp-image-1279" alt="site2" src="{{ site.baseurl }}/assets/2015/01/site2.png" width="514" height="288" /></a></p>
 <p><span style="line-height: 1.5;">Agora veremos alguns trechos do arquivo </span><strong style="line-height: 1.5;">update.aspx.cs</strong><span style="line-height: 1.5;"> e o que alterar para o correto funcionamento do seu servidor DDNS</span></p>
 <p>[sourcecode language="csharp"]if (auth_key != &quot;authtest123&quot;)<br />
  {<br />
@@ -66,7 +66,7 @@ IPAddress server = IPAddress.Parse(&quot;192.168.254.200&quot;);<br />
 <h2>Passo 2 - Servidor DNS</h2>
 <p>Para que este aplicativo funcione o servidor DNS precisa permitir atualização dinâmica sem DNSSec, o que é inseguro, desta forma é altamente recomendado que você só libere isso em uma zona específica para DDNS, e que o seu servidor não libere a porta 53 TCP para a internet.</p>
 <p>Abra o gerenciador de DNS, e edite a sua zona alterando o parâmetro de atualização para permitir atualizações não seguras, conforme a imagem abaixo.</p>
-<p><a href="http://www.helviojunior.com.br/wp-content/uploads/2015/01/dns1.png"><img class="alignnone  wp-image-1282" alt="dns1" src="{{ site.baseurl }}/assets/2015/01/dns1.png" width="248" height="298" /></a></p>
+<p><a href="{{ site.baseurl }}/assets/2015/01/dns1.png"><img class="alignnone  wp-image-1282" alt="dns1" src="{{ site.baseurl }}/assets/2015/01/dns1.png" width="248" height="298" /></a></p>
 <h2></h2>
 <h2>Passo 3 - Configurando cliente</h2>
 <p>Na pratica não existe um cliente em que você precisa fazer o download, instalar e configurar, qualquer navegador web pode ser cliente neste projeto, como Google Chrome, Wget, cURL, firefox entre outros. Esse conceito permite que usemos softwares como o wget e cURL para automatizar a requisição de tempos em tempos para sempre manter nosso host atualizado.</p>
@@ -81,7 +81,7 @@ IPAddress server = IPAddress.Parse(&quot;192.168.254.200&quot;);<br />
 <p>[sourcecode language="csharp"]http://192.168.254.100/update/aae5cd33-5b51-49af-8b10-6e88d5af92a8/authtest123/<br />
 [/sourcecode]</p>
 <p>Agora coloque essa URL em seu navegador preferido, em nosso teste utilizarei o Google Chrome.</p>
-<p><a href="http://www.helviojunior.com.br/wp-content/uploads/2015/01/teste1.png"><img class="alignnone  wp-image-1285" alt="teste1" src="{{ site.baseurl }}/assets/2015/01/teste1.png" width="545" height="97" /></a><br />
+<p><a href="{{ site.baseurl }}/assets/2015/01/teste1.png"><img class="alignnone  wp-image-1285" alt="teste1" src="{{ site.baseurl }}/assets/2015/01/teste1.png" width="545" height="97" /></a><br />
 Se você recebeu como retorno um texto <strong>OK</strong>, isso indica que tudo está configurado corretamente e seu host foi atualizado com seu IP.<br />
 Conforme a imagem abaixo o registro do tipo A com nome host1 foi criado automaticamente na minha zona de DNS e tendo como valor o meu IP.</p>
-<p><a href="http://www.helviojunior.com.br/wp-content/uploads/2015/01/dns2.png"><img class="alignnone  wp-image-1286" alt="dns2" src="{{ site.baseurl }}/assets/2015/01/dns2.png" width="536" height="163" /></a></p>
+<p><a href="{{ site.baseurl }}/assets/2015/01/dns2.png"><img class="alignnone  wp-image-1286" alt="dns2" src="{{ site.baseurl }}/assets/2015/01/dns2.png" width="536" height="163" /></a></p>

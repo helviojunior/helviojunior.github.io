@@ -190,7 +190,7 @@ alias uniqueid =&gt; uniqueid<br />
 <p>Para verificar o status da gravação do CDR utilize os comando<strong> cdr mysql status</strong></p>
 <h2>Alterando a linguagem do Asterisk para pt_BR</h2>
 <p>Realize o download dos prompts de audio e descompacte em /var/lib/asterisk/sounds/</p>
-<p>[sourcecode language="shell"]wget http://www.helviojunior.com.br/wp-content/uploads/2015/03/sounds-pt_BR.tgz<br />
+<p>[sourcecode language="shell"]wget {{ site.baseurl }}/assets/2015/03/sounds-pt_BR.tgz<br />
 tar -xzvf sounds-pt_BR.tgz -C /var/lib/asterisk/sounds/<br />
 [/sourcecode]</p>
 <p>Altere o seu arquivo sip.conf, iax.conf entre outros alterando a language para pt_BR conforme demonstrado abaixo</p>

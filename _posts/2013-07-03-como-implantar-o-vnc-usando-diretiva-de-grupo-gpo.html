@@ -39,20 +39,20 @@ permalink: "/it/como-implantar-o-vnc-usando-diretiva-de-grupo-gpo/"
 <p>Primeiramente acesse a página do VNCed Ultra MSI Creator e verifique a versão suportada do UltraVNC, no momento da elaboração deste post é a versão 1.0.9.6.1, desta forma será realizado com esta versão.</p>
 <p>Primeiro realize o download e instalação do UltraVNC 1.0.9.6.1 na sua maquina (pode ser somente o viewer).</p>
 <p>Depois, extraia os arquivos do VNCed e execute o arquivo <em>UltraVNC 1.0.9.6.1 - STEP1.config_ultravnc_settings.bat</em>. Será aberto uma janela para que você selecione as configurações:</p>
-<p><a href="http://www.helviojunior.com.br/wp-content/uploads/2013/07/0011.png"><img class="alignnone  wp-image-705" alt="001" src="{{ site.baseurl }}/assets/2013/07/0011.png" width="259" height="248" /></a></p>
+<p><a href="{{ site.baseurl }}/assets/2013/07/0011.png"><img class="alignnone  wp-image-705" alt="001" src="{{ site.baseurl }}/assets/2013/07/0011.png" width="259" height="248" /></a></p>
 <p>Nesta janela você deve definir sua senha e outras opções desejadas, depois clique em OK.</p>
 <p>Para habilitar autenticação por grupo de usuários do domínio, na aba segurança selecione a opção <em>Require MS logon</em>, clique no botão <em>Configure MS Logon Groups</em> e selecione os grupos que terão permissão para autenticar nas maquinas cliente.</p>
 <p>Agora execute o arquivo <em>UltraVNC 1.0.9.6.1 - STEP2.build_ultravnc_msi.bat</em>, neste passo será criado um arquivo nomeado <em>UltraVNC.msi</em>.</p>
 <p>Os passos a seguir são necessários para a publicação deste msi através da GPO. Primeiramente copie o MSI gerado no passo anterior para seu servidor de compartilhamento. É necessário que os clientes onde serão instalados o VNS tenham acesso a este compartilhamento. Ex.: <em>\\FILESERVER\GPINSTALLS</em></p>
 <p>Agora com  msi criado, salvo no compartilahento e com acesso aos clientes vá em seu servidor do AD (Active Directory), abra o <em>Group Policy Managment</em>, selecione o domínio e a OU (unidade organizacional) onde estão suas maquinas, clique com o botão direito (na OU) e selecione a opção <em>Create a GPO in this domain, and Link it here...</em></p>
-<p><a href="http://www.helviojunior.com.br/wp-content/uploads/2013/07/0021.png"><img class="alignnone  wp-image-707" alt="002" src="{{ site.baseurl }}/assets/2013/07/0021.png" width="236" height="133" /></a></p>
+<p><a href="{{ site.baseurl }}/assets/2013/07/0021.png"><img class="alignnone  wp-image-707" alt="002" src="{{ site.baseurl }}/assets/2013/07/0021.png" width="236" height="133" /></a></p>
 <p>Digite o nome da sua nova GPO e clique em OK.</p>
-<p><a href="http://www.helviojunior.com.br/wp-content/uploads/2013/07/0031.png"><img class="alignnone  wp-image-708" alt="003" src="{{ site.baseurl }}/assets/2013/07/0031.png" width="234" height="104" /></a></p>
+<p><a href="{{ site.baseurl }}/assets/2013/07/0031.png"><img class="alignnone  wp-image-708" alt="003" src="{{ site.baseurl }}/assets/2013/07/0031.png" width="234" height="104" /></a></p>
 <p>Clique com o botão direito no nome da GPO e clique em <em>Edit</em>. Agora vá em <em>Computer Configuration -&gt; Policies -&gt; Software Settings -&gt; Software Installation</em>, clique com o botão direito e crie um novo pacote, navegue em sua rede definindo o caminho completo do seu pacote msi<em>\\FILESERVER\GPINSTALLS\<em>UltraVNC.msi, </em></em>clique em<em><em> ok</em></em> e depois em<em><em> Assigned.</em><br />
 </em></p>
-<p><a href="http://www.helviojunior.com.br/wp-content/uploads/2013/07/0051.png"><img class="alignnone  wp-image-709" alt="005" src="{{ site.baseurl }}/assets/2013/07/0051.png" width="480" height="98" /></a></p>
+<p><a href="{{ site.baseurl }}/assets/2013/07/0051.png"><img class="alignnone  wp-image-709" alt="005" src="{{ site.baseurl }}/assets/2013/07/0051.png" width="480" height="98" /></a></p>
 <p>Você também pode necessitar criar regras de firewall liberando o acesso a portas do VNC. Para isso vá em<em> Configuration -&gt; Policies -&gt; Administrative Templates -&gt; Network -&gt; Network Connections -&gt; Windows Firewall -&gt; Standard Profile</em>.</p>
 <p>Edite a opção <em>Windows Firewall: Allow local port exceptions</em> para <em>Enabled. </em></p>
 <p>Abra a opção<em> Windows Firewall: Define inbound port exceptions, </em>selecione a opção<em> Enabled </em>e posteriormente clique no botão<em> Show</em> em<em> Define port exceptions </em>e adicione a exceção para a porta do VNC (5900) com o texto <em><em>5900:TCP:x.x.x.x/x:enabled:VNC </em></em>onde<em><em> x.x.x.x/x</em></em> é o escopo de rede que poderá acessar o VNC<em><em>.</em></em></p>
-<p><a href="http://www.helviojunior.com.br/wp-content/uploads/2013/07/0081.png"><img class="alignnone  wp-image-715" alt="008" src="{{ site.baseurl }}/assets/2013/07/0081.png" width="600" height="415" /></a></p>
+<p><a href="{{ site.baseurl }}/assets/2013/07/0081.png"><img class="alignnone  wp-image-715" alt="008" src="{{ site.baseurl }}/assets/2013/07/0081.png" width="600" height="415" /></a></p>
 <p>Agora basta entrar no cliente e executar o comando <em>GPUpdate /force</em> para atualizar a política.</p>

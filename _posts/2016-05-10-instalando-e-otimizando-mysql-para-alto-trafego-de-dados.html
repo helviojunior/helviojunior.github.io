@@ -101,7 +101,7 @@ mkfs.ext2 -m0 -L mysql_tmpdir /dev/sdb4<br />
 <p>Localize o UUID da sua partição</p>
 <p>[sourcecode language="shell"]ls -l /dev/disk/by-uuid<br />
 [/sourcecode]</p>
-<p><a href="http://www.helviojunior.com.br/wp-content/uploads/2016/05/uuid-mysql.png"><img class="alignnone size-full wp-image-1503" src="{{ site.baseurl }}/assets/2016/05/uuid-mysql.png" alt="uuid-mysql" width="720" height="129" /></a></p>
+<p><a href="{{ site.baseurl }}/assets/2016/05/uuid-mysql.png"><img class="alignnone size-full wp-image-1503" src="{{ site.baseurl }}/assets/2016/05/uuid-mysql.png" alt="uuid-mysql" width="720" height="129" /></a></p>
 <p>Edite o arquivo <strong>/etc/fstab</strong> e adicione as linhas abaixo, utilizando o UUID do seu disco, para que o seu disco seja montado na inicialização</p>
 <p>[sourcecode language="shell"]UUID=71ce0a1a-cff9-4ade-985c-aaf4bfabd7f9 /u01/mysql/bases/ xfs allocsize=256m,logbufs=8,noatime,nobarrier,nodiratime,attr2,logbsize=256k 0 0<br />
 UUID=ad22e209-08b4-405c-9c6b-7ac9da2e4376 /u01/mysql/innolog/ ext2    errors=remount-ro,noatime,nodiratime,rw 0 0<br />

@@ -153,7 +153,7 @@ tmpfs /opt/zabbix tmpfs nodev,nosuid,size=5M 0 0<br />
 tmpfs /var/lib/sqlite/ tmpfs nodev,nosuid,size=50M 0 0<br />
 [/sourcecode]</p>
 <p>Faça o reboot de seu equipamento e verifique as as partições foram montadas conforme esperado com o comando  <strong>df -h</strong>. Se tudo estiver correto sua tabela de partições estará similar a esta abaixo<br />
-<a href="http://www.helviojunior.com.br/wp-content/uploads/2013/05/ssh.png"><img class="wp-image-643 alignnone" alt="ssh" src="{{ site.baseurl }}/assets/2013/05/ssh.png" width="344" height="208" /></a></p>
+<a href="{{ site.baseurl }}/assets/2013/05/ssh.png"><img class="wp-image-643 alignnone" alt="ssh" src="{{ site.baseurl }}/assets/2013/05/ssh.png" width="344" height="208" /></a></p>
 <p>Para aumentar mais ainda a vida útil do sdcard e recomendável  desabilitar o journal do ext4, para isso se faz necessário montar o sdcard em uma maquina linux e realizar os procedimentos abaixo.</p>
 <p>Primeiramente identifique o device que esta o seu sdcard com o comando <strong>dmesg | grep sd</strong>, no meu caso montou em /dev/sdb.</p>
 <p>Agora execute os comandos abaixo</p>

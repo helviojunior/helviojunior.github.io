@@ -68,9 +68,9 @@ permalink: "/voip/asterisk/tratando-codigo-cnl-para-ligacoes-no-asterisk/"
 </ul>
 <h2>Entendendo o arquivo CNL</h2>
 <p>A base CNL pode ser baixada a qualquer momento através do link <a href="http://sistemas.anatel.gov.br/areaarea/N_Download/Tela.asp?varMod=Publico&amp;SISQSmodulo=7179" target="_blank">http://sistemas.anatel.gov.br/areaarea/N_Download/Tela.asp?varMod=Publico&amp;SISQSmodulo=7179</a> selecionando como tipo de arquivo Central CNL, tipo de central Fixo e sigla UF Todas conforme a imagem abaixo:</p>
-<p><a href="http://www.helviojunior.com.br/wp-content/uploads/2016/07/asterisk_cnl_001.png"><img class="alignnone wp-image-1541 size-medium" src="{{ site.baseurl }}/assets/2016/07/asterisk_cnl_001-300x215.png" alt="asterisk_cnl_001" width="300" height="215" /></a></p>
+<p><a href="{{ site.baseurl }}/assets/2016/07/asterisk_cnl_001.png"><img class="alignnone wp-image-1541 size-medium" src="{{ site.baseurl }}/assets/2016/07/asterisk_cnl_001-300x215.png" alt="asterisk_cnl_001" width="300" height="215" /></a></p>
 <p>Este processo realizará o download de um arquivo ZIP e detro deste conterá 2 arquivos: Um documento com o layout do arquivo texto, e o arquivo texto contendo a base de dados CNL completa.</p>
-<p><a href="http://www.helviojunior.com.br/wp-content/uploads/2016/07/asterisk_cnl_002.png"><img class="alignnone size-full wp-image-1543" src="{{ site.baseurl }}/assets/2016/07/asterisk_cnl_002.png" alt="asterisk_cnl_002" width="582" height="64" /></a></p>
+<p><a href="{{ site.baseurl }}/assets/2016/07/asterisk_cnl_002.png"><img class="alignnone size-full wp-image-1543" src="{{ site.baseurl }}/assets/2016/07/asterisk_cnl_002.png" alt="asterisk_cnl_002" width="582" height="64" /></a></p>
 <p>Abrindo o arquivo DOC temos o seguinte conteúdo</p>
 <p>[sourcecode language="text"]-----------------------------------------------------------<br />
 ANATEL - AGENCIA NACIONAL DE TELECOMUNICACOES<br />
@@ -508,7 +508,7 @@ unlink($filename);</p>
 <p>[sourcecode language="shell"] chmod +x /usr/local/bin/importacnl.php<br />
 [/sourcecode]</p>
 <p>Por fim execute o script para realizar a importação. E aproveite para dar uma navegada em outros posts aqui do site, curta, compartilhe, ou quem sabe vá tomar um café, energético, suco, ler um livro, pois este processo deve demorar alguns minutos para executar.</p>
-<p><a href="http://www.helviojunior.com.br/wp-content/uploads/2016/07/asterisk_cnl_003.png"><img class="alignnone size-full wp-image-1555" src="{{ site.baseurl }}/assets/2016/07/asterisk_cnl_003.png" alt="asterisk_cnl_003" width="486" height="131" /></a></p>
+<p><a href="{{ site.baseurl }}/assets/2016/07/asterisk_cnl_003.png"><img class="alignnone size-full wp-image-1555" src="{{ site.baseurl }}/assets/2016/07/asterisk_cnl_003.png" alt="asterisk_cnl_003" width="486" height="131" /></a></p>
 <p>O interessante é colocar este script para executar uma vez por semana (usando crontab), para manter essa base sempre atualizada.</p>
 <p>&nbsp;</p>
 <h2>Configurando o asterisk</h2>
@@ -744,5 +744,5 @@ exten =&gt; s,1,Agi(alteracnl.php,CTA)<br />
 <p>Lembrando que neste exemplo considero como origem da ligação o DDD 41 e CNL CTA.</p>
 <p>&nbsp;</p>
 <h2>Considerações finais</h2>
-<p>Segue o link (<a href="http://www.helviojunior.com.br/wp-content/uploads/2016/07/CNL1.zip">CNL</a>) para download do zip com todos os arquivos deste ambiente.</p>
+<p>Segue o link (<a href="{{ site.baseurl }}/assets/2016/07/CNL1.zip">CNL</a>) para download do zip com todos os arquivos deste ambiente.</p>
 <p>Espero ter ajudado. Caso tenha dúvidas, sugestões fique a vontade para comentar, mandar e-mail e etc...</p>

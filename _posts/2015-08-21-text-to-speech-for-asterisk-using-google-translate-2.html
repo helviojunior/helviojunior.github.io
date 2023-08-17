@@ -65,7 +65,7 @@ pecl install pecl_http-1.7.6<br />
 [/sourcecode]</p>
 <h2>Instalando o script AGI</h2>
 <p>Antes de instalar o script AGI verifique o diretório agi-bin do seu Asterisk, geralmente o padrão é <strong>/var/lib/asterisk/agi-bin/</strong>, essa informação pode ser encontrada em <strong>/etc/asterisk/asterisk.conf</strong>. Considerando que este é o diretório padrão execute os comandos abaixo:</p>
-<p>[sourcecode language="shell"]wget http://www.helviojunior.com.br/wp-content/uploads/2015/08/googletts.tgz<br />
+<p>[sourcecode language="shell"]wget {{ site.baseurl }}/assets/2015/08/googletts.tgz<br />
 tar -xzvf googletts.tgz -C /var/lib/asterisk/agi-bin/<br />
 chmod 777 /var/lib/asterisk/agi-bin/googletts.php<br />
 [/sourcecode]</p>

@@ -67,7 +67,7 @@ root@M4v3r1ck:~# pip3 install mysqlclient<br />
 <h2>Configurando a Autoridade Certificadora (CA)</h2>
 <p>O OpenVPN é uma VPN TLS/SSL. Isso significa que ele utiliza certificados para criptografar o tráfego entre o servidor e os clientes. Para emitir certificados confiáveis, precisaremos configurar nossa própria autoridade de certificação (CA) simples.</p>
 <p>Antes de iniciar os comandos propriamente dito creio ser bem importante entendermos o que estamos fazendo, e como esse assunto de autoridade certificadora é algo complexo recomendo a leitura deste artigo que escrevi sobre o assunto (<a href="https://www.helviojunior.com.br/it/security/introducao-criptografia/" target="_blank" rel="noopener noreferrer">https://www.helviojunior.com.br/it/security/introducao-criptografia/</a>). Para ilustrar o que iremos realizar em termos de autoridade de certificação (CA) observe a imagem abaixo:</p>
-<p><a href="http://www.helviojunior.com.br/wp-content/uploads/2020/06/Certificados.png"><img class="size-full wp-image-2186 aligncenter" src="{{ site.baseurl }}/assets/2020/06/Certificados.png" alt="" width="438" height="164" /></a></p>
+<p><a href="{{ site.baseurl }}/assets/2020/06/Certificados.png"><img class="size-full wp-image-2186 aligncenter" src="{{ site.baseurl }}/assets/2020/06/Certificados.png" alt="" width="438" height="164" /></a></p>
 <p>Observe que na imagem ilustramos 4 certificados:</p>
 <ol>
 <li><strong>Root CA</strong>: Este é a autoridade máxima nessa nossa estrutura, é a partir dela que todos os outros certificados são gerados, sendo assim será o primeiro certificado a ser gerado, e o mais importante, portando no momento que formos criar uma senha para suas chaves provadas, crie uma senha complexa e a guarde com carinho;</li>

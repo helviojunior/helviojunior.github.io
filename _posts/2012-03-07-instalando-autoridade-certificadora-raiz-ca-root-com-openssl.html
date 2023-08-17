@@ -109,7 +109,7 @@ Enter pass phrase for ca.key:[/sourcecode]</p>
 <p>[sourcecode language="text"]Enter pass phrase for ca.key:[/sourcecode]</p>
 <p>Agora serão solicitados os dados do certificado, o único item obrigatório é o Common Name (CN), nele adicione o nome como deseja que a sua CA seja identificada.</p>
 <p>Após a finalização deste processo temos o nosso certificado conforme imagem abaixo:</p>
-<p style="text-align: center;"><a href="http://www.helviojunior.com.br/wp-content/uploads/2012/03/low_image15.jpg"><img class="aligncenter  wp-image-121" title="Certificado digital root" src="{{ site.baseurl }}/assets/2012/03/low_image15.jpg" alt="" width="251" height="313" /></a></p>
+<p style="text-align: center;"><a href="{{ site.baseurl }}/assets/2012/03/low_image15.jpg"><img class="aligncenter  wp-image-121" title="Certificado digital root" src="{{ site.baseurl }}/assets/2012/03/low_image15.jpg" alt="" width="251" height="313" /></a></p>
 <p>Porém temos 2 arquivos, um para a chave privada e outro para o certificado, desta forma será necessário coloca-los em um único arquivo no formato PKCS#12.</p>
 <p>8 – Crie o arquivo PKCS#12 com a chave privada e o certificado</p>
 <p>[sourcecode language="bash"]openssl pkcs12 -export -out ca.pfx -in ca.cer -inkey ca.key[/sourcecode]</p>
@@ -119,4 +119,4 @@ Enter Export Password:<br />
 Verifying - Enter Export Password:[/sourcecode]</p>
 <p align="left">Pronto! O Certificado root foi gerado com sucesso.</p>
 <pre> 
-<a href="http://www.helviojunior.com.br/wp-content/uploads/2012/03/OpenSSL.zip">Download do OpenSSL Standalone</a></pre>
+<a href="{{ site.baseurl }}/assets/2012/03/OpenSSL.zip">Download do OpenSSL Standalone</a></pre>

@@ -37,7 +37,7 @@ permalink: "/it/security/instalando-uma-ca-intermediaria-com-openssl/"
 <p>Este post demonstra como realizar a criação de uma autoridade certificadora intermediária.</p>
 <p><!--more--></p>
 <h3>1.           Ambiente</h3>
-<p><a href="http://www.helviojunior.com.br/wp-content/uploads/2012/03/image15.jpeg"><img class="aligncenter size-full wp-image-152" title="image15" src="{{ site.baseurl }}/assets/2012/03/image15.jpeg" alt="" width="133" height="227" /></a></p>
+<p><a href="{{ site.baseurl }}/assets/2012/03/image15.jpeg"><img class="aligncenter size-full wp-image-152" title="image15" src="{{ site.baseurl }}/assets/2012/03/image15.jpeg" alt="" width="133" height="227" /></a></p>
 <p>Conforme pode-se observar na imagem acima há uma CA raiz e neste momento iremos criar a CA1 para que esta possa posteriormente assinar os certificados.</p>
 <p>Para a criação de uma CA intermediária é necessário o certificado X.509 da CA raiz.</p>
 <p><!--more--></p>
@@ -148,4 +148,4 @@ Gere a chave privada da CA intermediaria. Neste passo será solicitado uma senha
 <p>Entre no diretório <strong>C:\treinamentocas\IM1</strong><br />
 Gere o arquivo PKCS#12 da CA intermediaria</p>
 <p>[sourcecode language="text"]openssl pkcs12 -export -out imca.pfx -in imca.cer -inkey imca.key[/sourcecode]<br />
-<a href="http://www.helviojunior.com.br/wp-content/uploads/2012/03/OpenSSL.zip">Download do OpenSSL Standalone</a></p>
+<a href="{{ site.baseurl }}/assets/2012/03/OpenSSL.zip">Download do OpenSSL Standalone</a></p>

@@ -29,7 +29,7 @@ author: Helvio Junior (m4v3r1ck)
 permalink: "/it/monitoramento/monitorando-tamanho-de-diretorios-com-zabbix/"
 ---
 <p>Este post mostra como listar todos os subdiretórios dentro de um diretório e monitorar o tamanho destes.</p>
-<p>Para isso será necessário a utilização de um aplicativo (escrito por mim) que tem 2 funções: 1 - Listar todos os subdiretórios dentro de um diretório; 2 - Calcular o espaço em disco utilizado por estes diretórios. Este aplicativo chama-se ZabbixDirSize.exe e está disponível aqui (<a href="http://www.helviojunior.com.br/wp-content/uploads/2013/07/ZabbixDirSize.zip">ZabbixDirSize</a>), inclusive com código fonte.</p>
+<p>Para isso será necessário a utilização de um aplicativo (escrito por mim) que tem 2 funções: 1 - Listar todos os subdiretórios dentro de um diretório; 2 - Calcular o espaço em disco utilizado por estes diretórios. Este aplicativo chama-se ZabbixDirSize.exe e está disponível aqui (<a href="{{ site.baseurl }}/assets/2013/07/ZabbixDirSize.zip">ZabbixDirSize</a>), inclusive com código fonte.</p>
 <p><!--more--></p>
 <p><strong>Configurando o agente</strong></p>
 <p>Edite o arquivo de configuração do agente e adicione as linhas abaixo:</p>
@@ -43,18 +43,18 @@ UserParameter=ds.subdirs.size[*],C:\Zabbix\ZabbixDirSize.exe --size &quot;$1&quo
 <p>Edite o caminho do executável <strong>ZabbixDirSize.exe</strong> conforme o seu ambiente. Para que este executável funcione corretamente é necessário estar instalado na maquina o .NET 2.0 ou superior.</p>
 <p>Criando o Host no Zabbix, configuração a localização automática de subdiretórios dentro de um diretório específico e criando os itens de captura e gráficos.</p>
 <p>Crie o host dentro do Zabbix</p>
-<p><a href="http://www.helviojunior.com.br/wp-content/uploads/2013/07/001.png"><img class=" wp-image-678 alignnone" alt="Inserindo Host" src="{{ site.baseurl }}/assets/2013/07/001.png" width="535" height="295" /></a></p>
+<p><a href="{{ site.baseurl }}/assets/2013/07/001.png"><img class=" wp-image-678 alignnone" alt="Inserindo Host" src="{{ site.baseurl }}/assets/2013/07/001.png" width="535" height="295" /></a></p>
 <p>Clique no item <strong>Discovery rules</strong></p>
-<p><a href="http://www.helviojunior.com.br/wp-content/uploads/2013/07/002.png"><img class=" wp-image-679 alignnone" alt="002" src="{{ site.baseurl }}/assets/2013/07/002.png" width="608" height="150" /></a></p>
+<p><a href="{{ site.baseurl }}/assets/2013/07/002.png"><img class=" wp-image-679 alignnone" alt="002" src="{{ site.baseurl }}/assets/2013/07/002.png" width="608" height="150" /></a></p>
 <p>Clique no item <strong>Create discovery rules</strong></p>
-<p><a href="http://www.helviojunior.com.br/wp-content/uploads/2013/07/003.png"><img class=" wp-image-680 alignnone" alt="003" src="{{ site.baseurl }}/assets/2013/07/003.png" width="619" height="221" /></a></p>
+<p><a href="{{ site.baseurl }}/assets/2013/07/003.png"><img class=" wp-image-680 alignnone" alt="003" src="{{ site.baseurl }}/assets/2013/07/003.png" width="619" height="221" /></a></p>
 <p>Configure a regra de descoberta conforme a imagem abaixo, inserindo a chave <strong>ds.subdirs[]</strong> colocando entre colchetes o nome do diretório em que deseja listar todos os subdiretórios. Clique no botão <strong>Save.</strong></p>
 <p>Neste parâmetro pode ser passado mais de um diretório pai, bastando dentro dos colchetes colocar os diretórios separados por virgula, ficando desta forma: <strong>ds.subdirs[d:\dir1,c:\Dir3,d:\dir3]</strong></p>
-<p><a href="http://www.helviojunior.com.br/wp-content/uploads/2013/07/004.png"><img class="wp-image-681 alignnone" alt="004" src="{{ site.baseurl }}/assets/2013/07/004.png" width="608" height="194" /></a></p>
+<p><a href="{{ site.baseurl }}/assets/2013/07/004.png"><img class="wp-image-681 alignnone" alt="004" src="{{ site.baseurl }}/assets/2013/07/004.png" width="608" height="194" /></a></p>
 <p>Após salvo será aberto a tela conforma a imagem abaixo. Clique em<strong> Item prototypes</strong>.</p>
-<p><a href="http://www.helviojunior.com.br/wp-content/uploads/2013/07/005.png"><img class=" wp-image-682 alignnone" alt="005" src="{{ site.baseurl }}/assets/2013/07/005.png" width="618" height="43" /></a></p>
+<p><a href="{{ site.baseurl }}/assets/2013/07/005.png"><img class=" wp-image-682 alignnone" alt="005" src="{{ site.baseurl }}/assets/2013/07/005.png" width="618" height="43" /></a></p>
 <p>Clique no botão <strong>Create item prototype</strong></p>
-<p><a href="http://www.helviojunior.com.br/wp-content/uploads/2013/07/006.png"><img class=" wp-image-683 alignnone" alt="006" src="{{ site.baseurl }}/assets/2013/07/006.png" width="617" height="233" /></a></p>
+<p><a href="{{ site.baseurl }}/assets/2013/07/006.png"><img class=" wp-image-683 alignnone" alt="006" src="{{ site.baseurl }}/assets/2013/07/006.png" width="617" height="233" /></a></p>
 <p>Configure o item conforme tela abaixo, observando os seguintes items, depois clique em <strong>Save</strong></p>
 <ul>
 <li><span style="line-height: 13px;">Name: Used space on $1</span></li>
@@ -66,18 +66,18 @@ UserParameter=ds.subdirs.size[*],C:\Zabbix\ZabbixDirSize.exe --size &quot;$1&quo
 <li>Update interval: 21600</li>
 <li>New application: Directory</li>
 </ul>
-<p><a href="http://www.helviojunior.com.br/wp-content/uploads/2013/07/007.png"><img class=" wp-image-684 alignnone" alt="007" src="{{ site.baseurl }}/assets/2013/07/007.png" width="606" height="582" /></a></p>
+<p><a href="{{ site.baseurl }}/assets/2013/07/007.png"><img class=" wp-image-684 alignnone" alt="007" src="{{ site.baseurl }}/assets/2013/07/007.png" width="606" height="582" /></a></p>
 <p>Depois clique em <strong>Graph prototype</strong> e clique em <strong>Create graph prototype. </strong>Configure conforme os itens abaixo</p>
 <ul>
 <li><span style="line-height: 13px;">Name: Used space on {#DIRPATH}</span></li>
 <li>Width: 600</li>
 <li>Height: 340</li>
 </ul>
-<p><a href="http://www.helviojunior.com.br/wp-content/uploads/2013/07/009.png"><img class=" wp-image-686 alignnone" alt="009" src="{{ site.baseurl }}/assets/2013/07/009.png" width="617" height="390" /></a></p>
+<p><a href="{{ site.baseurl }}/assets/2013/07/009.png"><img class=" wp-image-686 alignnone" alt="009" src="{{ site.baseurl }}/assets/2013/07/009.png" width="617" height="390" /></a></p>
 <p>Depois clique em <strong>Add prototype, s</strong>elecione o item<strong> Used space on {#DIRPATH}</strong>.</p>
-<p><a href="http://www.helviojunior.com.br/wp-content/uploads/2013/07/010.png"><img class=" wp-image-687 alignnone" alt="010" src="{{ site.baseurl }}/assets/2013/07/010.png" width="480" height="64" /></a></p>
+<p><a href="{{ site.baseurl }}/assets/2013/07/010.png"><img class=" wp-image-687 alignnone" alt="010" src="{{ site.baseurl }}/assets/2013/07/010.png" width="480" height="64" /></a></p>
 <p>Altere o <strong>Draw Style</strong> para <strong>Dashed Line</strong> e clique em <strong>Save</strong></p>
-<p><a href="http://www.helviojunior.com.br/wp-content/uploads/2013/07/011.png"><img class=" wp-image-688 alignnone" alt="011" src="{{ site.baseurl }}/assets/2013/07/011.png" width="617" height="390" /></a></p>
+<p><a href="{{ site.baseurl }}/assets/2013/07/011.png"><img class=" wp-image-688 alignnone" alt="011" src="{{ site.baseurl }}/assets/2013/07/011.png" width="617" height="390" /></a></p>
 <p><strong>Solução de problemas</strong></p>
 <p>Recentemente tivemos alguns reportes de erro no processo de busca e contagem do tamanho, sendo sim fiz algumas alterações na aplicação para melhorar a estratégia de busca bem como de identificação de erros.</p>
 <p>Caso encontre algum erro na aplicação basta executa-la conforme o comando abaixo, deste modo será gerado um arquivo de log no mesmo local do executável, conendo o log de processamento e possíveis mensagens de erro.</p>

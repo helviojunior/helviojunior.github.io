@@ -52,7 +52,7 @@ reboot<br />
 Command (m for help): p<br />
 [/sourcecode]</p>
 <p>Com este comando será exibido a listagem de partições</p>
-<p><a href="http://www.helviojunior.com.br/wp-content/uploads/2014/07/001.png"><img class="alignnone  wp-image-951" alt="001" src="{{ site.baseurl }}/assets/2014/07/001.png" width="405" height="255" /></a></p>
+<p><a href="{{ site.baseurl }}/assets/2014/07/001.png"><img class="alignnone  wp-image-951" alt="001" src="{{ site.baseurl }}/assets/2014/07/001.png" width="405" height="255" /></a></p>
 <p>Vamos anotar a último bloco utilizado pela última partição, no nosso caso 6266879. Agora vamos criar uma nova partição com 1 Gb para swap.</p>
 <p>[sourcecode language="shell"]Command (m for help): n<br />
 Partition type:<br />
@@ -66,7 +66,7 @@ Partition type:<br />
 <p>Logo após podemos exibir novamente a listagem das partições</p>
 <p>[sourcecode language="shell"]Command (m for help): p<br />
 [/sourcecode]</p>
-<p><a href="http://www.helviojunior.com.br/wp-content/uploads/2014/07/002.png"><img class="alignnone  wp-image-953" alt="002" src="{{ site.baseurl }}/assets/2014/07/002.png" width="355" height="160" /></a></p>
+<p><a href="{{ site.baseurl }}/assets/2014/07/002.png"><img class="alignnone  wp-image-953" alt="002" src="{{ site.baseurl }}/assets/2014/07/002.png" width="355" height="160" /></a></p>
 <p><span style="line-height: 1.5;">Por fim grave as alterações realizadas com o comando abaixo</span></p>
 <p>[sourcecode language="shell"]<br />
 Command (m for help): w<br />
@@ -118,14 +118,14 @@ apt-get update<br />
 apt-get -y install webmin<br />
 [/sourcecode]</p>
 <p>Após a instalação pode ser realizado o acesso ao webmin através da URL https://ip_do_servidor:10000</p>
-<p><a href="http://www.helviojunior.com.br/wp-content/uploads/2014/07/003.png"><img class="alignnone  wp-image-971" alt="003" src="{{ site.baseurl }}/assets/2014/07/003.png" width="442" height="236" /></a></p>
+<p><a href="{{ site.baseurl }}/assets/2014/07/003.png"><img class="alignnone  wp-image-971" alt="003" src="{{ site.baseurl }}/assets/2014/07/003.png" width="442" height="236" /></a></p>
 <h2>Criando partição de dados</h2>
 <p>Agora vamos criar uma nova partição com todo o espaço restante do disco para ser utilizado como dados do NAS. Dentro do webmin vá em <strong>Hardware</strong> &gt; <strong>Partition on local disk</strong> &gt; <strong>selecione o disco externo</strong></p>
-<p><a href="http://www.helviojunior.com.br/wp-content/uploads/2014/07/004.png"><img class="alignnone  wp-image-975" alt="004" src="{{ site.baseurl }}/assets/2014/07/004.png" width="498" height="323" /></a></p>
+<p><a href="{{ site.baseurl }}/assets/2014/07/004.png"><img class="alignnone  wp-image-975" alt="004" src="{{ site.baseurl }}/assets/2014/07/004.png" width="498" height="323" /></a></p>
 <p>Clique no link <strong>add primary partition</strong></p>
-<p><a href="http://www.helviojunior.com.br/wp-content/uploads/2014/07/005.png"><img class="alignnone  wp-image-976" alt="005" src="{{ site.baseurl }}/assets/2014/07/005.png" width="534" height="190" /></a></p>
+<p><a href="{{ site.baseurl }}/assets/2014/07/005.png"><img class="alignnone  wp-image-976" alt="005" src="{{ site.baseurl }}/assets/2014/07/005.png" width="534" height="190" /></a></p>
 <p>Configure a partição para utilizar o sistema de arquivos <strong>Windows NTFS</strong> e clique em <strong>Create</strong></p>
-<p><a href="http://www.helviojunior.com.br/wp-content/uploads/2014/07/006.png"><img class="alignnone  wp-image-983" alt="006" src="{{ site.baseurl }}/assets/2014/07/006.png" width="534" height="129" /></a></p>
+<p><a href="{{ site.baseurl }}/assets/2014/07/006.png"><img class="alignnone  wp-image-983" alt="006" src="{{ site.baseurl }}/assets/2014/07/006.png" width="534" height="129" /></a></p>
 <p>Através da console ou SSH realize a formatação desta partição</p>
 <p>[sourcecode language="shell"]<br />
 mkfs.ntfs /dev/sda4 --quick<br />
@@ -138,15 +138,15 @@ mkdir /media/dados<br />
 <p>Neste momento toda a base está configurada, basta agora configurar os acessos a rede.</p>
 <h2>Configurando acesso a rede</h2>
 <p>No Webmin vá em <strong>Server</strong> &gt; <strong>Samba windwow file sharing, </strong>posteriormente em<strong> Create a new file share</strong></p>
-<p><a href="http://www.helviojunior.com.br/wp-content/uploads/2014/07/0071.png"><img class="alignnone  wp-image-990" alt="007" src="{{ site.baseurl }}/assets/2014/07/0071.png" width="485" height="216" /></a></p>
+<p><a href="{{ site.baseurl }}/assets/2014/07/0071.png"><img class="alignnone  wp-image-990" alt="007" src="{{ site.baseurl }}/assets/2014/07/0071.png" width="485" height="216" /></a></p>
 <p>Preencha os dados do compartilhamento conforma a imagem abaixo e clique em <strong>Create</strong></p>
-<p><a href="http://www.helviojunior.com.br/wp-content/uploads/2014/07/008.png"><img class="alignnone  wp-image-991" alt="008" src="{{ site.baseurl }}/assets/2014/07/008.png" width="395" height="234" /></a></p>
+<p><a href="{{ site.baseurl }}/assets/2014/07/008.png"><img class="alignnone  wp-image-991" alt="008" src="{{ site.baseurl }}/assets/2014/07/008.png" width="395" height="234" /></a></p>
 <p>Após este processo pode-se observar que o compartilhamento foi criado como somente leitura, desta forma iremos alterar as permissões para permitir a escrita.</p>
-<p><a href="http://www.helviojunior.com.br/wp-content/uploads/2014/07/009.png"><img class="alignnone  wp-image-992" alt="009" src="{{ site.baseurl }}/assets/2014/07/009.png" width="363" height="143" /></a></p>
+<p><a href="{{ site.baseurl }}/assets/2014/07/009.png"><img class="alignnone  wp-image-992" alt="009" src="{{ site.baseurl }}/assets/2014/07/009.png" width="363" height="143" /></a></p>
 <p>Clique no nome do compartilhamento desejado (<strong>NAS</strong>) e posteriormente clique em <strong>Security and Access control</strong></p>
-<p><a href="http://www.helviojunior.com.br/wp-content/uploads/2014/07/010.png"><img class="alignnone  wp-image-994" alt="010" src="{{ site.baseurl }}/assets/2014/07/010.png" width="325" height="293" /></a></p>
+<p><a href="{{ site.baseurl }}/assets/2014/07/010.png"><img class="alignnone  wp-image-994" alt="010" src="{{ site.baseurl }}/assets/2014/07/010.png" width="325" height="293" /></a></p>
 <p>Altere a permissão <strong>Writable</strong> como <strong>Yes, Guest </strong>como<strong> Yes</strong> clique em <strong>save</strong></p>
-<p><a href="http://www.helviojunior.com.br/wp-content/uploads/2014/07/011.png"><img class="alignnone size-full wp-image-998" alt="011" src="{{ site.baseurl }}/assets/2014/07/011.png" width="393" height="103" /></a></p>
+<p><a href="{{ site.baseurl }}/assets/2014/07/011.png"><img class="alignnone size-full wp-image-998" alt="011" src="{{ site.baseurl }}/assets/2014/07/011.png" width="393" height="103" /></a></p>
 <p>Na tela de edição do NAS clique em <strong>Save</strong> novamente</p>
 <p>Como o objetivo deste NAS é um servidor para meus vídeos irei configurar um serviço DLNA.</p>
 <h2>Configurando DLNA</h2>

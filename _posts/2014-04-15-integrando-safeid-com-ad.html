@@ -36,32 +36,32 @@ permalink: "/safetrend/safeid/integrando-safeid-com-ad/"
 <p>Para que este post seja o mais completo possível será utilizado um ambiente totalmente linpo, ou seja recém instalado.</p>
 <h2>1 - Configurando o proxy</h2>
 <p>Acesse o painel de administração do SafeID, clique em <strong>Menu</strong> &gt; <strong>Proxy</strong> &gt; <strong>Gerenciador de proxies</strong></p>
-<p><a href="http://www.helviojunior.com.br/wp-content/uploads/2014/04/001-admin.png"><img class="alignnone  wp-image-827" alt="001-admin" src="{{ site.baseurl }}/assets/2014/04/001-admin.png" width="496" height="283" /></a></p>
+<p><a href="{{ site.baseurl }}/assets/2014/04/001-admin.png"><img class="alignnone  wp-image-827" alt="001-admin" src="{{ site.baseurl }}/assets/2014/04/001-admin.png" width="496" height="283" /></a></p>
 <p>Depois clique no botão <strong>Novo Proxy</strong></p>
-<p><a href="http://www.helviojunior.com.br/wp-content/uploads/2014/04/002-proxy.png"><img class="alignnone  wp-image-828" alt="002-proxy" src="{{ site.baseurl }}/assets/2014/04/002-proxy.png" width="464" height="246" /></a></p>
+<p><a href="{{ site.baseurl }}/assets/2014/04/002-proxy.png"><img class="alignnone  wp-image-828" alt="002-proxy" src="{{ site.baseurl }}/assets/2014/04/002-proxy.png" width="464" height="246" /></a></p>
 <p>Digite o nome do proxy e clique em Adicionar.</p>
 <p>Para instalar este proxy em seu servidor clique no link <strong>Download (instalador e configuração) </strong>para realizar o download dos executáveis e configuração do proxy.</p>
-<p><a href="http://www.helviojunior.com.br/wp-content/uploads/2014/04/004-proxy2.png"><img class="alignnone  wp-image-895" alt="004-proxy2" src="{{ site.baseurl }}/assets/2014/04/004-proxy2.png" width="566" height="233" /></a></p>
+<p><a href="{{ site.baseurl }}/assets/2014/04/004-proxy2.png"><img class="alignnone  wp-image-895" alt="004-proxy2" src="{{ site.baseurl }}/assets/2014/04/004-proxy2.png" width="566" height="233" /></a></p>
 <p>&nbsp;</p>
 <p>&nbsp;</p>
 <p>Dentro do seu servidor descompacte o arquivo ZIP gerado em um diretório de preferência.</p>
-<p><a href="http://www.helviojunior.com.br/wp-content/uploads/2014/04/004-proxy3.png"><img class="alignnone  wp-image-896" alt="004-proxy3" src="{{ site.baseurl }}/assets/2014/04/004-proxy3.png" width="294" height="176" /></a></p>
+<p><a href="{{ site.baseurl }}/assets/2014/04/004-proxy3.png"><img class="alignnone  wp-image-896" alt="004-proxy3" src="{{ site.baseurl }}/assets/2014/04/004-proxy3.png" width="294" height="176" /></a></p>
 <p>&nbsp;</p>
 <p>Execute o arquivo <strong>_Install.cmd </strong>para realizar a instalação do proxy como serviço.</p>
 <p>Reinicie o serviço do proxy</p>
-<p><a href="http://www.helviojunior.com.br/wp-content/uploads/2014/04/004-proxy4.png"><img class="alignnone  wp-image-897" alt="004-proxy4" src="{{ site.baseurl }}/assets/2014/04/004-proxy4.png" width="583" height="136" /></a></p>
+<p><a href="{{ site.baseurl }}/assets/2014/04/004-proxy4.png"><img class="alignnone  wp-image-897" alt="004-proxy4" src="{{ site.baseurl }}/assets/2014/04/004-proxy4.png" width="583" height="136" /></a></p>
 <p>Após reiniciado se tudo tiver correto na console de administração você verá a informação que o proxy está on-line, ou seja conectado ao servidor.</p>
-<p><a href="http://www.helviojunior.com.br/wp-content/uploads/2014/04/004-proxy1.png"><img class="alignnone  wp-image-898" alt="004-proxy" src="{{ site.baseurl }}/assets/2014/04/004-proxy1.png" width="569" height="228" /></a></p>
+<p><a href="{{ site.baseurl }}/assets/2014/04/004-proxy1.png"><img class="alignnone  wp-image-898" alt="004-proxy" src="{{ site.baseurl }}/assets/2014/04/004-proxy1.png" width="569" height="228" /></a></p>
 <h2>2 - Configurando os campos</h2>
 <p>Os campos serão utilizados para que possamos mapear os dados de entrada (neste exemplo as colunas do arquivo CSV) com o padrão do SafeID.</p>
 <p>No painel de administração do SafeID, clique em <strong>Menu</strong> &gt; <b>Campos </b>&gt; <strong>Gerenciador de campos</strong></p>
-<p><a href="http://www.helviojunior.com.br/wp-content/uploads/2014/04/005-fields.png"><img class="alignnone  wp-image-836" alt="005-fields" src="{{ site.baseurl }}/assets/2014/04/005-fields.png" width="709" height="303" /></a></p>
+<p><a href="{{ site.baseurl }}/assets/2014/04/005-fields.png"><img class="alignnone  wp-image-836" alt="005-fields" src="{{ site.baseurl }}/assets/2014/04/005-fields.png" width="709" height="303" /></a></p>
 <p>Na tela acima podemos observar a listagem dos campos cadastrados por padrão no sistema, caso deseje adicionar outro campo clique no botão <strong>Novo campo. </strong>Na configuração de cada campo há 2 opções: Público e permite edição, a primeira indica de outros usuários poderão visualizar essa informação, e o segundo se o usuário em questão poderá alterar essa informação.</p>
 <h2>3 - Configurando o recurso</h2>
 <p>Recurso é o nome dado para o sistema de origem/destino de onde os dados serão importados ou para onde serão publicados.</p>
 <p><span style="line-height: 1.5;">No painel de administração do SafeID, clique em </span><strong style="line-height: 1.5;">Menu</strong><span style="line-height: 1.5;"> &gt; <b>Recurso</b></span><span style="line-height: 1.5;">&gt; <strong>Novo recurso</strong></span><strong style="line-height: 1.5;"><br />
 </strong></p>
-<p><a href="http://www.helviojunior.com.br/wp-content/uploads/2014/04/027-recurso.png"><img class="alignnone  wp-image-886" alt="027-recurso" src="{{ site.baseurl }}/assets/2014/04/027-recurso.png" width="317" height="172" /></a></p>
+<p><a href="{{ site.baseurl }}/assets/2014/04/027-recurso.png"><img class="alignnone  wp-image-886" alt="027-recurso" src="{{ site.baseurl }}/assets/2014/04/027-recurso.png" width="317" height="172" /></a></p>
 <p>Na tela de criação de recurso será necessário informar 3 campos, o primeiro é o nome do recurso, segundo é o contexto do qual ele faz parte e por último qual será o proxy que fará a comunicação entre o SafeID e este recurso.</p>
 <h2>4 - Integrando o recurso <em>versus</em> plugin</h2>
 <p>A tela final de configuração, também a mais complexa, contém diversos passos para que seja realizada a integração do recurso com o SafeID.</p>
@@ -69,11 +69,11 @@ permalink: "/safetrend/safeid/integrando-safeid-com-ad/"
 <p>Esta tela tem diversas configurações que serão explicadas uma a uma a seguir.</p>
 <h3>4.1 - Configurações gerais</h3>
 <p>Para criar este vínculo, clique em <strong>Menu</strong> &gt; <b>Recurso x plugin</b>&gt; <strong>Novo recurso x plugin</strong></p>
-<p><a href="http://www.helviojunior.com.br/wp-content/uploads/2014/04/028-recurso.png"><img class="alignnone  wp-image-884" alt="028-recurso" src="{{ site.baseurl }}/assets/2014/04/028-recurso.png" width="483" height="307" /></a></p>
+<p><a href="{{ site.baseurl }}/assets/2014/04/028-recurso.png"><img class="alignnone  wp-image-884" alt="028-recurso" src="{{ site.baseurl }}/assets/2014/04/028-recurso.png" width="483" height="307" /></a></p>
 <p>Nesta tela há o início da configuração, onde existe 3 campos a serem cadastrados: O primeiro é o recurso, seguido do plugin (no nosso caso o plugin de integração com Active Directory) e por último o domínio de e-mail.</p>
 <p>Após informar estes campos clique em <strong>Salvar e continuar</strong>.</p>
 <p>Logo após serão exibidas diversas informações e opções de configuração, porém neste momento iremos nos ater a finalizar as configurações gerais.</p>
-<p><a href="http://www.helviojunior.com.br/wp-content/uploads/2014/04/008-resourceplugin.png"><img class="alignnone  wp-image-841" alt="008-resourceplugin" src="{{ site.baseurl }}/assets/2014/04/008-resourceplugin.png" width="481" height="269" /></a></p>
+<p><a href="{{ site.baseurl }}/assets/2014/04/008-resourceplugin.png"><img class="alignnone  wp-image-841" alt="008-resourceplugin" src="{{ site.baseurl }}/assets/2014/04/008-resourceplugin.png" width="481" height="269" /></a></p>
 <p>Segue abaixo a explicação de cada uma destas opções:</p>
 <ul>
 <li><strong>Permite adição de entidade:</strong> Como <span style="line-height: 1.5;">sta integração que estamos realizando tem por objetivo capturar os usuários do CSV e importa-los no SafeID, será necessário habilitar que os dados vindos deste recurso versus plugin possa inserir entidade. Caso esta opção esteja desabilitada o SafeID não será capaz de adicionar novos usuários (Entidades), porém caso exista uma entidade que se enquadre nas regras (mapeamento de campos) que serão configuradas posteriormente, o SafeID irá criar uma nova identidade na entidade existente;</span></li>
@@ -83,15 +83,15 @@ permalink: "/safetrend/safeid/integrando-safeid-com-ad/"
 </ul>
 <p>Após selecionas as opções desejadas clique em <strong>Salvar</strong>.</p>
 <p>Agora clique na opção <strong>Saída</strong> e depois em <strong>Editar</strong></p>
-<p><a href="http://www.helviojunior.com.br/wp-content/uploads/2014/04/009-resourceplugin.png"><img class="alignnone  wp-image-843" alt="009-resourceplugin" src="{{ site.baseurl }}/assets/2014/04/009-resourceplugin.png" width="457" height="48" /></a></p>
+<p><a href="{{ site.baseurl }}/assets/2014/04/009-resourceplugin.png"><img class="alignnone  wp-image-843" alt="009-resourceplugin" src="{{ site.baseurl }}/assets/2014/04/009-resourceplugin.png" width="457" height="48" /></a></p>
 <p>Realize as configurações conforme desejado e clique em <strong>Salvar</strong></p>
-<p><a href="http://www.helviojunior.com.br/wp-content/uploads/2014/04/029-rp.png"><img class="alignnone  wp-image-888" alt="029-rp" src="{{ site.baseurl }}/assets/2014/04/029-rp.png" width="641" height="301" /></a></p>
+<p><a href="{{ site.baseurl }}/assets/2014/04/029-rp.png"><img class="alignnone  wp-image-888" alt="029-rp" src="{{ site.baseurl }}/assets/2014/04/029-rp.png" width="641" height="301" /></a></p>
 <p>Para finalizar as configurações gerais clique em <strong>Campos</strong> e posteriormente <strong>Editar </strong>e configure os campos conforme abaixo e clique em <strong>Salvar</strong></p>
-<p><a href="http://www.helviojunior.com.br/wp-content/uploads/2014/04/011-resourceplugin.png"><img class="alignnone  wp-image-845" alt="011-resourceplugin" src="{{ site.baseurl }}/assets/2014/04/011-resourceplugin.png" width="578" height="233" /></a></p>
+<p><a href="{{ site.baseurl }}/assets/2014/04/011-resourceplugin.png"><img class="alignnone  wp-image-845" alt="011-resourceplugin" src="{{ site.baseurl }}/assets/2014/04/011-resourceplugin.png" width="578" height="233" /></a></p>
 <h3>4.2 - Entendendo a tela de recurso <em>versus</em> plugin</h3>
 <p>Nesta tela tem-se basicamente 2 quadros, o primeiro com informações das configurações e status importantes, e na segunda as configurações/ações possíveis</p>
-<p><a href="http://www.helviojunior.com.br/wp-content/uploads/2014/04/012-resourceplugin.png"><img class="alignnone  wp-image-849" alt="012-resourceplugin" src="{{ site.baseurl }}/assets/2014/04/012-resourceplugin.png" width="736" height="293" /></a></p>
-<p><a style="line-height: 1.5;" href="http://www.helviojunior.com.br/wp-content/uploads/2014/04/013-resourceplugin.png"><img class="alignnone  wp-image-850" alt="013-resourceplugin" src="{{ site.baseurl }}/assets/2014/04/013-resourceplugin.png" width="575" height="176" /></a></p>
+<p><a href="{{ site.baseurl }}/assets/2014/04/012-resourceplugin.png"><img class="alignnone  wp-image-849" alt="012-resourceplugin" src="{{ site.baseurl }}/assets/2014/04/012-resourceplugin.png" width="736" height="293" /></a></p>
+<p><a style="line-height: 1.5;" href="{{ site.baseurl }}/assets/2014/04/013-resourceplugin.png"><img class="alignnone  wp-image-850" alt="013-resourceplugin" src="{{ site.baseurl }}/assets/2014/04/013-resourceplugin.png" width="575" height="176" /></a></p>
 <p>Segue a explicação de cada um dos itens do quadrante de informações, posteriormente realizaremos as configurações dos que ainda não realizamos:</p>
 <ol>
 <li>Status: Mostra o status atual deste recurso x plugin;</li>
@@ -103,7 +103,7 @@ permalink: "/safetrend/safeid/integrando-safeid-com-ad/"
 </ol>
 <p>O quadrante de configurações/ações estão os links para cada uma das ações e configurações possíveis para este recurso x plugin.</p>
 <h3>4.3 - Parâmetros do plugin</h3>
-<p><a href="http://www.helviojunior.com.br/wp-content/uploads/2014/04/030-rp.png"><img class="alignnone  wp-image-890" alt="030-rp" src="{{ site.baseurl }}/assets/2014/04/030-rp.png" width="326" height="214" /></a></p>
+<p><a href="{{ site.baseurl }}/assets/2014/04/030-rp.png"><img class="alignnone  wp-image-890" alt="030-rp" src="{{ site.baseurl }}/assets/2014/04/030-rp.png" width="326" height="214" /></a></p>
 <p>Conforme descrito anteriormente cada plugin exige uma configuração diferenciada nesta tela. Para o plugin de AD há somente 3 configurações:</p>
 <ul>
 <li>Servidor AD: IP ou nome do servidor AD;</li>
@@ -119,9 +119,9 @@ permalink: "/safetrend/safeid/integrando-safeid-com-ad/"
 </ul>
 <h4><strong>Mapeamento manual</strong></h4>
 <p><span style="line-height: 1.5;">Dentro do recurso x plugin clique no link </span><strong style="line-height: 1.5;">Mapeamento de campos, </strong><span style="line-height: 1.5;">depois no botão <strong>Editar</strong> </span></p>
-<p><a href="http://www.helviojunior.com.br/wp-content/uploads/2014/04/017-resourceplugin.png"><img class="alignnone  wp-image-859" alt="017-resourceplugin" src="{{ site.baseurl }}/assets/2014/04/017-resourceplugin.png" width="397" height="216" /></a></p>
+<p><a href="{{ site.baseurl }}/assets/2014/04/017-resourceplugin.png"><img class="alignnone  wp-image-859" alt="017-resourceplugin" src="{{ site.baseurl }}/assets/2014/04/017-resourceplugin.png" width="397" height="216" /></a></p>
 <p>Digite o nome do campo cadastrado no SafeID e selecione o campo desejado. (Caso deseje cadastrar um novo campo basta ir em Menu &gt; Campos &gt; Novo Campo)</p>
-<p><a href="http://www.helviojunior.com.br/wp-content/uploads/2014/04/018-resourceplugin.png"><img class="alignnone size-full wp-image-860" alt="018-resourceplugin" src="{{ site.baseurl }}/assets/2014/04/018-resourceplugin.png" width="521" height="270" /></a></p>
+<p><a href="{{ site.baseurl }}/assets/2014/04/018-resourceplugin.png"><img class="alignnone size-full wp-image-860" alt="018-resourceplugin" src="{{ site.baseurl }}/assets/2014/04/018-resourceplugin.png" width="521" height="270" /></a></p>
 <p>Ao selecionar o campo desejado as opções do campo serão exibidas. Segue a explicação de cada uma das opções do mapeamento do campo:</p>
 <ul>
 <li>Campo do recurso: nome do campo exatamente como o sistema integrado informa (este campo diferencia maiúsculo de minúsculo)</li>
@@ -135,19 +135,19 @@ permalink: "/safetrend/safeid/integrando-safeid-com-ad/"
 <p>Para que este mapeamento funcione corretamente as configurações gerais e os parâmetros de configuração devem estar configurados e corretos, bem como o proxy precisa estar on-line.</p>
 <p>Dentro do recurso x plugin clique no link <strong>Mapeamento de campos, </strong>depois no botão <strong>Busca automática</strong> e depois no botão <strong>Iniciar nova busca</strong></p>
 <p>Neste momento o procedimento de busca será iniciado e a informação de aguardando as informações do proxy será informado</p>
-<p><a href="http://www.helviojunior.com.br/wp-content/uploads/2014/04/020-resourceplugin.png"><img class="alignnone  wp-image-862" alt="020-resourceplugin" src="{{ site.baseurl }}/assets/2014/04/020-resourceplugin.png" width="644" height="93" /></a></p>
+<p><a href="{{ site.baseurl }}/assets/2014/04/020-resourceplugin.png"><img class="alignnone  wp-image-862" alt="020-resourceplugin" src="{{ site.baseurl }}/assets/2014/04/020-resourceplugin.png" width="644" height="93" /></a></p>
 <p>Aguarde alguns instantes e atualize a tela. Caso o procedimento apresente erro uma informação de erro será exibida e os detalhes do erro poderão ser vistos no botão de Log, caso o procedimento seja realizado com sucesso a tela abaixo será exibida</p>
-<p><a href="http://www.helviojunior.com.br/wp-content/uploads/2014/04/021-resourceplugin.png"><img class="alignnone  wp-image-864" alt="021-resourceplugin" src="{{ site.baseurl }}/assets/2014/04/021-resourceplugin.png" width="638" height="86" /></a></p>
+<p><a href="{{ site.baseurl }}/assets/2014/04/021-resourceplugin.png"><img class="alignnone  wp-image-864" alt="021-resourceplugin" src="{{ site.baseurl }}/assets/2014/04/021-resourceplugin.png" width="638" height="86" /></a></p>
 <p>Para abrir as informações mapeadas clique no botão <strong>Abrir, </strong>uma tabela com as informações mapeadas será exibida. Pode observar que além das colunas (campos do sistema) são exibidos alguns exemplos de valor do campo.</p>
-<p><a href="http://www.helviojunior.com.br/wp-content/uploads/2014/04/022-resourceplugin.png"><img class="alignnone  wp-image-865" alt="022-resourceplugin" src="{{ site.baseurl }}/assets/2014/04/022-resourceplugin.png" width="644" height="327" /></a></p>
+<p><a href="{{ site.baseurl }}/assets/2014/04/022-resourceplugin.png"><img class="alignnone  wp-image-865" alt="022-resourceplugin" src="{{ site.baseurl }}/assets/2014/04/022-resourceplugin.png" width="644" height="327" /></a></p>
 <p>Mapeie os campos conforme desejado e clique em Salvar. Caso haja algum campo que não deseje mapear basta clicar no botão excluir que o mesmo será desconsiderado no mapeamento.</p>
 <p>Obs.: É obrigatório a seleção de pelo menos um campo como identificador ou único.</p>
 <p>Para o nosso exemplo o seguinte mapeamento foi realizado</p>
-<p><a href="http://www.helviojunior.com.br/wp-content/uploads/2014/04/023-resourceplugin.png"><img class="alignnone  wp-image-868" alt="023-resourceplugin" src="{{ site.baseurl }}/assets/2014/04/023-resourceplugin.png" width="642" height="268" /></a></p>
+<p><a href="{{ site.baseurl }}/assets/2014/04/023-resourceplugin.png"><img class="alignnone  wp-image-868" alt="023-resourceplugin" src="{{ site.baseurl }}/assets/2014/04/023-resourceplugin.png" width="642" height="268" /></a></p>
 <h3>4.5 - Agendamento</h3>
 <p>Dentro do recurso x plugin clique no link <strong>Agendamento </strong>e clique no botão<strong> Editar.</strong></p>
 <p>Cadastre o agendamento conforme a tela abaixo e clique em salvar.</p>
-<p><a href="http://www.helviojunior.com.br/wp-content/uploads/2014/04/024-schedule.png"><img class="alignnone  wp-image-869" alt="024-schedule" src="{{ site.baseurl }}/assets/2014/04/024-schedule.png" width="337" height="266" /></a></p>
+<p><a href="{{ site.baseurl }}/assets/2014/04/024-schedule.png"><img class="alignnone  wp-image-869" alt="024-schedule" src="{{ site.baseurl }}/assets/2014/04/024-schedule.png" width="337" height="266" /></a></p>
 <h3>4.6 - Outras configurações</h3>
 <p>De configurações obrigatórios são essas demonstradas acima, outras configurações podem ser realizadas como vínculo com função, e regras de bloqueio. Porém estas não serão abordadas neste post.</p>
 <h3>4.7 - Habilitando recurso versus plugin</h3>
@@ -161,6 +161,6 @@ permalink: "/safetrend/safeid/integrando-safeid-com-ad/"
 <h3>5.1 - Visualizando usuários</h3>
 <p>Como em nosso teste todas as importações ocorreram com sucesso podemos visualizar os dados dos usuários (Entidades e Identidades) em <strong>Menu</strong> &gt; <strong>Gerenciador de usuários</strong></p>
 <p>Clicando em um usuário recém importado podemos observar todas suas informações.</p>
-<p><a href="http://www.helviojunior.com.br/wp-content/uploads/2014/04/026-user.png"><img class="alignnone  wp-image-875" alt="026-user" src="{{ site.baseurl }}/assets/2014/04/026-user.png" width="656" height="354" /></a></p>
+<p><a href="{{ site.baseurl }}/assets/2014/04/026-user.png"><img class="alignnone  wp-image-875" alt="026-user" src="{{ site.baseurl }}/assets/2014/04/026-user.png" width="656" height="354" /></a></p>
 <h2>5 - Dúvidas?</h2>
 <p>Caso tenha alguma dúvida favor entrar em contato conosco através do link <a href="www.safetrend.com.br/contato/" target="_blank">www.safetrend.com.br/contato/</a></p>

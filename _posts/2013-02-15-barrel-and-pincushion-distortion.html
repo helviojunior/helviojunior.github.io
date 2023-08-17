@@ -34,7 +34,7 @@ permalink: "/fotografia/barrel-and-pincushion-distortion/"
 <p>Distorção em barril (barrel distortion) ocorre quando a ampliação no centro da lente é maior do que nas extremidades. Lentes olho de peixe (fisheye) produzem este tipo de distorção em resultado de uma cena hemisférica a ser projetada sobre uma superfície plana.</p>
 <p>O inverso da distorção em barril é conhecido como pincushion distortion ( distorção almofada de alfinetes) ou inverse barrel distortion.</p>
 <p>Para ilustrar estes 2 tipos de distorção vamos utilizar uma imagem com gradeado. Ao lado esquerdo tem-se a imagem original seguida dos efeitos barrel e pincushion respectivamente.</p>
-<p><a href="http://www.helviojunior.com.br/wp-content/uploads/2013/02/001.png"><img class="alignnone  wp-image-452" title="001" src="{{ site.baseurl }}/assets/2013/02/001-300x214.png" alt="" width="180" height="128" /></a><a href="http://www.helviojunior.com.br/wp-content/uploads/2013/02/002-0.1.png"><img class="alignnone  wp-image-453" title="002 (0.1)" src="{{ site.baseurl }}/assets/2013/02/002-0.1-300x214.png" alt="" width="180" height="128" /></a><a href="http://www.helviojunior.com.br/wp-content/uploads/2013/02/003-0.1.png"><img class="alignnone  wp-image-454" title="003 (-0.1)" src="{{ site.baseurl }}/assets/2013/02/003-0.1-300x214.png" alt="" width="180" height="128" /></a></p>
+<p><a href="{{ site.baseurl }}/assets/2013/02/001.png"><img class="alignnone  wp-image-452" title="001" src="{{ site.baseurl }}/assets/2013/02/001-300x214.png" alt="" width="180" height="128" /></a><a href="{{ site.baseurl }}/assets/2013/02/002-0.1.png"><img class="alignnone  wp-image-453" title="002 (0.1)" src="{{ site.baseurl }}/assets/2013/02/002-0.1-300x214.png" alt="" width="180" height="128" /></a><a href="{{ site.baseurl }}/assets/2013/02/003-0.1.png"><img class="alignnone  wp-image-454" title="003 (-0.1)" src="{{ site.baseurl }}/assets/2013/02/003-0.1-300x214.png" alt="" width="180" height="128" /></a></p>
 <p>A motivação deste post foi não encontrar nenhum algoritmo interessante para C# (CSharp) realizando estas duas distorções, desta forma após realizar algumas leituras pela internet, e achar muitas formulas que não funcionavam ou estavam incompletas, resolvi criar meu próprio algoritmo. Neste post não entrarei em detalhes do algoritmo, mas somente na forma de utilização final dele, porém o código dele está completo e funcional abaixo.</p>
 <p><!--more--></p>
 <p>A chamada principal da função é a:</p>
@@ -54,7 +54,7 @@ bmp = ImageEfects.BarrelDistortion(bmp, 0.1, false, Color.White);<br />
 bmp.Save(&quot;images_distorcida.jpg&quot;);<br />
 bmp.Dispose();<br />
 [/sourcecode]</p>
-<p><a href="http://www.helviojunior.com.br/wp-content/uploads/2013/02/002-0.1.png"><img class="alignnone size-medium wp-image-453" title="002 (0.1)" src="{{ site.baseurl }}/assets/2013/02/002-0.1-300x214.png" alt="" width="300" height="214" /></a></p>
+<p><a href="{{ site.baseurl }}/assets/2013/02/002-0.1.png"><img class="alignnone size-medium wp-image-453" title="002 (0.1)" src="{{ site.baseurl }}/assets/2013/02/002-0.1-300x214.png" alt="" width="300" height="214" /></a></p>
 <p>Pode-se observar que o resultado foi uma leve distorção pincushion.</p>
 <p><strong>Exemplo 2:</strong><br />
 Neste exemplo será utilizado um fator -0.1 sem corte da imagem.</p>
@@ -64,7 +64,7 @@ bmp = ImageEfects.BarrelDistortion(bmp, -0.1, false, Color.White);<br />
 bmp.Save(&quot;images_distorcida.jpg&quot;);<br />
 bmp.Dispose();<br />
 [/sourcecode]</p>
-<p><a href="http://www.helviojunior.com.br/wp-content/uploads/2013/02/003-0.1.png"><img class="alignnone size-medium wp-image-454" title="003 (-0.1)" src="{{ site.baseurl }}/assets/2013/02/003-0.1-300x214.png" alt="" width="300" height="214" /></a></p>
+<p><a href="{{ site.baseurl }}/assets/2013/02/003-0.1.png"><img class="alignnone size-medium wp-image-454" title="003 (-0.1)" src="{{ site.baseurl }}/assets/2013/02/003-0.1-300x214.png" alt="" width="300" height="214" /></a></p>
 <p>Pode-se observar que o resultado foi uma leve distorção de barril.</p>
 <p>Por estes 2 efeitos pode-se observar que o fator negativo implica na distorção barril e o positivo na distorção pincushion.</p>
 <p><strong>Exemplo 3:</strong><br />
@@ -75,7 +75,7 @@ bmp = ImageEfects.BarrelDistortion(bmp, 0.5, false, Color.White);<br />
 bmp.Save(&quot;images_distorcida.jpg&quot;);<br />
 bmp.Dispose();<br />
 [/sourcecode]</p>
-<p><a href="http://www.helviojunior.com.br/wp-content/uploads/2013/02/004-0.5.png"><img class="alignnone size-medium wp-image-460" title="004 (0.5)" src="{{ site.baseurl }}/assets/2013/02/004-0.5-300x214.png" alt="" width="300" height="214" /></a></p>
+<p><a href="{{ site.baseurl }}/assets/2013/02/004-0.5.png"><img class="alignnone size-medium wp-image-460" title="004 (0.5)" src="{{ site.baseurl }}/assets/2013/02/004-0.5-300x214.png" alt="" width="300" height="214" /></a></p>
 <p><strong>Exemplo 4:</strong><br />
 Neste exemplo será utilizado um fator -0.5 sem corte da imagem.</p>
 <p>[sourcecode language="csharp"]<br />
@@ -84,7 +84,7 @@ bmp = ImageEfects.BarrelDistortion(bmp, -0.5, false, Color.White);<br />
 bmp.Save(&quot;images_distorcida.jpg&quot;);<br />
 bmp.Dispose();<br />
 [/sourcecode]</p>
-<p><a href="http://www.helviojunior.com.br/wp-content/uploads/2013/02/005-0.5.png"><img class="alignnone size-medium wp-image-461" title="005 (-0.5)" src="{{ site.baseurl }}/assets/2013/02/005-0.5-300x214.png" alt="" width="300" height="214" /></a></p>
+<p><a href="{{ site.baseurl }}/assets/2013/02/005-0.5.png"><img class="alignnone size-medium wp-image-461" title="005 (-0.5)" src="{{ site.baseurl }}/assets/2013/02/005-0.5-300x214.png" alt="" width="300" height="214" /></a></p>
 <p><strong>Exemplo de corte:</strong><br />
 Os próximos exemplos utilizam o parâmetro de corte para não deixar áreas vazias na imagem. Em cada um deles será mostrado 2 imagens a primeira com um quadrado vermelho indicando onde será realizado o corte, e a outra, a imagem com o corte realizado.</p>
 <p><strong>Exemplo 5:</strong><br />
@@ -95,7 +95,7 @@ bmp = ImageEfects.BarrelDistortion(bmp, 0.1, true, Color.White);<br />
 bmp.Save(&quot;images_distorcida.jpg&quot;);<br />
 bmp.Dispose();<br />
 [/sourcecode]</p>
-<p><a href="http://www.helviojunior.com.br/wp-content/uploads/2013/02/006-0.1.png"><img class="alignnone size-medium wp-image-464" title="006 (0.1)" src="{{ site.baseurl }}/assets/2013/02/006-0.1-300x214.png" alt="" width="300" height="214" /></a><a href="http://www.helviojunior.com.br/wp-content/uploads/2013/02/010-0.1.png"><img class="alignnone size-medium wp-image-466" title="010 (0.1)" src="{{ site.baseurl }}/assets/2013/02/010-0.1-300x214.png" alt="" width="300" height="214" /></a></p>
+<p><a href="{{ site.baseurl }}/assets/2013/02/006-0.1.png"><img class="alignnone size-medium wp-image-464" title="006 (0.1)" src="{{ site.baseurl }}/assets/2013/02/006-0.1-300x214.png" alt="" width="300" height="214" /></a><a href="{{ site.baseurl }}/assets/2013/02/010-0.1.png"><img class="alignnone size-medium wp-image-466" title="010 (0.1)" src="{{ site.baseurl }}/assets/2013/02/010-0.1-300x214.png" alt="" width="300" height="214" /></a></p>
 <p><strong>Exemplo 6:</strong><br />
 Neste exemplo será utilizado um fator -0.1 com corte da imagem.</p>
 <p>[sourcecode language="csharp"]<br />
@@ -104,7 +104,7 @@ bmp = ImageEfects.BarrelDistortion(bmp, -0.1, true, Color.White);<br />
 bmp.Save(&quot;images_distorcida.jpg&quot;);<br />
 bmp.Dispose();<br />
 [/sourcecode]</p>
-<p><a href="http://www.helviojunior.com.br/wp-content/uploads/2013/02/007-0.1.png"><img class="alignnone size-medium wp-image-465" title="007 (-0.1)" src="{{ site.baseurl }}/assets/2013/02/007-0.1-300x214.png" alt="" width="300" height="214" /></a><a href="http://www.helviojunior.com.br/wp-content/uploads/2013/02/011-0.1.png"><img class="alignnone size-medium wp-image-467" title="011 (-0.1)" src="{{ site.baseurl }}/assets/2013/02/011-0.1-300x214.png" alt="" width="300" height="214" /></a></p>
+<p><a href="{{ site.baseurl }}/assets/2013/02/007-0.1.png"><img class="alignnone size-medium wp-image-465" title="007 (-0.1)" src="{{ site.baseurl }}/assets/2013/02/007-0.1-300x214.png" alt="" width="300" height="214" /></a><a href="{{ site.baseurl }}/assets/2013/02/011-0.1.png"><img class="alignnone size-medium wp-image-467" title="011 (-0.1)" src="{{ site.baseurl }}/assets/2013/02/011-0.1-300x214.png" alt="" width="300" height="214" /></a></p>
 <p><strong>Exemplo 7:</strong><br />
 Neste exemplo será utilizado um fator 0.5 com corte da imagem.</p>
 <p>[sourcecode language="csharp"]<br />
@@ -113,7 +113,7 @@ bmp = ImageEfects.BarrelDistortion(bmp, 0.5, true, Color.White);<br />
 bmp.Save(&quot;images_distorcida.jpg&quot;);<br />
 bmp.Dispose();<br />
 [/sourcecode]</p>
-<p><a href="http://www.helviojunior.com.br/wp-content/uploads/2013/02/008-0.5.png"><img class="alignnone size-medium wp-image-468" title="008 (0.5)" src="{{ site.baseurl }}/assets/2013/02/008-0.5-300x214.png" alt="" width="300" height="214" /></a><a href="http://www.helviojunior.com.br/wp-content/uploads/2013/02/012-0.5.png"><img class="alignnone size-medium wp-image-469" title="012 (0.5)" src="{{ site.baseurl }}/assets/2013/02/012-0.5-300x214.png" alt="" width="300" height="214" /></a></p>
+<p><a href="{{ site.baseurl }}/assets/2013/02/008-0.5.png"><img class="alignnone size-medium wp-image-468" title="008 (0.5)" src="{{ site.baseurl }}/assets/2013/02/008-0.5-300x214.png" alt="" width="300" height="214" /></a><a href="{{ site.baseurl }}/assets/2013/02/012-0.5.png"><img class="alignnone size-medium wp-image-469" title="012 (0.5)" src="{{ site.baseurl }}/assets/2013/02/012-0.5-300x214.png" alt="" width="300" height="214" /></a></p>
 <p><strong>Exemplo 8:</strong><br />
 Neste exemplo será utilizado um fator -0.5 com corte da imagem.</p>
 <p>[sourcecode language="csharp"]<br />
@@ -122,20 +122,20 @@ bmp = ImageEfects.BarrelDistortion(bmp, -0.5, true, Color.White);<br />
 bmp.Save(&quot;images_distorcida.jpg&quot;);<br />
 bmp.Dispose();<br />
 [/sourcecode]</p>
-<p><a href="http://www.helviojunior.com.br/wp-content/uploads/2013/02/009-0.5.png"><img class="alignnone size-medium wp-image-470" title="009 (-0.5)" src="{{ site.baseurl }}/assets/2013/02/009-0.5-300x214.png" alt="" width="300" height="214" /></a><a href="http://www.helviojunior.com.br/wp-content/uploads/2013/02/013-0.5.png"><img class="alignnone size-medium wp-image-471" title="013 (-0.5)" src="{{ site.baseurl }}/assets/2013/02/013-0.5-300x214.png" alt="" width="300" height="214" /></a></p>
+<p><a href="{{ site.baseurl }}/assets/2013/02/009-0.5.png"><img class="alignnone size-medium wp-image-470" title="009 (-0.5)" src="{{ site.baseurl }}/assets/2013/02/009-0.5-300x214.png" alt="" width="300" height="214" /></a><a href="{{ site.baseurl }}/assets/2013/02/013-0.5.png"><img class="alignnone size-medium wp-image-471" title="013 (-0.5)" src="{{ site.baseurl }}/assets/2013/02/013-0.5-300x214.png" alt="" width="300" height="214" /></a></p>
 <p><strong>Exemplo com fotos reais:</strong><br />
 Nestes exemplos será utilizado a foto abaixo:</p>
-<p><a href="http://www.helviojunior.com.br/wp-content/uploads/2013/02/foto1.jpg"><img class="alignnone size-medium wp-image-473" title="foto1" src="{{ site.baseurl }}/assets/2013/02/foto1-300x199.jpg" alt="" width="300" height="199" /></a></p>
+<p><a href="{{ site.baseurl }}/assets/2013/02/foto1.jpg"><img class="alignnone size-medium wp-image-473" title="foto1" src="{{ site.baseurl }}/assets/2013/02/foto1-300x199.jpg" alt="" width="300" height="199" /></a></p>
 <p><strong>Fator 0.1 sem corte:</strong></p>
-<p><a href="http://www.helviojunior.com.br/wp-content/uploads/2013/02/014-0.1.jpg"><img class="alignnone size-medium wp-image-474" title="014 (0.1)" src="{{ site.baseurl }}/assets/2013/02/014-0.1-300x199.jpg" alt="" width="300" height="199" /></a></p>
+<p><a href="{{ site.baseurl }}/assets/2013/02/014-0.1.jpg"><img class="alignnone size-medium wp-image-474" title="014 (0.1)" src="{{ site.baseurl }}/assets/2013/02/014-0.1-300x199.jpg" alt="" width="300" height="199" /></a></p>
 <p>Fator 0.1 com corte:</p>
-<p><a href="http://www.helviojunior.com.br/wp-content/uploads/2013/02/015-0.1.jpg"><img class="alignnone size-medium wp-image-475" title="015 (0.1)" src="{{ site.baseurl }}/assets/2013/02/015-0.1-300x199.jpg" alt="" width="300" height="199" /></a></p>
+<p><a href="{{ site.baseurl }}/assets/2013/02/015-0.1.jpg"><img class="alignnone size-medium wp-image-475" title="015 (0.1)" src="{{ site.baseurl }}/assets/2013/02/015-0.1-300x199.jpg" alt="" width="300" height="199" /></a></p>
 <p><strong>Fator -0.1 sem corte:</strong></p>
-<p><a href="http://www.helviojunior.com.br/wp-content/uploads/2013/02/016-0.1.jpg"><img class="alignnone size-medium wp-image-476" title="016 (0.1)" src="{{ site.baseurl }}/assets/2013/02/016-0.1-300x199.jpg" alt="" width="300" height="199" /></a></p>
+<p><a href="{{ site.baseurl }}/assets/2013/02/016-0.1.jpg"><img class="alignnone size-medium wp-image-476" title="016 (0.1)" src="{{ site.baseurl }}/assets/2013/02/016-0.1-300x199.jpg" alt="" width="300" height="199" /></a></p>
 <p><strong>Fator -0.1 com corte:</strong></p>
-<p><a href="http://www.helviojunior.com.br/wp-content/uploads/2013/02/017-0.1.jpg"><img class="alignnone size-medium wp-image-477" title="017 (0.1)" src="{{ site.baseurl }}/assets/2013/02/017-0.1-300x199.jpg" alt="" width="300" height="199" /></a></p>
+<p><a href="{{ site.baseurl }}/assets/2013/02/017-0.1.jpg"><img class="alignnone size-medium wp-image-477" title="017 (0.1)" src="{{ site.baseurl }}/assets/2013/02/017-0.1-300x199.jpg" alt="" width="300" height="199" /></a></p>
 <p>Para finalizar segue o código completo do aplicativo.</p>
-<p>Download: <a href="http://www.helviojunior.com.br/wp-content/uploads/2013/02/Barrel.zip">Código fonte Barrel.cs</a></p>
+<p>Download: <a href="{{ site.baseurl }}/assets/2013/02/Barrel.zip">Código fonte Barrel.cs</a></p>
 <p>Código:</p>
 <p>[sourcecode language="csharp"]<br />
 using System;<br />

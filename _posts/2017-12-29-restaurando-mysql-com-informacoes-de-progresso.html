@@ -55,12 +55,12 @@ zcat backup.sql.gz | mysql -u usuario -p<br />
 <p>[sourcecode language="shell"]ps aux | grep -i &quot;command\|dd if&quot; | grep -v mysql | grep -v grep<br />
 [/sourcecode]</p>
 <p>O Resultado do comando será algo parecido com a imagem abaixo:<br />
-<a href="http://www.helviojunior.com.br/wp-content/uploads/2017/12/ps.jpg"><img class="alignnone wp-image-1710 size-full" src="{{ site.baseurl }}/assets/2017/12/ps.jpg" alt="ps" width="929" height="115" /></a></p>
+<a href="{{ site.baseurl }}/assets/2017/12/ps.jpg"><img class="alignnone wp-image-1710 size-full" src="{{ site.baseurl }}/assets/2017/12/ps.jpg" alt="ps" width="929" height="115" /></a></p>
 <p>Agora de posse do PID podemos executar o comando mágico que trará quanto o nosso DD ja leu do arquivo</p>
 <p>[sourcecode language="shell"]kill -USR1 26711<br />
 [/sourcecode]</p>
 <p>Quando executado este comando, na janela em que está sendo executado o DD ele irá trazer um resultado semelhante a imagem abaixo:<br />
-<a href="http://www.helviojunior.com.br/wp-content/uploads/2017/12/kill.jpg"><img class="alignnone wp-image-1711 size-full" src="{{ site.baseurl }}/assets/2017/12/kill.jpg" alt="kill" width="926" height="87" /></a></p>
+<a href="{{ site.baseurl }}/assets/2017/12/kill.jpg"><img class="alignnone wp-image-1711 size-full" src="{{ site.baseurl }}/assets/2017/12/kill.jpg" alt="kill" width="926" height="87" /></a></p>
 <p>Agora para fechar com chave de outro vamos criar um comando que fica enviando este sinal a nosso processo de tempo em tempo.</p>
 <p>[sourcecode language="shell"] while :; do kill -USR1 26711; sleep 30; done<br />
 [/sourcecode]</p>
