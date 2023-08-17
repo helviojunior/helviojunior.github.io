@@ -1,0 +1,77 @@
+---
+layout: post
+title: Configurando Postfix para usar SMTP do Gmail no Ubuntu
+date: 2015-10-20 11:06:28.000000000 -02:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Linux
+tags: []
+meta:
+  _edit_last: '1'
+  _syntaxhighlighter_encoded: '1'
+  _yoast_wpseo_title: Configurando Postfix para usar SMTP do Gmail no Ubuntu
+  _yoast_wpseo_metadesc: Aprenda passo-a-passo como configurar o Postfix para utilizar
+    o SMTP do Gmail como relay para enviar e-mails.
+  _aviaLayoutBuilder_active: ''
+  _aviaLayoutBuilderCleanData: ''
+  layout: ''
+  sidebar: ''
+  footer: ''
+  header_title_bar: ''
+  header_transparency: ''
+  _avia_hide_featured_image: '0'
+  _av_alb_posts_elements_state: a:0:{}
+  _av_el_mgr_version: '1.0'
+  _av_alb_element_mgr_version: 1.0.1
+  _av_css_styles: a:6:{s:7:"post_id";i:1429;s:8:"css_file";s:13:"post-1429.css";s:9:"timestamp";s:0:"";s:6:"status";s:6:"no_css";s:13:"processed_ids";a:0:{}s:13:"include_posts";a:0:{}}
+author:
+  login: helvio
+  email: helvio_junior@hotmail.com
+  display_name: Helvio Junior - M4v3r1ck - OSCE3 (OSEP + OSED + OSWE), OSCE, OSCP,
+    eCXD, eMAPT, CEH
+  first_name: Helvio
+  last_name: Junior - M4v3r1ck - OSCE3 (OSEP + OSED + OSWE), OSCE, OSCP, eCXD, eMAPT,
+    CEH
+permalink: "/it/linux/configurando-postfix-para-usar-smtp-do-gmail-no-ubuntu/"
+---
+<p>Este post tem por objetivo demonstrar como configurar o Postfix para enviar e-mails através do SMTP do Gmail como relay. Como ambiente para este post foi utilizado o Ununti 14.04. Caso tenha algum problema por favor utilize a sessão de comentários para posta-lo.</p>
+<p><!--more--></p>
+<h2>Fazendo relay do Postfix via smtp.gmail.com:</h2>
+<p>Primeiramente realize a instalação dos pacotes necessários</p>
+<p>[sourcecode language="shell"]sudo apt-get install postfix mailutils libsasl2-2 ca-certificates libsasl2-modules<br />
+[/sourcecode]</p>
+<p>Caso você ainda não tenha uma instalação do Postfix em seu sistema ele fará alguns questionamentos a você. Basta selecionar a opção <strong>Servidor para a internet</strong> e usar um nome completo (FQDN) para o seu servidor como <strong>mail.exemplo.com.br</strong>.</p>
+<p>Edite o arquivo de configuração <strong>/etc/postfix/main.cf</strong> e adicione as seguintes linhas:</p>
+<p>[sourcecode language="shell"]relayhost = [smtp.gmail.com]:587<br />
+smtp_sasl_auth_enable = yes<br />
+smtp_sasl_password_maps = hash:/etc/postfix/sasl_passwd<br />
+smtp_sasl_security_options = noanonymous<br />
+smtp_tls_CAfile = /etc/postfix/cacert.pem<br />
+smtp_use_tls = yes<br />
+[/sourcecode]</p>
+<p>Edite/crie o arquivo <strong>/etc/postfix/sasl_passwd</strong> e deixe ele com a seguinte informação:</p>
+<p>[sourcecode language="shell"][smtp.gmail.com]:587    USERNAME@gmail.com:PASSWORD<br />
+[/sourcecode]</p>
+<p>Caso você utilize o Google Apps, basta alterar o domínio @gmail.com para o seu domínio exemplo @helviojunior.com.br</p>
+<p>Corrija as permissões do arquivo e atualize o postfix para utilizar o arquivo <strong>/etc/postfix/sasl_passwd </strong>com os comandos abaixo:</p>
+<p>[sourcecode language="shell"]sudo chmod 400 /etc/postfix/sasl_passwd<br />
+sudo postmap /etc/postfix/sasl_passwd<br />
+[/sourcecode]</p>
+<p>Valide o certificado digital para avitar erros rodando o seguinte comando:</p>
+<p>[sourcecode language="shell"]cat /etc/ssl/certs/Thawte_Premium_Server_CA.pem | sudo tee -a /etc/postfix/cacert.pem<br />
+[/sourcecode]</p>
+<p>Por fim reinicie o serviço do Postfix</p>
+<p>[sourcecode language="shell"]sudo /etc/init.d/postfix reload<br />
+[/sourcecode]</p>
+<p>&nbsp;</p>
+<h2>Testando</h2>
+<p>Verifique se os e-mails estão sendo enviado através do Gmail, se tudo estiver correto através do comando abaixo você enviará um e-mail para sua caixa postal usando o Gmail como relay.</p>
+<p>[sourcecode language="shell"]echo &quot;Teste de e-mail com postfix&quot; | mail -s &quot;Teste Postfix&quot; voce@exemplo.com.br<br />
+[/sourcecode]</p>
+<p>&nbsp;</p>
+<h3>Referência</h3>
+<p>Este artigo foi baseado no artigo: <a href="https://rtcamp.com/tutorials/linux/ubuntu-postfix-gmail-smtp/">https://rtcamp.com/tutorials/linux/ubuntu-postfix-gmail-smtp/</a></p>

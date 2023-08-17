@@ -1,0 +1,57 @@
+---
+layout: post
+title: Listando e montando disco pelo UUID no ubuntu
+date: 2015-10-29 13:06:20.000000000 -02:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Linux
+tags:
+- disco
+- disk
+- fstab
+- montar disco
+- uuid
+meta:
+  _edit_last: '1'
+  _syntaxhighlighter_encoded: '1'
+  _aviaLayoutBuilder_active: ''
+  _aviaLayoutBuilderCleanData: ''
+  layout: ''
+  sidebar: ''
+  footer: ''
+  header_title_bar: ''
+  header_transparency: ''
+  _avia_hide_featured_image: '0'
+  _av_alb_posts_elements_state: a:0:{}
+  _av_el_mgr_version: '1.0'
+  _av_alb_element_mgr_version: 1.0.1
+  _av_css_styles: a:6:{s:7:"post_id";i:1438;s:8:"css_file";s:13:"post-1438.css";s:9:"timestamp";s:0:"";s:6:"status";s:6:"no_css";s:13:"processed_ids";a:0:{}s:13:"include_posts";a:0:{}}
+author:
+  login: helvio
+  email: helvio_junior@hotmail.com
+  display_name: Helvio Junior - M4v3r1ck - OSCE3 (OSEP + OSED + OSWE), OSCE, OSCP,
+    eCXD, eMAPT, CEH
+  first_name: Helvio
+  last_name: Junior - M4v3r1ck - OSCE3 (OSEP + OSED + OSWE), OSCE, OSCP, eCXD, eMAPT,
+    CEH
+permalink: "/it/linux/listando-e-montando-disco-pelo-uuid-no-ubuntu/"
+---
+<p>O UUID (Universally Unique Identifier) pode ser utilizado para identificar um disco como ponto de montagem. A estratégia de utilizar o UUID ao invés do nome do dispositivo é mais interessante pois caso você troque o disco de porta física, haveria muitos problemas de ponto de montagem incorreto.</p>
+<p>Para listar todos os seus discos e seus respectivos UUIDs basta executar o comando abaixo</p>
+<p>&nbsp;</p>
+<p>[sourcecode language="shell"]ls -l /dev/disk/by-uuid<br />
+lrwxrwxrwx 1 root root 10 Oct 29 11:21 1cadf475-fa59-4809-a3a0-667bc581f44c -&gt; ../../sdb1<br />
+[/sourcecode]</p>
+<p>&nbsp;</p>
+<p>Para montar o seu disco usando o UUID basta alterar o seu fstab para utilizar o UUID ao invés do device conforme o exemplo abaixo:</p>
+<p>[sourcecode language="shell"]#Modo antigo de montar<br />
+/dev/sdb1 /media/dados ext4 defaults 1 2</p>
+<p>#Modo Novo<br />
+UUID=1cadf475-fa59-4809-a3a0-667bc581f44c /media/dados ext4 defaults 1 2<br />
+[/sourcecode]</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>

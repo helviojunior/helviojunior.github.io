@@ -1,0 +1,295 @@
+---
+layout: post
+title: Instalando e otimizando o MySQL para alto tráfego de dados
+date: 2016-05-10 12:40:24.000000000 -03:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- MySQL
+tags: []
+meta:
+  _edit_last: '1'
+  _yoast_wpseo_title: Instalando MySQL para alto tráfego de dados
+  _yoast_wpseo_metadesc: Aprenda passo a passo como instalar e configurar o MySQL
+    em um ambiente de alto tráfego no banco de dados.
+  _aviaLayoutBuilder_active: ''
+  _aviaLayoutBuilderCleanData: ''
+  layout: ''
+  sidebar: ''
+  footer: ''
+  header_title_bar: ''
+  header_transparency: ''
+  _avia_hide_featured_image: '0'
+  _syntaxhighlighter_encoded: '1'
+  _yoast_wpseo_content_score: '60'
+  _yoast_wpseo_primary_category: ''
+  _av_alb_posts_elements_state: a:0:{}
+  _av_el_mgr_version: '1.0'
+  _av_alb_element_mgr_version: 1.0.1
+  _av_css_styles: a:6:{s:7:"post_id";i:1500;s:8:"css_file";s:13:"post-1500.css";s:9:"timestamp";s:0:"";s:6:"status";s:6:"no_css";s:13:"processed_ids";a:0:{}s:13:"include_posts";a:0:{}}
+author:
+  login: helvio
+  email: helvio_junior@hotmail.com
+  display_name: Helvio Junior - M4v3r1ck - OSCE3 (OSEP + OSED + OSWE), OSCE, OSCP,
+    eCXD, eMAPT, CEH
+  first_name: Helvio
+  last_name: Junior - M4v3r1ck - OSCE3 (OSEP + OSED + OSWE), OSCE, OSCP, eCXD, eMAPT,
+    CEH
+permalink: "/it/mysql/instalando-e-otimizando-mysql-para-alto-trafego-de-dados/"
+---
+<p>Na maioria dos ambientes onde é instalado o MySQL não se tem configurações mínimas para um alto desempenho do banco de dados. Neste post não pretendo abordar 100% das técnicas, recursos e tecnologias que poderiam ser utilizadas para otimizar o MySQL, mas sim abordar configurações simples mas muito eficazes para otimização do MySQL.</p>
+<p><!--more-->De modo geral as configurações aqui propostas se baseiam na seleção de um bom sistema de arquivos para cada função do banco de dados, bem como otimização da configuração para utilizar todo potencial do hardware.</p>
+<p><strong><span style="color: #ff0000;">ATENÇÃO!!!! Ao realizar qualquer operação em banco de dados que esteja em produção tenha certeza que você tem backup dos seus dados, pois este procedimento excluirá todas as informações da base de dados. Qualquer perda de dados é por sua conta e risco.</span></strong></p>
+<h2>Atualização do sistema</h2>
+<p>Antes de qualquer instalação é interessante garantir que nosso sistema está atualizado, faça isso com os comandos abaixo</p>
+<p>[sourcecode language="shell"]apt-get update<br />
+apt-get upgrade<br />
+[/sourcecode]</p>
+<h2>Remoção de instalações antigas</h2>
+<p>O primeiro passo antes de instalar uma nova instalação do MySQL é necessário desinstalar uma versão atual. Gostaria de frisar mais uma vez que este processo apagará todos os dados atuais do seu banco de dados então, tenha certeza de que você tem um backup integro da sua base dedados, pois não me responsabilizo por eventuais perdas de dado em seu ambiente.</p>
+<p>[sourcecode language="shell"]apt-get remove --purge mysql-server mysql-client mysql-common mysql-server-core-* mysql-client-core-*<br />
+rm -rf /etc/mysql /var/lib/mysql/*<br />
+apt-get autoremove<br />
+apt-get autoclean<br />
+[/sourcecode]</p>
+<h2>Preparando o ambiente, partições, diretórios e sistema de arquivos</h2>
+<p>Antes de iniciar a instalação do MySQL propriamente dita vamos criar as partições, formatar e montar em uma estrutura de diretório específica para o banco de dados.</p>
+<p>Instale as dependências necessárias</p>
+<p>[sourcecode language="shell"]apt-get install libaio1 libaio-dev xfsprogs libc6<br />
+[/sourcecode]</p>
+<p>Utilizando o aplicativo de sua preferência, crie 4 partições no disco secundário. As partições devem ser criadas com os tamanhos ajustados para o seu ambiente, para termos um norte segue abaixo uma tabela com a sugestão de tamanho a ser utilizado e a função de cada uma das partições.</p>
+<p>Obviamente essa é somente uma tabela de sugestão pois diversas coisas irão influenciar na montagem dessa tabela, como quantidade de transações, tamanho da base, o que será armazenado em log e etc...</p>
+<table style="height: 202px;" width="665">
+<tbody>
+<tr>
+<td width="64"><strong>Partição</strong></td>
+<td width="291"><strong>Função</strong></td>
+<td width="108"><strong>Espaço sugerido</strong></td>
+</tr>
+<tr>
+<td width="64">1</td>
+<td width="291">Armazenamento das bases de dados</td>
+<td width="108">85% do disco</td>
+</tr>
+<tr>
+<td width="64">2</td>
+<td width="291">Armazenamento de logs (Innolog) para rollback, reciperação de desastres e etc...</td>
+<td width="108">5%  do disco</td>
+</tr>
+<tr>
+<td width="64">3</td>
+<td width="291">Armazenamento de logs (bin) para replicação e backup incremental</td>
+<td width="108">5%  do disco</td>
+</tr>
+<tr>
+<td width="64">4</td>
+<td width="291">Diretório temporário</td>
+<td width="108">5%  do disco</td>
+</tr>
+</tbody>
+</table>
+<p>Suponto que o seu disco é de 100Gb e que o mesmo esteja fisicamente no <strong>/dev/sdb</strong> monte as 4 partições que ficarão da seguinte forma: <strong>/dev/sdb1</strong>, <strong>/dev/sdb2</strong>, <strong>/dev/sdb3</strong> e <strong>/dev/sdb4</strong>.</p>
+<p>Formate o disco com os comandos abaixo, apenas trocando <strong>/dev/sdbX</strong> para o nome real do seu disco</p>
+<p>[sourcecode language="shell"]mkfs.xfs -f -d agcount=256 -l size=128m,lazy-count=1,version=2 -L mysql_bases /dev/sdb1<br />
+mkfs.ext2 -m0 -L mysql_innolog /dev/sdb2<br />
+mkfs.ext2 -m0 -L mysql_binlog /dev/sdb3<br />
+mkfs.ext2 -m0 -L mysql_tmpdir /dev/sdb4<br />
+[/sourcecode]</p>
+<p>Localize o UUID da sua partição</p>
+<p>[sourcecode language="shell"]ls -l /dev/disk/by-uuid<br />
+[/sourcecode]</p>
+<p><a href="http://www.helviojunior.com.br/wp-content/uploads/2016/05/uuid-mysql.png"><img class="alignnone size-full wp-image-1503" src="{{ site.baseurl }}/assets/2016/05/uuid-mysql.png" alt="uuid-mysql" width="720" height="129" /></a></p>
+<p>Edite o arquivo <strong>/etc/fstab</strong> e adicione as linhas abaixo, utilizando o UUID do seu disco, para que o seu disco seja montado na inicialização</p>
+<p>[sourcecode language="shell"]UUID=71ce0a1a-cff9-4ade-985c-aaf4bfabd7f9 /u01/mysql/bases/ xfs allocsize=256m,logbufs=8,noatime,nobarrier,nodiratime,attr2,logbsize=256k 0 0<br />
+UUID=ad22e209-08b4-405c-9c6b-7ac9da2e4376 /u01/mysql/innolog/ ext2    errors=remount-ro,noatime,nodiratime,rw 0 0<br />
+UUID=f08fabbd-5ac5-41cb-9c8e-ad9f01492d88 /u01/mysql/binlog/ ext2    errors=remount-ro,noatime,nodiratime,rw 0 0<br />
+UUID=3b7f233a-cdbb-44a1-9d60-d878af3ea7e4 /u01/mysql/tmpdir/ ext2    errors=remount-ro,noatime,nodiratime,rw 0 0<br />
+[/sourcecode]</p>
+<p>Crie os diretórios que serão utilizados pelo banco de dados</p>
+<p>[sourcecode language="shell"]mkdir -p /u01/mysql/bases/<br />
+mkdir -p /u01/mysql/innolog/<br />
+mkdir -p /u01/mysql/tmpdir/<br />
+mkdir -p /u01/mysql/logs/<br />
+mkdir -p /u01/mysql/binlog/relay<br />
+[/sourcecode]</p>
+<p>Adicione o usuário e grupo do mysql</p>
+<p>[sourcecode language="shell"]groupadd mysql<br />
+useradd -r -g mysql mysql<br />
+[/sourcecode]</p>
+<p>Monte todos os apontamentos realizados no fstab</p>
+<p>[sourcecode language="shell"]mount -a<br />
+[/sourcecode]</p>
+<p>Crie o arquivo de logs</p>
+<p>[sourcecode language="shell"]touch /u01/mysql/logs/error.log<br />
+[/sourcecode]</p>
+<p>Altere as permissões dos diretórios montados e arquivos</p>
+<p>[sourcecode language="shell"]chown -R mysql:mysql /u01<br />
+chmod -R 755 /u01/mysql/<br />
+[/sourcecode]</p>
+<p>Realize algumas otimizações do sistema operacional, bem como a criação de algumas variáveis de ambiente com os comandos abaixo</p>
+<p>[sourcecode language="shell"]echo &quot;PATH=$PATH:/usr/local/mysql/bin&quot; &gt;&gt; /etc/profile.d/mysql<br />
+echo &quot;PATH=$PATH:/usr/local/mysql/bin&quot; &gt;&gt; /etc/environment<br />
+echo &quot;mysql soft nofile 1048576&quot; &gt;&gt; /etc/security/limits.conf<br />
+echo &quot;mysql hard nofile 1048576&quot; &gt;&gt; /etc/security/limits.conf<br />
+echo &quot;# --- MySQL Install --- &quot; &gt;&gt; /etc/sysctl.conf<br />
+echo &quot;vm.swappiness = 1&quot; &gt;&gt; /etc/sysctl.conf<br />
+echo &quot;net.core.rmem_default = 33554432&quot; &gt;&gt; /etc/sysctl.conf<br />
+echo &quot;net.core.rmem_max = 33554432&quot; &gt;&gt; /etc/sysctl.conf<br />
+echo &quot;net.core.wmem_default = 33554432&quot; &gt;&gt; /etc/sysctl.conf<br />
+echo &quot;net.core.wmem_max = 33554432&quot; &gt;&gt; /etc/sysctl.conf<br />
+echo &quot;net.ipv4.tcp_rmem = 10240 87380 33554432&quot; &gt;&gt; /etc/sysctl.conf<br />
+echo &quot;net.ipv4.tcp_wmem = 10240 87380 33554432&quot; &gt;&gt; /etc/sysctl.conf<br />
+echo &quot;net.ipv4.tcp_no_metrics_save = 1&quot; &gt;&gt; /etc/sysctl.conf<br />
+echo &quot;net.ipv4.tcp_window_scaling = 1&quot; &gt;&gt; /etc/sysctl.conf<br />
+echo &quot;net.ipv4.tcp_timestamps = 1&quot; &gt;&gt; /etc/sysctl.conf<br />
+echo &quot;net.ipv4.tcp_sack = 1&quot; &gt;&gt; /etc/sysctl.conf<br />
+echo &quot;net.core.netdev_max_backlog = 5000&quot; &gt;&gt; /etc/sysctl.conf<br />
+echo &quot;net.ipv4.tcp_mem = 786432 1048576 26777216&quot; &gt;&gt; /etc/sysctl.conf<br />
+echo &quot;net.ipv4.ip_local_port_range = 1024 65535&quot; &gt;&gt; /etc/sysctl.conf<br />
+echo &quot;net.ipv4.tcp_max_tw_buckets = 360000&quot; &gt;&gt; /etc/sysctl.conf<br />
+echo &quot;fs.nr_open = 1048576&quot; &gt;&gt; /etc/sysctl.conf<br />
+echo &quot;mysql soft nofile 1048576&quot; &gt;&gt; /etc/security/limits.conf<br />
+echo &quot;mysql hard nofile 1048576&quot; &gt;&gt; /etc/security/limits.conf<br />
+export PATH=$PATH:/usr/local/mysql/bin<br />
+[/sourcecode]</p>
+<p>Caso a distribuição do seu Linux seja RedHat ou Centos, é necessário executar o comando abaixo para desativar o SELINUX</p>
+<p>[sourcecode language="shell"]sed 's/SELINUX=enforcing/SELINUX=disabled/g ' -i /etc/selinux/config<br />
+reboot<br />
+[/sourcecode]</p>
+<h2>Instalando o MySQL</h2>
+<p>Realize o download e descompactação do MySQL com os comandos abaixo</p>
+<p>[sourcecode language="shell"]wget http://cdn.mysql.com/archives/mysql-5.6/mysql-5.6.37-linux-glibc2.12-x86_64.tar.gz<br />
+tar -zxvf mysql-5.6.37-linux-glibc2.12-x86_64.tar.gz -C /usr/local<br />
+ln -sf /usr/local/mysql-5.6.37-linux-glibc2.12-x86_64 /usr/local/mysql<br />
+[/sourcecode]</p>
+<p>Copie o script de inicialização do MySQL</p>
+<p>[sourcecode language="shell"]cp /usr/local/mysql/support-files/mysql.server /etc/init.d/mysql<br />
+[/sourcecode]</p>
+<p>Edite o arquivo <strong>/etc/init.d/mysql</strong> alterando as linhas conforme exemplo abaixo</p>
+<p>[sourcecode language="shell"]basedir=/usr/local/mysql<br />
+datadir=/u01/mysql/bases<br />
+[/sourcecode]</p>
+<p>Crie o arquivo <strong>/u01/mysql/my.cnf</strong>  com o conteúdo abaixo</p>
+<p>[sourcecode language="shell"]## Helvio Junior – my.cnf template<br />
+### my.cnf</p>
+<p>[client]<br />
+port            = 3306<br />
+socket          = /u01/mysql/mysql.sock</p>
+<p>[mysqld_safe]<br />
+open_files_limit = 1024000<br />
+basedir        = /usr/local/mysql<br />
+timezone        = America/Sao_Paulo<br />
+socket          = /u01/mysql/mysql.sock<br />
+nice            = 0</p>
+<p># Diretório de logs e consultas lentas<br />
+log-error       = /u01/mysql/logs/error.log<br />
+pid-file        = /u01/mysql/bases/mysql.pid</p>
+<p>[mysqld]<br />
+open_files_limit = 1024000<br />
+general_log     = 0<br />
+log_warnings    = 1<br />
+general_log_file = /u01/mysql/logs/mysqld.log<br />
+log-error       = /u01/mysql/logs/error.log<br />
+log-slow-admin-statements = 0<br />
+explicit_defaults_for_timestamp = 1</p>
+<p>#Consultas lentas<br />
+slow_query_log			= 1<br />
+slow_query_log_file		= /u01/mysql/logs/mysql-slow.log<br />
+long_query_time			= 5</p>
+<p>#Consultas sem indices<br />
+log-queries-not-using-indexes = 0</p>
+<p>user            = mysql<br />
+pid-file        = /u01/mysql/bases/mysql.pid<br />
+socket          = /u01/mysql/mysql.socket<br />
+port            = 3306<br />
+basedir        = /usr/local/mysql<br />
+datadir         = /u01/mysql/bases/<br />
+tmpdir          = /u01/mysql/tmpdir<br />
+lc-messages-dir = /usr/local/mysql/share/</p>
+<p># Performance Analsys<br />
+performance_schema = off</p>
+<p># Desativa o LOAD FILE<br />
+local-infile = 0<br />
+old_passwords=0</p>
+<p># 0x = MASTER<br />
+# 1x = Slave Level 1<br />
+# 2x = Slave em baixo de Slave<br />
+server-id=01</p>
+<p># Master Setup (Caso tenha replicação)<br />
+#binlog_format = ROW<br />
+#log-bin        = /u01/mysql/binlog/mysql-bin<br />
+#log_slave_updates = 1<br />
+#log_bin_trust_function_creators = 1<br />
+#expire_logs_days = 1</p>
+<p># Configuracoes Diversas<br />
+#Compatibilidade<br />
+sql_mode = ''</p>
+<p>skip-name-resolve<br />
+max_connections = 10000<br />
+query_cache_size = 80M<br />
+query_cache_min_res_unit = 2K<br />
+query_cache_type = 1<br />
+sort_buffer_size = 2M<br />
+read_buffer_size = 128k<br />
+join_buffer_size = 5M<br />
+myisam_sort_buffer_size = 128M<br />
+bulk_insert_buffer_size = 128M<br />
+max_allowed_packet = 1G<br />
+thread_cache_size = 100</p>
+<p># Tabelas temporárias<br />
+# Configura o tamanho maximo para tabela do tipo MEMORY<br />
+max_heap_table_size = 1G</p>
+<p># Configura o tamanho maximo antes de converter para MyISAM<br />
+tmp_table_size = 1G</p>
+<p># Federated Store Engine<br />
+federated</p>
+<p># InnoDB (Default)</p>
+<p># Depreciado na 5.6 - Armazena dicionario de dados na ram<br />
+innodb_additional_mem_pool_size = 16M</p>
+<p># BUFFER POOL<br />
+#</p>
+<p># Alterar este valor para +- 80 da memória do servidor<br />
+innodb_buffer_pool_size = 1G</p>
+<p># Segregacao do buffer_pool - Performance para algoritmo LRU (qtd cpu)<br />
+innodb_buffer_pool_instance = 6</p>
+<p># Redo Log<br />
+innodb_log_buffer_size = 1G<br />
+innodb_log_group_home_dir = /u01/mysql/innolog<br />
+innodb_log_files_in_group = 7<br />
+innodb_log_file_size = 512M</p>
+<p># Manipulacao de arquivos<br />
+innodb_open_files = 1024000<br />
+innodb_file_per_table = 1<br />
+innodb_data_file_path = ibdata1:1G:autoextend<br />
+innodb_data_home_dir=/u01/mysql/bases/</p>
+<p># O_DIRECT para fazer by-pass (O EBS controla)<br />
+innodb_flush_method = O_DIRECT<br />
+innodb_file_format = BARRACUDA</p>
+<p># QTD de IOPS que esta disponível para o datadir<br />
+innodb_io_capacity = 1000</p>
+<p># Controle Transacional<br />
+transaction-isolation=READ-COMMITTED<br />
+innodb_support_xa = 0</p>
+<p># Qtd de segundos antes de um Lock wait timeout exceeded<br />
+innodb_lock_wait_timeout = 120<br />
+[/sourcecode]</p>
+<p>Altere o parâmetro <strong>innodb_buffer_pool_size</strong> deste arquivo recém criado para um valor de +- 80% da memória do ser servidor.</p>
+<p>Crie um link simbólico do arquivo de configuração para o diretório /etc</p>
+<p>[sourcecode language="shell"]ln -s /u01/mysql/my.cnf /etc/my.cnf<br />
+[/sourcecode]</p>
+<p>Crie as bases de dados iniciais do MySQL</p>
+<p>[sourcecode language="shell"]cd /usr/local/mysql<br />
+scripts/mysql_install_db --datadir=/u01/mysql/bases/ --basedir=/usr/local/mysql<br />
+[/sourcecode]</p>
+<p>Configure para que o MySQL inicie automaticamente na inicialização do sistema operacional e inicie o serviço</p>
+<p>[sourcecode language="shell"]update-rc.d -f mysql defaults<br />
+service mysql start<br />
+[/sourcecode]</p>
+<p>Por questões de segurança, altere a senha padrão do usuário root do banco de dados</p>
+<p>[sourcecode language="shell"]/usr/local/mysql/bin/mysqladmin -u root password 'new-password'<br />
+[/sourcecode]</p>
+<p>Pronto, o seu servidor de MySQL está instalado e pronto para uso.</p>
+<p>Caso deseje outras otimizações não citadas neste post segue uma sugestão se referência para consulta: <a href="http://blog.neweb.co/pt/how-to-optimize-a-mysql-server/" target="_blank">http://blog.neweb.co/pt/how-to-optimize-a-mysql-server/</a></p>

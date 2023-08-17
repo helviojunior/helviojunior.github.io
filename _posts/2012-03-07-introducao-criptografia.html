@@ -1,0 +1,188 @@
+---
+layout: post
+title: Introdução a Criptografia (Criptografia, hash, base64 encoding e certificação
+  digital)
+date: 2012-03-07 03:37:40.000000000 -03:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- IT
+- Segurança da Informação
+tags:
+- autoridade certificadora
+- ca
+- certificate authority
+- openssl
+meta:
+  _edit_last: '1'
+  _topsy_long_url: http://www.helviojunior.com.br/it/security/certificacao-digital/
+  topsy_short_url: ''
+  footer: ''
+  header_title_bar: ''
+  sidebar: ''
+  layout: ''
+  _aviaLayoutBuilderCleanData: ''
+  _aviaLayoutBuilder_active: ''
+  _yoast_wpseo_primary_category: ''
+  _wp_old_slug: certificacao-digital
+  _yoast_wpseo_content_score: '30'
+  header_transparency: ''
+  _avia_hide_featured_image: '0'
+  _oembed_2400d55470dca2d8c1ef0ae17f7d0c3e: "{{unknown}}"
+  _oembed_1c3cc7ebac28fe24f90a2f75ca5cf023: "{{unknown}}"
+  _oembed_08c70a31bc852f18bf5e1acc859de4c7: "{{unknown}}"
+  _av_alb_posts_elements_state: a:0:{}
+  _av_el_mgr_version: '1.0'
+  _av_alb_element_mgr_version: 1.0.1
+  _av_css_styles: a:6:{s:7:"post_id";i:79;s:8:"css_file";s:11:"post-79.css";s:9:"timestamp";s:0:"";s:6:"status";s:6:"no_css";s:13:"processed_ids";a:0:{}s:13:"include_posts";a:0:{}}
+author:
+  login: helvio
+  email: helvio_junior@hotmail.com
+  display_name: Helvio Junior - M4v3r1ck - OSCE3 (OSEP + OSED + OSWE), OSCE, OSCP,
+    eCXD, eMAPT, CEH
+  first_name: Helvio
+  last_name: Junior - M4v3r1ck - OSCE3 (OSEP + OSED + OSWE), OSCE, OSCP, eCXD, eMAPT,
+    CEH
+permalink: "/it/security/introducao-criptografia/"
+---
+<p>Este artigo objetiva demonstrar os conceitos iniciais de criptográfica com chave assimétrica e certificação digital.</p>
+<p><!--more--></p>
+<h2>1.     O que é criptografia?</h2>
+<p>A criptografia é o processo pelo qual se transforma dados legíveis em algo sem sentido (ilegível), porém sendo capaz de recuperar os dados originais a partir dessas dados sem sentido. A criptografia é uma das ferramentas mais importantes para a proteção dos dados, sejam eles em trânsito ou armazenado. Mas vale a pena ressaltar que a criptografia não é à prova de falhas e toda criptografia pode ser quebrada e, sobretudo, se for implementada incorretamente, ela não agrega nenhuma segurança real.</p>
+<h3>Porque a chave é necessária?</h3>
+<p>Toda criptografia computadorizada opera com chaves, pois manter o algoritmo criptográfico em segredo é algo inviável, sendo assim para proteger os dados basta utilizar um algoritmo de criptografia forte e proteger a chave utilizada. Isso significa também que pode ser utilizado chaves diferentes para proteger diferentes informações, sendo assim, se alguém quebrar uma das chaves, as outras informações ainda estarão seguras.</p>
+<h2>2.     Criptografia de chave simétrica</h2>
+<p>Nesta abordagem, um algoritmo utiliza uma chave para converter as informações naquilo que se parece com bits aleatórios. Assim, o mesmo algoritmo utiliza a mesma chave para recuperar os dados originais.</p>
+<p>Esta metodologia tem desempenho bem melhores em se comparado com a criptografia de chave assimétrica, porém como para recuperar os dados cifrados, você também necessita das mesmas chaves que foram utilizadas para cifrar os dados é necessário um bom gerenciamento dessas chaves. Em se tratando de comunicação de via rede este problema da gestão da chave é mais evidente, pois para que dois ativos possam se comunicar os dois necessita conhecer a mesma chave, desta forma tem-se um problema: ou os dois ativos detêm a chave antes do início da comunicação ou a chave necessita ser transmitida via rede sem criptografia.</p>
+<p>Segue abaixo a imagem ilustrando a utilização do mesmo algoritmo e chave para cifrar a decifrar a mensagem.</p>
+<p style="text-align: center;"><a href="http://www.helviojunior.com.br/wp-content/uploads/2012/03/image1.jpeg"><img class="aligncenter wp-image-80" title="Chave-Simetrica" src="{{ site.baseurl }}/assets/2012/03/image1.jpeg" alt="" width="374" height="462" /></a></p>
+<h2>3.     Criptografia de chave assimétrica</h2>
+<p>Este esquema utiliza duas chaves diferentes. Mesmo estando relacionadas entre si – elas são parceiras – elas são significativamente diferentes. O relacionamento é matemático; o que uma chave encripta a outra chave decripta. Na criptografia simétrica, a mesma chave é utilizada para encriptar e decriptar (daí a palavra “simétrica” – partes correspondentes); se utilizar outra chave qualquer para decriptar, o resultado será algo sem sentido. Mas com a criptografia assimétrica (conforme imagem abaixo), a chave que é utilizada para encriptar os dados não é utilizada para decriptá-los; apenas a parte correspondente pode (daí palavra “assimétrica” – partes não-correspondentes).</p>
+<p>Em outras palavras, a chave privada deve permanecer em segredo, enquanto a chave pública pode ser publicada sem qualquer perigo. Neste exemplo é utilizada a <b>chave publica </b>para <b>criptografar</b> os dados, porém somente a <b>chave privada </b>pode <b>decriptografar</b>.</p>
+<p style="text-align: center;" align="left"> <a href="http://www.helviojunior.com.br/wp-content/uploads/2012/03/image2.jpeg"><img class="aligncenter wp-image-81" title="chave-assimetrica" src="{{ site.baseurl }}/assets/2012/03/image2.jpeg" alt="" width="353" height="485" /></a></p>
+<p align="left">Quando utilizado o algoritmo RSA, qualquer coisa que tenha sido encriptado com a chave pública pode ser decifrado apenas com a chave privada. Bem como qualquer coisa que tenha sido enncriptado com a chave privada pode ser decrifrado apenas com a chave pública. Isto demonstra que o RSA funciona tanto do privado ao público, como do público ao privado.</p>
+<h2>4.     Assinatura digital</h2>
+<p>Quando se utiliza a chave privada para criptografar os dados, apenas a chave pública pode ser utilizada para decriptografar os dados. Este processo não fornece segurança uma vez que que a chave pública, conceitualmente pode ser conhecida por todos, então para que serve este processo? Para assinatura digital. Pois como somente o proprietário da chave privada pode gerar a informação criptografada, ao descriptografar com a chave pública tem-se a garantia de que o dado criptografado veio de quem diz ser.</p>
+<p>Desta forma as assinaturas digitais detém duas suposições fundamentais: primeiro, que a chave privada seja segura e que apenas o proprietário da chave tenha acesso a ela e, segundo, que a única maneira de produzir uma assinatura digital seja utilizando a chave privada.</p>
+<p>A Assinatura digital resolve duas questões relacionadas à criptografia: autenticação e não repúdio. A autenticação permite que alguém no mundo eletrônico confirme dados e identidade, e o não repúdio impede que pessoas retifiquem sua palavra eletrônica.</p>
+<p>A forma mais comum de assinatura digital conhecida é o certificado digital. Um certificado digital associa um nome a uma chave pública. O certificado digital é produzido de tal maneira que o torna perceptível se um impostor pegou o certificado existente e substituiu a chave pública ou o nome.</p>
+<h2>5. Hash</h2>
+<p>Hash, ou resumo da mensagem é um algoritmo que recebe qualquer comprimento de entrada (de dados/mensagem) e mescla a entrada para produzir uma saída pseudoaleatória de largura fixa.  Hash detém algumas propriedades:</p>
+<ul>
+<li><b>Propriedade 1: </b>Um mesmo algoritmo de hash sempre condensará (reduzir, resumir) o conteúda da entrada de dados em uma saída de tamanho fixo independentemente do tamanho, e do que, for fornecido como entrada;</li>
+<li><b>Propriedade 2: </b>A saída de um algoritmo de hash é pseudoaleatória por diversas questões e princípios matemáticos;</li>
+<li><b>Propriedade 3: </b>Mesmo que os dados de entrada seja quase idêntico (mudando apenas 1 bit, por exemplo), o a saída será dramaticamente diferente;</li>
+<li><b>Propriedade 4: </b>Não pode reconstruir a mensagem de entrada (mensagem original) a partir de uma saída hash, este princípio é conhecido como função de uma única via;</li>
+<li><b>Propriedade 5: </b>Um bom algoritmo de hash não são tão fáceis de examinar;</li>
+<li><b>Propriedade 6: </b>Não é possível localizar uma mensagem que produza um hash em particular;</li>
+<li><b>Propriedade 7: </b>Um bom algoritmo de hash não pode encontrar duas mensagens que produzam uma mesma saída;</li>
+</ul>
+<h3>Hash e Colisões</h3>
+<p>Até o momento da escrita deste post não existe nenhum algoritmo capaz de satisfazer as propriedades 6 e 7 de forma perfeita,  então quando um algoritmo de hash viola as duas ultimas propriedades, o resultado é uma colisão, o termo técnico para descrever uma situação em que duas mensagens produzem um mesmo hash.</p>
+<p>Segue abaixo uma tabela com as informações dos principais hashes utilizados atualmente:</p>
+<p><a href="http://www.helviojunior.com.br/wp-content/uploads/2012/03/Hashes.png"><img class="alignnone size-full wp-image-1994" src="{{ site.baseurl }}/assets/2012/03/Hashes.png" alt="" width="1305" height="325" /></a></p>
+<h3>Diferença principal entre Criptografia e Hash</h3>
+<p>Este é um tema controverso, dependendo da literatura que se adota, sendo assim para este estudo vamos entender de forma geral como sendo:</p>
+<ul>
+<li><b>Criptografia: </b>Reversível;</li>
+<li><b>Hash: </b>Não reversível;</li>
+</ul>
+<h2>6.     Infraestrutura de chave pública e o padrão X.509</h2>
+<p>Um certificado de chave pública (public-key certificate – PKC) é um conjunto de dados à prova de falsificação que atesta a associação de uma chave pública a um usuário final. Para fornecer essa associação, um conjunto de terceiros confiáveis confirma a identidade do usuário. Os terceiros chamados de autoridades certificadoras (certification authorities – Cas), emitem certificados para o usuário com o nome de usuário, a chave pública e outras informações que o identifiquem. Após serem assinados digitalmente pela CA, esses certificados podem ser transferidos e armazenados.</p>
+<p>O formato de certificado mais amplamente aceito é o X.509 Versão 3. Em 1999 foi publicado um perfil para o X.509 na RFC2459.</p>
+<p>Todas as versões dos certificados X.509 contêm os seguintes campos:</p>
+<table border="1" cellspacing="0" cellpadding="0">
+<tbody>
+<tr>
+<td valign="top" width="206"><strong>Campo</strong></td>
+<td valign="top" width="428"><strong>Descrição</strong></td>
+</tr>
+<tr>
+<td valign="top" width="206"><strong>Version (Versão)</strong></td>
+<td valign="top" width="428">Este campo deferência as sucessivas versões do certificado, como Versão 1, Versão 2 e Versão 3. O campo Versão também permite possíveis versões futuras.</td>
+</tr>
+<tr>
+<td valign="top" width="206"><strong>Certificate Serial Number (Número serial de certificado)</strong></td>
+<td valign="top" width="428">Esse campo contém um valor de inteiro único em cada certificado. É gerado pela CA.</td>
+</tr>
+<tr>
+<td valign="top" width="206"><strong>Signature Algorithm Identifier (Identificador do algoritmo de assinatura)</strong></td>
+<td valign="top" width="428">Este campo indica o identificador do algoritmo utilizado para assinar o certificado junto com quaisquer parâmetros associados.</td>
+</tr>
+<tr>
+<td valign="top" width="206"><strong>Issue Name (Nome do emissor)</strong></td>
+<td valign="top" width="428">Esse campo identifica o nome distinto (distinguished name – DN) com o qual a CA cria e assina esse certificado.</td>
+</tr>
+<tr>
+<td valign="top" width="206"><strong>Validity (Not before/After) (Validade – Não antes/Não depois)</strong></td>
+<td valign="top" width="428">Esse campo conte´m dois valores de data/hora – Not Valid Before e Not Valid After – que definem o período que esse certificado pode ser considerado válido a menos que, caso, contrário, seja revogado.</td>
+</tr>
+<tr>
+<td valign="top" width="206"><strong>Subject Name (Nome do sujeito)</strong></td>
+<td valign="top" width="428">Esse campo identifica o DN da entidade final a que o certificado se refere, isto é, o sujeito que mantém a chave privada correspondente. Esse campo deve ter uma entrada, a menos que um nome alternativo seja utilizado nas extensões da Versão 3.</td>
+</tr>
+<tr>
+<td valign="top" width="206"><strong>Subject Public Key Information (Informação sobre a chave pública do sujeito)</strong></td>
+<td valign="top" width="428">Esse campo contém o valor da chave pública so sijeito, bem como o identificador de algoritmo e quaisquer parâmetros associados ao algoritmo pelos quais a chave deve ser utilizada. Esse campo sempre deve ter uma entrada.</td>
+</tr>
+</tbody>
+</table>
+<p>Os certificados versões 2 e 3 podem conter outros campos com:</p>
+<ul>
+<li>Issue Unique Identifier (identificador único de emissor)</li>
+<li>Subject Unique Identifier (Identificador único de sujeito)</li>
+<li>Extensions (Extensões) (Somente versão 3)
+<ul>
+<li>Authority Key Identifier (Identificador de chave de autoridade)</li>
+<li>Subject Key Identifier (Identificador de chave de sujeito)</li>
+<li>Key Usage (Utilização de chave)</li>
+<li>Extened Key Usage (Utilização de chave estendida)</li>
+<li>CRL Distribution Point (Ponto de distribuição de CRL)</li>
+<li>Private Key Usage Period (Período de uso de chave privada)</li>
+<li>Certificate Policies (Políticas de certificado)</li>
+<li>Policy Mapping (Mapeamento de políticas)</li>
+<li>Subject Alternate Name (Nome alternativo so sujeito)</li>
+<li>Issue Alternate Name (Nome alternativo do emissor)</li>
+<li>Subject Directory attributes (Atributos do diretório do sujeito)</li>
+<li>Basic Constraints (Restições básicas)</li>
+<li>Name Constraints (Restições de nome)</li>
+<li>Policy Constraints (Restições de diretiva)</li>
+</ul>
+</li>
+</ul>
+<p>Com foco no estudo deste documento as únicas extensões que iremos descrever é a <strong>Basic Constraints (Restições básicas)</strong> e <strong>Certificate Policies (Políticas de certificado).</strong></p>
+<ul>
+<li>Basic Constraints (Restições básicas)</li>
+</ul>
+<p>Essa extensão indica se o sujeito pode agir como uma CA, fornecendo uma maneira para restringir que usuários finais atuem como CAs. Se este campo estiver presente, também poderá ser especificado um comprimento do caminho de certificaçã. O comprimento do caminho de certificação limita os poderes certificadores de uma nova autoridade (por exemplo, se a Verisign poderia permitir que a RSA Inc. atuasse como uma CA, mas ao mesmo tempo, não permitisse que a RSA Inc. criasse novas CAs). A RFC2459 ordena que essa extensão esteja presente e marcada como crítica em todos os certificados de CA.</p>
+<ul>
+<li>Certificate Policies (Políticas de certificado)</li>
+</ul>
+<p>Essa extensão identifica as informações sobre as políticas e qualificadores opcionais que a CA associa ao certificado. Se essa extensão for marcada como crítica, o aplicativo de processamento deve seguir pelo menos uma das políticas indicadas ou o certificado não deverá ser utilizado.</p>
+<h3>6.1.           Hierarquia de certificado</h3>
+<p>À medida que uma população de PKI (public-key infraestructure) começa a aumentar, torna-se difícil para uma CA monitorar de maneira eficaz a identidade de todas as partes que ela certificou. Uma solução é utilizar uma hierarquia de certificados, onde uma CA delega sua autoridade para uma ou mais autoridades subsidiarias. Essas autoridades, por sua vez, designam seus próprios subsidiários. A figura abaixo ilustra o conceito de hierarquia de certificados.</p>
+<p style="text-align: center;"><a href="http://www.helviojunior.com.br/wp-content/uploads/2012/03/image3.jpeg"><img class="aligncenter wp-image-82" title="Hierarquia de certificação" src="{{ site.baseurl }}/assets/2012/03/image3.jpeg" alt="" width="308" height="234" /></a></p>
+<p>Um recurso poderoso das hierarquias de certificado é que nem todas as partes devem confiar automaticamente em todas as autoridades certificadoras. De fato, a única autoridade cuja confiança deve ser estabelecida por todos é a CA superior. Por causa da sua posição na hierarquia, essa autoridade é geralmente conhecida como autoridade raiz. Os exemplos atuais de CAs de raiz pública incluem Verisign, Thawte e a raiz de CA do U.S Postal Service.</p>
+<h2>7.     Padrão PKCS#12</h2>
+<p>O formato PKCS#12 foi criado pela “RSA Laboratories” para armazenamento do certificado X.509 acompanhado da chave privada. Esse arquivo geralmente tem a extensão “pfx” e “p12”.</p>
+<h2>8.     Bas64 encoding</h2>
+<p><b>Base64 NÃO é criptografia é um algoritmo de codificação</b></p>
+<p>Base64 é um método para codificação de dados para transferência na Internet (codificação MIME para transferência de conteúdo). É utilizado frequentemente para transmitir dados binários por meios de transmissão que lidam apenas com texto, como por exemplo para enviar arquivos anexos por e-mail. É constituído por 64 caracteres ([A-Z],[a-z],[0-9], "/" e "+") que deram origem ao seu nome.</p>
+<p>Exemplo:</p>
+<ul>
+<li>Texto original: Treinamento Desenvolvimento Seguro</li>
+<li>Texto convertido para Base64: VHJlaW5hbWVudG8gRGVzZW52b2x2aW1lbnRvIFNlZ3Vybw==</li>
+</ul>
+<p>Busca parcial</p>
+<ul>
+<li>Texto anterior completo convertido para Base64: VHJlaW5hbWVudG8g<span style="color: #ff0000;">RGVzZW52b2x2aW1lbnRv</span>IFNlZ3Vybw==</li>
+<li>Texto original: Desenvolvimento</li>
+<li>Texto convertido para Base64: RGVzZW52b2x2aW1lbnRv</li>
+</ul>
+<p>&nbsp;</p>
+<h2>9.     Referencias bibliográficas</h2>
+<p>BURNETT, Steve, <strong>Criptografia e segurança: o guia oficial RSA, </strong>tradução de Edson Fumankiewcz. Ed. Rio de Janeiro: Elsevier, 2002.</p>
+<p>https://tools.ietf.org/html/rfc4648</p>

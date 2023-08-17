@@ -1,0 +1,88 @@
+---
+layout: post
+title: Mantendo a data e hora do servidor Linux atualizada com NTP
+date: 2020-04-08 17:57:13.000000000 -03:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- IT
+tags: []
+meta:
+  _edit_last: '1'
+  _yoast_wpseo_focuskw: Como manter a data e hora do servidor Linux atualizado?
+  _yoast_wpseo_metadesc: Como manter a data e hora do servidor Linux atualizado automaticamente?
+    Aprenda como instalar e configurar o NTP (Network Time Protocol) e manter a data
+    e hora do seu servidor sempre atualizado.
+  _yoast_wpseo_linkdex: '39'
+  _yoast_wpseo_content_score: '60'
+  _yoast_wpseo_primary_category: ''
+  _syntaxhighlighter_encoded: '1'
+  _aviaLayoutBuilder_active: ''
+  _aviaLayoutBuilderCleanData: ''
+  layout: ''
+  sidebar: ''
+  footer: ''
+  header_title_bar: ''
+  header_transparency: ''
+  _avia_hide_featured_image: '0'
+  _av_alb_posts_elements_state: a:0:{}
+  _av_el_mgr_version: '1.0'
+  _av_alb_element_mgr_version: 1.0.1
+  _av_css_styles: a:6:{s:7:"post_id";i:2101;s:8:"css_file";s:13:"post-2101.css";s:9:"timestamp";s:0:"";s:6:"status";s:6:"no_css";s:13:"processed_ids";a:0:{}s:13:"include_posts";a:0:{}}
+author:
+  login: helvio
+  email: helvio_junior@hotmail.com
+  display_name: Helvio Junior - M4v3r1ck - OSCE3 (OSEP + OSED + OSWE), OSCE, OSCP,
+    eCXD, eMAPT, CEH
+  first_name: Helvio
+  last_name: Junior - M4v3r1ck - OSCE3 (OSEP + OSED + OSWE), OSCE, OSCP, eCXD, eMAPT,
+    CEH
+permalink: "/it/mantendo-a-data-e-hora-do-servidor-linux-atualizada-com-ntp/"
+---
+<p>Neste posto veremos como realizar a configuração do cliente NTP para que o servidor sempre mantenha a data e hora atualizada de forma automática.</p>
+<p><!--more--></p>
+<p>Etapa 1: lista de fusos horários disponíveis</p>
+<p>[sourcecode language="shell"]root@M4v3r1ck:~# timedatectl list-timezones<br />
+[/sourcecode]</p>
+<p>Etapa 2: definir o fuso horário desejado</p>
+<p>[sourcecode language="shell"]root@M4v3r1ck:~# sudo timedatectl set-timezone America/Sao_Paulo<br />
+[/sourcecode]</p>
+<p>Procedimento: configurar o NTPD no Ubuntu 14<br />
+configurar o NTP ubuntu</p>
+<p>Abra o terminal ou conecte a sua SSH. Você deve logar como o usuário root. Digite o seguinte comando apt para instalar o NTP:</p>
+<p>[sourcecode language="shell"]root@M4v3r1ck:~# sudo apt-get update<br />
+root@M4v3r1ck:~# sudo apt-get install ntp ntpdate<br />
+[/sourcecode]</p>
+<p>Sincronize o relógio do sistema com o servidor a.ntp.br manualmente (use este comando apenas uma vez, ou conforme necessário):</p>
+<p>[sourcecode language="shell"]root@M4v3r1ck:~# service ntp stop<br />
+root@M4v3r1ck:~# ntpdate a.ntp.br<br />
+root@M4v3r1ck:~# service ntp start<br />
+[/sourcecode]</p>
+<p>Configurar o NTP (opcional)</p>
+<p>Abra o arquivo ntp.conf</p>
+<p>[sourcecode language="shell"]sudo vi /etc/ntp.conf<br />
+[/sourcecode]</p>
+<p>Abra o arquivo /etc/ntp.conf e procure pelas linhas:</p>
+<p>[sourcecode language="shell"]server 0.ubuntu.pool.ntp.org<br />
+server 1.ubuntu.pool.ntp.org<br />
+server 2.ubuntu.pool.ntp.org<br />
+server 3.ubuntu.pool.ntp.org<br />
+# Use Ubuntu's ntp server as a fallback.<br />
+server ntp.ubuntu.com<br />
+[/sourcecode]</p>
+<p>Altere para os servidores públicos do projeto http://ntp.br :</p>
+<p>[sourcecode language="shell"]server a.ntp.br<br />
+server b.ntp.br<br />
+server c.ntp.br<br />
+[/sourcecode]</p>
+<p>Parar e iniciar o servidor NTP.</p>
+<p>Para iniciar, parar, reiniciar o servidor NTP use os comandos abaixo:</p>
+<p>[sourcecode language="shell"]root@M4v3r1ck:~# service ntp start<br />
+root@M4v3r1ck:~# service ntp stop<br />
+root@M4v3r1ck:~# service ntp restart<br />
+[/sourcecode]</p>
+<p><strong>*** Atenção:</strong> Caso o seu servidor esteja atrás de um Firewall é necessário liberar a comunicação do mesmo para a internet através do Protocolo UDP na porta 123.</p>
+<p>Fonte: <a href="https://brasilcloud.com.br/tutoriais/instalar-e-configurar-o-ntp-para-sincronizar-o-relogio-do-ubuntu-server-14/">https://brasilcloud.com.br/tutoriais/instalar-e-configurar-o-ntp-para-sincronizar-o-relogio-do-ubuntu-server-14/</a></p>

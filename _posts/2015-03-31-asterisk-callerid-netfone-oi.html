@@ -1,0 +1,90 @@
+---
+layout: post
+title: Asterisk - CallerID
+date: 2015-03-31 14:46:54.000000000 -03:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Asterisk
+- VoIP
+tags: []
+meta:
+  _syntaxhighlighter_encoded: '1'
+  _yoast_wpseo_metadesc: Asterisk CallerID em linhas NetFone e Oi
+  _edit_last: '1'
+  _yoast_wpseo_title: Asterisk - CallerID
+  _av_alb_posts_elements_state: a:0:{}
+  _av_el_mgr_version: '1.0'
+  _av_alb_element_mgr_version: 1.0.1
+  _av_css_styles: a:6:{s:7:"post_id";i:1261;s:8:"css_file";s:13:"post-1261.css";s:9:"timestamp";s:0:"";s:6:"status";s:6:"no_css";s:13:"processed_ids";a:0:{}s:13:"include_posts";a:0:{}}
+author:
+  login: helvio
+  email: helvio_junior@hotmail.com
+  display_name: Helvio Junior - M4v3r1ck - OSCE3 (OSEP + OSED + OSWE), OSCE, OSCP,
+    eCXD, eMAPT, CEH
+  first_name: Helvio
+  last_name: Junior - M4v3r1ck - OSCE3 (OSEP + OSED + OSWE), OSCE, OSCP, eCXD, eMAPT,
+    CEH
+permalink: "/voip/asterisk-callerid-netfone-oi/"
+---
+<p>Este post tem por objetivo demonstrar como realizar a identificação de chamadas através do Asterisk usando uma placa analógica FXO.</p>
+<p>A maioria das operadoras no Brasil utiliza sinalização Padrão do Asterisk, porem a Net, VIVO e a OI utilizam outro tipo de sinalização. A boa notícia é que podemos realizar essa identificação sem a necessidade de conversor DTMF para FXS como muitos fóruns sugerem.</p>
+<p><!--more--></p>
+<h2>Ambiente</h2>
+<ul>
+<li>Asterisk  1.8.26;</li>
+<li>DAHDI 2.9.2;</li>
+<li>Placa FXO X100P;</li>
+<li>NetFone Arris TG862</li>
+</ul>
+<h2> Troubleshooting</h2>
+<p>No Asterisk o módulo responsável pela identificação do CALLERID é o chan_dahdi e normalmente o seu arquivo de configuração está localizado em /etc/asterisk/chan_dahdi.conf e detém 3 variáveis que controlam o funcionamento dessa identificação:</p>
+<ul>
+<li><strong>usecallerid</strong>: Define se o Asterisk deve ou não o caller ID, "yes" ou "no" são as unicas opções disponíveis</li>
+<li><strong>cidsignalling</strong>: Determina o tipo de sinalização usada para o caller ID. As sinalizações suportadas pelo Asterisk são:<br />
+bell: bell202 usada nos Estados Unidos (padrão do Asterisk)<br />
+v23: v23 usada no Reino Unido<br />
+v23_jp: v23 usado no Japão<br />
+dtmf: DTMF usado por Dinamarca, Suécia, Holanda e por algumas operadoras aqui no Brasil (NET, VIVO e OI)</li>
+<li><strong>cidstart</strong>: Determina o sinal de início do caller ID. As opções suportadas pelo Asterisk São:<br />
+ring: O início é ao início sinal ring (padrão do Asterisk)<br />
+polarity: A inversão de polaridade sinaliza o início<br />
+polarity_IN: A inversão de polaridade sinaliza o início, a detecção de tom de discagem DTMF na Índia<br />
+dtmf: O caller ID é recebido através de tons dtml que ocorrem antes do sinal ring.</li>
+</ul>
+<p>Se o <strong>cidstart</strong> for configurado como dtmf, o nível do sinal da linha precisa ser ajustado para a correta identificação dos tons DTMF. Este ajuste ocorre através do parâmetro <strong>dtmfcidlevel</strong>. O padrão deste padâmetro é 256, porém pode ser ajustado conforme sua necessidade, quanto maior o valor menor será a detecção de falsos tons DTMF.</p>
+<p>Segue abaixo um exemplo dessa configuração no arquivo <strong>/etc/asterisk/chan_dahdi.conf</strong>.</p>
+<p>[sourcecode language="shell"][channels]<br />
+...<br />
+usecallerid=yes<br />
+cidsignalling=bell<br />
+cidstart=ring<br />
+...<br />
+[/sourcecode]</p>
+<p><em>Nota: "..." indica outras configurações não relacionadas a identificação do caller ID.</em></p>
+<h2>Identificando o caller ID em NetFone, VIVO e OI</h2>
+<p>Segue abaixo o trecho de parâmetros do arquivo o <strong>/etc/asterisk/chan_dahdi.conf</strong> para que ocorra a identificação correta do caller ID</p>
+<p>[sourcecode language="shell"][channels]<br />
+...<br />
+usecallerid=yes<br />
+cidsignalling=dtmf<br />
+cidstart=dtmf<br />
+dtmfcidlevel=7640<br />
+...<br />
+[/sourcecode]</p>
+<h2>Exemplo de configuração, e log na console do Asterisk</h2>
+<p>Segue abaixo um trecho do arquivo extensions.conf</p>
+<p>[sourcecode language="shell"]exten = s,1,NoOP(Chamada entrando ${CALLERID(num)})<br />
+exten = s,n,Dial(SIP/2000,15,r)<br />
+[/sourcecode]</p>
+<p>Saída em tela ao entrar a ligação. Nível verbose do asterisk definido como 4.</p>
+<p>[sourcecode language="shell"] == Starting DTMF CID detection on channel 1<br />
+ -- Starting simple switch on 'DAHDI/1-1'<br />
+ -- Executing [s@default:1] NoOp(&quot;DAHDI/1-1&quot;, &quot;Chamada entrando 04198xxxxxx&quot;) in new stack<br />
+ -- Executing [s@default:2] Dial(&quot;DAHDI/1-1&quot;, &quot;SIP/2000,15,r&quot;) in new stack<br />
+[/sourcecode]</p>
+<h2>Fonte para Troubleshooting</h2>
+<p><a href="http://kb.digium.com/articles/Configuration/Troubleshooting-missing-caller-ID-on-Analog-calls" target="_blank">http://kb.digium.com/articles/Configuration/Troubleshooting-missing-caller-ID-on-Analog-calls</a></p>

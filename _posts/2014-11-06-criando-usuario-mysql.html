@@ -1,0 +1,53 @@
+---
+layout: post
+title: Criando usuário no MySQL
+date: 2014-11-06 12:11:54.000000000 -02:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- MySQL
+tags: []
+meta:
+  _edit_last: '1'
+  _syntaxhighlighter_encoded: '1'
+  _yoast_wpseo_title: Criando usuário no MySQL
+  _yoast_wpseo_metadesc: Aprenda a criar e definir as permissões de um usuário no
+    banco de dados MySQL através da linha de comando.
+  _av_alb_posts_elements_state: a:0:{}
+  _av_el_mgr_version: '1.0'
+  _av_alb_element_mgr_version: 1.0.1
+  _av_css_styles: a:6:{s:7:"post_id";i:1161;s:8:"css_file";s:13:"post-1161.css";s:9:"timestamp";s:0:"";s:6:"status";s:6:"no_css";s:13:"processed_ids";a:0:{}s:13:"include_posts";a:0:{}}
+author:
+  login: helvio
+  email: helvio_junior@hotmail.com
+  display_name: Helvio Junior - M4v3r1ck - OSCE3 (OSEP + OSED + OSWE), OSCE, OSCP,
+    eCXD, eMAPT, CEH
+  first_name: Helvio
+  last_name: Junior - M4v3r1ck - OSCE3 (OSEP + OSED + OSWE), OSCE, OSCP, eCXD, eMAPT,
+    CEH
+permalink: "/it/mysql/criando-usuario-mysql/"
+---
+<h3>Criando usuário</h3>
+<p>[sourcecode language="shell"]CREATE USER 'nome_do_usuario'@'localhost' IDENTIFIED BY 'senha_do_usuario';<br />
+[/sourcecode]</p>
+<p>Este exemplo demostra como criar um usuário que terá permissão de acesso somente da própria maquina (localhost) e definindo sua senha.</p>
+<p>Veremos no próximo exemplo como criar um usuário que tenha permissão de acesso (como origem do acesso) vindo de qualquer endereço IP.</p>
+<p>[sourcecode language="shell"]CREATE USER 'nome_do_usuario'@'%' IDENTIFIED BY 'senha_do_usuario';<br />
+[/sourcecode]</p>
+<h3>Definindo permissão de acesso a uma base de dados</h3>
+<p>Neste primeiro exemplo veremos como definir as permissões para que o usuário tenha acesso total porém somente a uma base de dados e o acesso vindo da própria maquina.</p>
+<p>[sourcecode language="shell"]GRANT ALL PRIVILEGES ON database_name.* TO 'nome_do_usuario'@'localhost';<br />
+[/sourcecode]</p>
+<p><span style="line-height: 1.5;">Seguindo a mesma lógica, será definido a permissão porém para acesso a partir de qualquer IP.</span></p>
+<p>[sourcecode language="shell"]GRANT ALL PRIVILEGES ON database_name.* TO 'nome_do_usuario'@'%';<br />
+[/sourcecode]</p>
+<h3>Definindo permissão de acesso como root</h3>
+<p>Por fim veremos como dar permissão como root a este usuário mas com o acesso vindo da própria maquina.</p>
+<p>[sourcecode language="shell"]GRANT ALL PRIVILEGES ON *.* TO 'nome_do_usuario'@'localhost';<br />
+[/sourcecode]</p>
+<p>Seguindo a mesma lógica, será definido a permissão porém para acesso a partir de qualquer IP.</p>
+<p>[sourcecode language="shell"]GRANT ALL PRIVILEGES ON *.* TO 'nome_do_usuario'@'%';<br />
+[/sourcecode]</p>

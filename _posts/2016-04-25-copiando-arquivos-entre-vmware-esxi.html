@@ -1,0 +1,58 @@
+---
+layout: post
+title: Copiando arquivos entre servidores VMWare ESXi
+date: 2016-04-25 19:17:12.000000000 -03:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories: []
+tags: []
+meta:
+  _edit_last: '1'
+  _yoast_wpseo_metadesc: Aprenda passo a passo como configurar o VMWare ESXi para
+    liberar cópia de arquivos entre servidores usando SCP.
+  _aviaLayoutBuilder_active: ''
+  _aviaLayoutBuilderCleanData: ''
+  layout: ''
+  sidebar: ''
+  footer: ''
+  header_title_bar: ''
+  header_transparency: ''
+  _avia_hide_featured_image: '0'
+  _av_alb_posts_elements_state: a:0:{}
+  _av_el_mgr_version: '1.0'
+  _av_alb_element_mgr_version: 1.0.1
+  _av_css_styles: a:6:{s:7:"post_id";i:1481;s:8:"css_file";s:13:"post-1481.css";s:9:"timestamp";s:0:"";s:6:"status";s:6:"no_css";s:13:"processed_ids";a:0:{}s:13:"include_posts";a:0:{}}
+author:
+  login: helvio
+  email: helvio_junior@hotmail.com
+  display_name: Helvio Junior - M4v3r1ck - OSCE3 (OSEP + OSED + OSWE), OSCE, OSCP,
+    eCXD, eMAPT, CEH
+  first_name: Helvio
+  last_name: Junior - M4v3r1ck - OSCE3 (OSEP + OSED + OSWE), OSCE, OSCP, eCXD, eMAPT,
+    CEH
+permalink: "/uncategorized/copiando-arquivos-entre-vmware-esxi/"
+---
+<p>Neste post veremos passo a passo como configurar um servidor VMWare ESXi para liberar cópia via SCP entre eles.</p>
+<p><!--more--></p>
+<p>Para realizar a cópia de arquivos entre servidores VMWare ESXi, é necessário a realização dos seguintes passos:</p>
+<ol>
+<li>Iniciar serviço SSH;</li>
+<li>Liberação do firewall para permitir as conexões SSH;</li>
+</ol>
+<p>&nbsp;</p>
+<h2>Inicie o servidor SSH</h2>
+<p>Na console do vSphere, Selecione o seu servidor, clique em <strong>Configuration</strong> -&gt; <strong>Security Profile</strong>, e depois na sessão <strong>Services</strong> clique em <strong>Properties...</strong></p>
+<p><a href="http://www.helviojunior.com.br/wp-content/uploads/2016/04/vmware-ssh-service.png"><img class="alignnone wp-image-1484 size-medium" src="{{ site.baseurl }}/assets/2016/04/vmware-ssh-service-300x162.png" alt="vmware-ssh-service" width="300" height="162" /></a></p>
+<p>&nbsp;</p>
+<p>Selecione o serviço SSH e configure para iniciar automaticamente.</p>
+<p><a href="http://www.helviojunior.com.br/wp-content/uploads/2016/04/vmware-ssh-service-2.png"><img class="alignnone wp-image-1485 size-medium" src="{{ site.baseurl }}/assets/2016/04/vmware-ssh-service-2-281x300.png" alt="vmware-ssh-service-2" width="281" height="300" /></a></p>
+<p><a href="http://www.helviojunior.com.br/wp-content/uploads/2016/04/vmware-ssh-service-3.png"><img class="alignnone wp-image-1486 size-medium" src="{{ site.baseurl }}/assets/2016/04/vmware-ssh-service-3-300x200.png" alt="vmware-ssh-service-3" width="300" height="200" /></a></p>
+<p>&nbsp;</p>
+<h2>Configure o Firewall para permitir as conexões</h2>
+<p>Na console do vSphere, Selecione o seu servidor, clique em <strong>Configuration</strong> -&gt; <strong>Security Profile</strong>, e depois na sessão <strong>Firewall </strong>clique em <strong>Properties...</strong></p>
+<p><a href="http://www.helviojunior.com.br/wp-content/uploads/2016/04/vmware-ssh-firewall.png"><img class="alignnone wp-image-1482 size-medium" src="{{ site.baseurl }}/assets/2016/04/vmware-ssh-firewall-300x162.png" alt="vmware-ssh-firewall" width="300" height="162" /></a></p>
+<p>Selecione as 2 opções de liberação de SSH (Cliente e Servidor)</p>
+<p><a href="http://www.helviojunior.com.br/wp-content/uploads/2016/04/vmware-ssh-firewall-2.png"><img class="alignnone wp-image-1483 size-medium" src="{{ site.baseurl }}/assets/2016/04/vmware-ssh-firewall-2-281x300.png" alt="vmware-ssh-firewall-2" width="281" height="300" /></a></p>

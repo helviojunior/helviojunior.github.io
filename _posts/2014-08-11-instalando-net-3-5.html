@@ -1,0 +1,46 @@
+---
+layout: post
+title: Instalando .NET 3.5
+date: 2014-08-11 11:56:19.000000000 -03:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- IT
+tags: []
+meta:
+  _syntaxhighlighter_encoded: '1'
+  _edit_last: '1'
+  _av_alb_posts_elements_state: a:0:{}
+  _av_el_mgr_version: '1.0'
+  _av_alb_element_mgr_version: 1.0.1
+  _av_css_styles: a:6:{s:7:"post_id";i:1028;s:8:"css_file";s:13:"post-1028.css";s:9:"timestamp";s:0:"";s:6:"status";s:6:"no_css";s:13:"processed_ids";a:0:{}s:13:"include_posts";a:0:{}}
+author:
+  login: helvio
+  email: helvio_junior@hotmail.com
+  display_name: Helvio Junior - M4v3r1ck - OSCE3 (OSEP + OSED + OSWE), OSCE, OSCP,
+    eCXD, eMAPT, CEH
+  first_name: Helvio
+  last_name: Junior - M4v3r1ck - OSCE3 (OSEP + OSED + OSWE), OSCE, OSCP, eCXD, eMAPT,
+    CEH
+permalink: "/it/instalando-net-3-5/"
+---
+<p>Por uma falha no windows 8, 8.1 e 2012 não é possível realizar a instalação do .net 3.5 através da interface de gerenciamento gráfica.</p>
+<p>Sendo assim você poderá habilitar o .NET Framework 3.5 usando a ferramenta de linha de comando DISM (Gerenciamento e Manutenção de Imagens de Implantação) e especificando a mídia de instalação (imagem ISO ou DVD) com a qual o Windows 8 foi instalado.</p>
+<ol>
+<li>No Windows 8 ou no Windows Server 2012, abra uma janela do Prompt de Comando com credenciais administrativas (ou seja, escolha <strong>Executar como Administrador</strong>).</li>
+<li>Para instalar o .NET Framework 3.5 da mídia de instalação localizada no diretório D:\sources\sxs, use o seguinte comando:
+<p><em>DISM /Online /Enable-Feature /FeatureName:NetFx3 /All /LimitAccess /Source:d:\sources\sxs</em></p>
+<p>onde,</li>
+</ol>
+<ul>
+<ul>
+<li><strong>/Online</strong> segmenta o sistema operacional em execução (em vez de uma imagem offline do Windows).</li>
+<li><strong>/Enable-Feature /FeatureName:NetFx3</strong> especifica que você deseja habilitar o .NET Framework 3.5.</li>
+<li><strong>/All</strong> habilita todos os recursos pai do .NET Framework 3.5.</li>
+<li><strong>/LimitAccess</strong> impede que o DISM entre em contato com o Windows Update.</li>
+<li><strong>/Source</strong> especifica o local dos arquivos necessários para restaurar o recurso (neste exemplo, o diretório D:\sources\sxs).</li>
+</ul>
+</ul>

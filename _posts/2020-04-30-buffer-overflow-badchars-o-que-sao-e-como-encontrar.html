@@ -1,0 +1,59 @@
+---
+layout: post
+title: Buffer Overflow - Badchars o que são e como encontrar?
+date: 2020-04-30 20:28:54.000000000 -03:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Criação de Exploits
+tags: []
+meta:
+  _edit_last: '1'
+  _yoast_wpseo_content_score: '60'
+  _yoast_wpseo_primary_category: '80'
+  _aviaLayoutBuilder_active: ''
+  _aviaLayoutBuilderCleanData: ''
+  layout: ''
+  sidebar: ''
+  footer: ''
+  header_title_bar: ''
+  header_transparency: ''
+  _avia_hide_featured_image: '0'
+  _av_alb_posts_elements_state: a:0:{}
+  _av_el_mgr_version: '1.0'
+  _av_alb_element_mgr_version: 1.0.1
+  _av_css_styles: a:6:{s:7:"post_id";i:2132;s:8:"css_file";s:13:"post-2132.css";s:9:"timestamp";s:0:"";s:6:"status";s:6:"no_css";s:13:"processed_ids";a:0:{}s:13:"include_posts";a:0:{}}
+author:
+  login: helvio
+  email: helvio_junior@hotmail.com
+  display_name: Helvio Junior - M4v3r1ck - OSCE3 (OSEP + OSED + OSWE), OSCE, OSCP,
+    eCXD, eMAPT, CEH
+  first_name: Helvio
+  last_name: Junior - M4v3r1ck - OSCE3 (OSEP + OSED + OSWE), OSCE, OSCP, eCXD, eMAPT,
+    CEH
+permalink: "/it/security/criacao-de-exploits/buffer-overflow-badchars-o-que-sao-e-como-encontrar/"
+---
+<p>Uma pergunta que frequentemente recebo e tenho em nossos treinamentos é com relação a Badchars, o que são, como são causados, e como encontrar. Neste post irei comentar com mais detalhes sobre este assunto.</p>
+<p><!--more--></p>
+<p><em><strong>Badchars</strong></em>, ou caracteres inválidos, não tem uma definição formal, mas é frequentemente utilizado para referenciar caracteres inválidos no processo de criação de exploits. Mas e dai? Continuei sem entender!</p>
+<p>Em poucas palavras e de forma direta <strong><em>badchar</em></strong> é todo caractere que quando passamos em um processo de exploit cause um dos comportamentos abaixo:</p>
+<ul>
+<li>Não seja salvo em memória (desapareça);</li>
+<li>Seja salvo um valor diferente do passado (altere); Ex.: mandamos o caractere A mas na posição em memória é salvo B;</li>
+<li>Adicione um caractere adjacente antes ou depois do caractere atual (se expanda); Ex.: mandamos o caractere A mas na posição em memória é salvo AB ou BA;</li>
+</ul>
+<p>Vamos detalhar este processo. Observe a imagem abaixo:</p>
+<p><a href="http://www.helviojunior.com.br/wp-content/uploads/2020/04/Badchars2.png"><img class="alignnone size-full wp-image-2136" src="{{ site.baseurl }}/assets/2020/04/Badchars2.png" alt="" width="1617" height="569" /></a></p>
+<p>Na imagem podemos ver que temos uma ou mais entrada de dados que passam por algum tratamento por parte da aplicação e posteriormente são salvos em memória. O badchar ocorre exatamente no ponto de recebimento e tratamento dos dados, e é diretamente ligado a como a aplicação foi escrita.</p>
+<p>Em uma aplicação, por exemplo, onde o campo que temos para passar dados é o campo HOST do cabeçalho http. Este campo por definição só deve aceitar um range pequeno de caracteres (A-Z, a-z, 0-9, ç, ., -, _ e etc...) mas não deve aceitar caracteres como quebra de linha (\r), retorno de carro (\r) entre outros. Se levarmos em consideração este caso, e se aplicação tiver implementando uma filtragem diversos caracteres (não pertencentes a estes caracteres permitidos) não serão salvos em memória. Desta forma estes caracteres que causam um dos comportamentos anômalos listados acima.</p>
+<p>Sendo assim, então basicamente o badchar é causado por um comportamento da aplicação (filtro, forma de cópia, tratamento e etc...) em que altera os dados entre o seu recebimento e o seu armazenamento em memória.</p>
+<h2>Identificando badchar</h2>
+<p>O processo de identificação de badchar basicamente consiste em enviar os dados para a aplicação e posteriormente verificar os dados armazenados em memória validando se o que foi passado realmente é o que foi salvo em memória.</p>
+<h2>Identificando badchar no windows</h2>
+<p>Para identificação de badchars em um processo de criação de exploit no windows nós temos um post explicando este processo, desta forma segue aqui o link do mesmo: <a href="https://www.helviojunior.com.br/it/security/criacao-de-exploits/criacao-de-exploits-parte-2-removendo-bad-chars-usando-immunity-debugger-e-mona/" target="_blank" rel="noopener noreferrer">Criação de Exploits - Parte 2 - Removendo bad chars usando Immunity Debugger e Mona</a></p>
+<h2>Identificando badchar no linux</h2>
+<p>Para identificação de badchars em um processo de criação de exploit no linux o procedimento é basicamente o mesmo realizado no windows, sendo assim recomendo que realize a leitura do tutorial acima. Porém no linux ao invés de utilizar o <strong><em>mona</em></strong> para realizar a criação do bytearray e comparar os dados (<em>!mona bytearray</em> e <em>!mona compare</em>) utilizamos os comandos <strong>bytearray</strong> e <strong>bincompare</strong> implementados por mim nos scripts adicionais do GEF (explico a instalação do mesmo neste tutorial <a href="https://www.helviojunior.com.br/it/security/criacao-de-exploits/buffer-overflow-linux-melhorando-o-gdb/" target="_blank" rel="noopener noreferrer">Buffer Overflow Linux - Melhorando o GDB</a>).</p>
+<p>&nbsp;</p>

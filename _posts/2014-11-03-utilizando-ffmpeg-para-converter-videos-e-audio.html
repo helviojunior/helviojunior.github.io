@@ -1,0 +1,126 @@
+---
+layout: post
+title: Utilizando FFmpeg para converter vídeos e audio
+date: 2014-11-03 07:46:39.000000000 -02:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Vídeo
+tags: []
+meta:
+  _edit_last: '1'
+  _syntaxhighlighter_encoded: '1'
+  _yoast_wpseo_title: Utilizando FFmpeg para converter vídeos e audio
+  _yoast_wpseo_metadesc: 'Utilize o FFmpeg para converter diversos formatos de vídeo
+    e audio como: DivX, AVI XviD, H.264 MP4, MOV, DV, 3GP, Sony PSP, MP2, MP3, AAC,
+    AC3, MPEG-1, MPEG-2 e outros.'
+  _yoast_wpseo_content_score: '90'
+  _yoast_wpseo_primary_category: ''
+  _aviaLayoutBuilder_active: ''
+  _aviaLayoutBuilderCleanData: ''
+  layout: ''
+  sidebar: ''
+  footer: ''
+  header_title_bar: ''
+  header_transparency: ''
+  _avia_hide_featured_image: '0'
+  _av_alb_posts_elements_state: a:0:{}
+  _av_el_mgr_version: '1.0'
+  _av_alb_element_mgr_version: 1.0.1
+  _av_css_styles: a:6:{s:7:"post_id";i:1147;s:8:"css_file";s:13:"post-1147.css";s:9:"timestamp";s:0:"";s:6:"status";s:6:"no_css";s:13:"processed_ids";a:0:{}s:13:"include_posts";a:0:{}}
+author:
+  login: helvio
+  email: helvio_junior@hotmail.com
+  display_name: Helvio Junior - M4v3r1ck - OSCE3 (OSEP + OSED + OSWE), OSCE, OSCP,
+    eCXD, eMAPT, CEH
+  first_name: Helvio
+  last_name: Junior - M4v3r1ck - OSCE3 (OSEP + OSED + OSWE), OSCE, OSCP, eCXD, eMAPT,
+    CEH
+permalink: "/video/utilizando-ffmpeg-para-converter-videos-e-audio/"
+---
+<p>O FFmpeg é uma ferramenta que pode ser utilizada para diversas ações com vídeo e audio (encode, decode, transcode, crop e etc...). O FFmpeg é uma poderosa ferramenta por ser multi plataformas (windows, linux, mac), pequena leve e portátil.</p>
+<p>Segue o link oficial da ferramenta: <a href="https://www.ffmpeg.org">https://www.ffmpeg.org</a></p>
+<p><!--more--></p>
+<p>Agora chega de bla, bla, bla... e vamos ao que interessa, os comandos de conversão.</p>
+<p>Segue o link para a página oficial do FFmpeg para download: <a href="https://www.ffmpeg.org/download.html">https://www.ffmpeg.org/download.html</a></p>
+<h3>Convertendo para MP4</h3>
+<p>[sourcecode language="shell"]ffmpeg -i source_file.mov -b:v 16M -vcodec h264 -pix_fmt yuv420p -acodec aac -strict -2 destination_file.mp4<br />
+[/sourcecode]</p>
+<p>Segue a explicação de cada parâmetro:</p>
+<ul>
+<li><strong>-i source_file.mov:</strong> Arquivo de entrada, ou seja, o vídeo original. <span style="line-height: 1.5;">Este exemplo demostra a conversão de um arquivo MOV para MP4, mas pode ser utilizado qualquer arquivo suportado pelo FFmpeg como entrada que o comando funcionará. Ex.: (avi, mov, 3gp e wmv). </span></li>
+<li><strong>-b:v 16M:</strong> Definição de um bitrate máximo de 16 Mbps para o vídeo</li>
+<li><strong>-vcodec h264:</strong> Utilização do coded h264 para saída de vídeo, ou seja, para o vídeo de destino ja convertido</li>
+<li><strong>-acodec aac -strict -2:</strong> Utilização do codec aac como saída de audio</li>
+<li><strong>destination_file.mp4:</strong> Arquivo do vídeo convertido</li>
+</ul>
+<h3>Convertendo para MP4 mantendo a qualidade</h3>
+<p>[sourcecode language="shell"]ffmpeg -i source_file.mov -vcodec h264 -crf 0 -pix_fmt yuv420p -acodec copy destination_file.mp4<br />
+[/sourcecode]</p>
+<p>Segue a explicação de cada parâmetro:</p>
+<ul>
+<li><strong>-i source_file.mov:</strong> Arquivo de entrada, ou seja, o vídeo original. Este exemplo demostra a conversão de um arquivo MOV para MP4, mas pode ser utilizado qualquer arquivo suportado pelo FFmpeg como entrada que o comando funcionará. Ex.: (avi, mov, 3gp e wmv).</li>
+<li><strong>-vcodec h264:</strong> Utilização do coded h264 para saída de vídeo, ou seja, para o vídeo de destino ja convertido</li>
+<li><strong>-crf 0:</strong> Utilizado para manter a qualidade sem se importar com o tamanho do arquivo. Valor padrão é 23</li>
+<li><strong>-acodec copy:</strong> Copia o áudio</li>
+<li><strong>destination_file.mp4:</strong> Arquivo do vídeo convertido</li>
+</ul>
+<h3></h3>
+<h3>Convertendo para WMV</h3>
+<p>[sourcecode language="shell"]ffmpeg -i source_file.3gp -b:v 16M -vcodec msmpeg4 -acodec wmav2 destination_file.wmv<br />
+[/sourcecode]</p>
+<p>Segue a explicação de cada parâmetro:</p>
+<ul>
+<li><strong>-i source_file.3gp:</strong> Arquivo de entrada, ou seja, o vídeo original. Este exemplo demostra a conversão de um arquivo 3GP para WMV, mas pode ser utilizado qualquer arquivo suportado pelo FFmpeg como entrada que o comando funcionará. Ex.: (avi, mov, mp4 e wmv).</li>
+<li><strong>-b:v 16M:</strong> Definição de um bitrate máximo de 16 Mbps para o vídeo</li>
+<li><strong>-vcodec msmpeg4:</strong> Utilização do codec msmpeg4 para saída de vídeo, ou seja, para o vídeo de destino ja convertido</li>
+<li><strong>-acodec wmav2:</strong> Utilização do coded wmav2 como saída de audio</li>
+<li><strong>destination_file.wmv:</strong> Arquivo do vídeo convertido</li>
+</ul>
+<h3>Convertendo para MP3</h3>
+<p>[sourcecode language="shell"]ffmpeg -i source_file.avi -b:a 16M -acodec libmp3lame destination_file.mp3<br />
+[/sourcecode]</p>
+<p>Segue a explicação de cada parâmetro:</p>
+<ul>
+<li><strong>-i source_file.avi:</strong> Arquivo de entrada, ou seja, o vídeo original. Este exemplo demostra a conversão de um arquivo AVI para MP3, mas pode ser utilizado qualquer arquivo suportado pelo FFmpeg como entrada que o comando funcionará. Ex.: (avi, mov, mp4 e wmv).</li>
+<li><strong>-b:a 16M:</strong> Definição de um bitrate máximo de 16 Mbps para o audio</li>
+<li><strong style="line-height: 1.5;">-acodec libmp3lame:</strong><span style="line-height: 1.5;"> Utilização do codec libmp3lame como saída de audio</span></li>
+<li><strong>destination_file.mp3:</strong> Arquivo de audio convertido</li>
+</ul>
+<h3>Extração/corte de parte de audio/vídeo</h3>
+<p>[sourcecode language="shell"]ffmpeg -ss 210 -t 30 -i source_file.mov -b:v 16M -vcodec h264 -acodec aac -strict -2 destination_file.mp4<br />
+[/sourcecode]</p>
+<p>Neste exemplo utilizamos o mesmo comando do primeiro exemplo (convertendo para MP4) porém extraindo somente uma parte do vídeo, porém os 2 parâmetros utilizado para este corte (-ss e -t) podem ser utilizado para todos os outros exemplos.</p>
+<p>Segue a explicação de cada parâmetro:</p>
+<ul>
+<li><strong>-ss 210:</strong> Início da área de corte, ou seja, o ponto do vídeo original que será convertido. Neste caso no segundo 210.</li>
+<li><strong>-t 30:</strong> O tamanho, em segundos, do novo vídeo a partir do ponto inicial definido no parâmetro anterior</li>
+<li><strong>-i source_file.mov:</strong> Arquivo de entrada, ou seja, o vídeo original. Este exemplo demostra a conversão de um arquivo MOV para MP4, mas pode ser utilizado qualquer arquivo suportado pelo FFmpeg como entrada que o comando funcionará. Ex.: (avi, mov, 3gp e wmv).</li>
+<li><strong>-b:v 16M:</strong> Definição de um bitrate máximo de 16 Mbps para o vídeo</li>
+<li><strong>-vcodec h264:</strong> Utilização do coded h264 para saída de vídeo, ou seja, para o vídeo de destino ja convertido</li>
+<li><strong>-acodec aac -strict -2:</strong> Utilização do codec aac como saída de audio</li>
+<li><strong>destination_file.mp4:</strong> Arquivo do vídeo convertido</li>
+</ul>
+<h3>Facilitando a vida em windows</h3>
+<p>Para usuários windows (como eu) fica maio chato ter que entrar no command, digitar tudo sempre que precisar converter, desta forma criei um bach <strong>.cmd </strong>que recebe como primeiro parâmetro o nome do arquivo a ser convertido, altera o nome do arquivo de saída conforme o script e realiza a conversão. Desta forma basta que eu arraste o arquivo a ser convertido para cima do arquivo CMD que ele faz o resto.</p>
+<p>Como fazer isso? Vamos la...</p>
+<p>Primeiro realize o download do FFmpeg no local de sua preferência. No meu ambiente coloquei em <strong>C:\FFmpeg</strong>.</p>
+<p>Agora crie neste diretório um arquivo nomeado <strong>converte_para_mp4.cmd</strong> e adicione o seguinte conteúdo</p>
+<p>[sourcecode language="shell"]@echo off<br />
+SET _file=%1<br />
+SET _newFile=%_file:avi=mp4%<br />
+SET _newFile=%_newFile:AVI=mp4%<br />
+SET _newFile=%_newFile:MOV=mp4%<br />
+SET _newFile=%_newFile:mov=mp4%<br />
+SET _newFile=%_newFile:3GP=mp4%<br />
+SET _newFile=%_newFile:3gp=mp4%<br />
+SET _newFile=%_newFile:WMV=mp4%<br />
+SET _newFile=%_newFile:wmv=mp4%</p>
+<p>rem MOV to MP4<br />
+c:\FFmpeg\ffmpeg.exe -i %1 -b:v 16M -vcodec h264 -acodec aac -strict -2 %_newFile%<br />
+[/sourcecode]</p>
+<p>Agora para converter o seu vídeo basta arrastar o arquivo de vídeo para cima deste arquivo cmd conforme ilustrado na imagem abaixo</p>
+<p><a href="http://www.helviojunior.com.br/wp-content/uploads/2014/11/Convert.png"><img class="alignnone size-full wp-image-1157" src="{{ site.baseurl }}/assets/2014/11/Convert.png" alt="Convert" width="391" height="135" /></a></p>

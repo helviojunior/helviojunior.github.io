@@ -1,0 +1,56 @@
+---
+layout: post
+title: Configurando 802.1q VLAN Tagging no ubuntu até 14.04
+date: 2013-03-18 13:20:40.000000000 -03:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- IT
+tags: []
+meta:
+  _edit_last: '1'
+  _syntaxhighlighter_encoded: '1'
+  _yoast_wpseo_content_score: '60'
+  _yoast_wpseo_primary_category: ''
+  _aviaLayoutBuilder_active: ''
+  _aviaLayoutBuilderCleanData: ''
+  layout: ''
+  sidebar: ''
+  footer: ''
+  header_title_bar: ''
+  header_transparency: ''
+  _avia_hide_featured_image: '0'
+  _av_alb_posts_elements_state: a:0:{}
+  _av_el_mgr_version: '1.0'
+  _av_alb_element_mgr_version: 1.0.1
+  _av_css_styles: a:6:{s:7:"post_id";i:495;s:8:"css_file";s:12:"post-495.css";s:9:"timestamp";s:0:"";s:6:"status";s:6:"no_css";s:13:"processed_ids";a:0:{}s:13:"include_posts";a:0:{}}
+author:
+  login: helvio
+  email: helvio_junior@hotmail.com
+  display_name: Helvio Junior - M4v3r1ck - OSCE3 (OSEP + OSED + OSWE), OSCE, OSCP,
+    eCXD, eMAPT, CEH
+  first_name: Helvio
+  last_name: Junior - M4v3r1ck - OSCE3 (OSEP + OSED + OSWE), OSCE, OSCP, eCXD, eMAPT,
+    CEH
+permalink: "/it/configurando-802-1q-vlan-tagging-no-ubuntu/"
+---
+<p>1 - Realize a instalação do módulo</p>
+<p>[sourcecode language="shell"]sudo apt-get install vlan[/sourcecode]</p>
+<p>2 - Verifique se o módulo está carregado no kernel</p>
+<p>[sourcecode language="shell"]lsmod | grep 8021q[/sourcecode]</p>
+<p>3 - Se o módulo não tiver carregado, carregue com o seguinte comando:</p>
+<p>[sourcecode language="shell"]modprobe 8021q[/sourcecode]</p>
+<p>4 - Configure o módulo para iniciar automaticamente após o reboot</p>
+<p>[sourcecode language="shell"]sudo sh -c 'grep -q 8021q /etc/modules || echo 8021q >> /etc/modules'[/sourcecode]</p>
+<p>5 - Configure as interfaces editando o arquivo /etc/network/interfaces, onde X é o número correspondente a interface específica. O nome do device precisa conter o nome da interface física mais o caracter . (ponto) mais o ID da VLAN. Por exemplo, se o ID da VLAN é 192, e a interface física é eth0, então o nome do device será eth0.192:</p>
+<p>[sourcecode language="shell"]auto eth0.192<br />
+iface eth0.192 inet static<br />
+address 192.168.1.1<br />
+netmask 255.255.255.0<br />
+[/sourcecode]</p>
+<p>6 - Se houver a necessidade de configurar uma segunda VLAN, como por exemplo, VLAN ID 193, na mesma interface, adicione um novo trecho no arquivo /etc/network/interfaces com o device eth0.193 seguindo o mesmo modelo apresentado.</p>
+<p>7 - Reinicie as interfaces de rede para que o linux carregue as informações, com o seguinte comando:</p>
+<p>[sourcecode language="shell"]/etc/init.d/networking restart[/sourcecode]</p>

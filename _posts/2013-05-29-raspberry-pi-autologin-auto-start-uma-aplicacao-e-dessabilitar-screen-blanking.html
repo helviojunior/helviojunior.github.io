@@ -1,0 +1,61 @@
+---
+layout: post
+title: Raspberry Pi, AutoLogin, Auto start uma aplicação e dessabilitar Screen blanking
+date: 2013-05-29 16:54:17.000000000 -03:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- IT
+- Monitoramento
+- Zabbix
+tags: []
+meta:
+  _edit_last: '1'
+  _syntaxhighlighter_encoded: '1'
+  _av_alb_posts_elements_state: a:0:{}
+  _av_el_mgr_version: '1.0'
+  _av_alb_element_mgr_version: 1.0.1
+  _av_css_styles: a:6:{s:7:"post_id";i:613;s:8:"css_file";s:12:"post-613.css";s:9:"timestamp";s:0:"";s:6:"status";s:6:"no_css";s:13:"processed_ids";a:0:{}s:13:"include_posts";a:0:{}}
+author:
+  login: helvio
+  email: helvio_junior@hotmail.com
+  display_name: Helvio Junior - M4v3r1ck - OSCE3 (OSEP + OSED + OSWE), OSCE, OSCP,
+    eCXD, eMAPT, CEH
+  first_name: Helvio
+  last_name: Junior - M4v3r1ck - OSCE3 (OSEP + OSED + OSWE), OSCE, OSCP, eCXD, eMAPT,
+    CEH
+permalink: "/it/raspberry-pi-autologin-auto-start-uma-aplicacao-e-dessabilitar-screen-blanking/"
+---
+<p>Este post demonstra como configurar o Raspberry (quando em modo de tela gráfica - x-session) para iniciar automaticamente uma aplicação e prevenir que entre em modo de espera, proteção de tela ou desabilite o monitor.</p>
+<p><!--more--></p>
+<p><strong>Login automático</strong></p>
+<p>Maiores informações em: <a href="http://elinux.org/RPi_Debian_Auto_Login">http://elinux.org/RPi_Debian_Auto_Login</a></p>
+<p>Edite o arquivo <strong>/etc/rc.local</strong> e adicione a seguinte linha</p>
+<p>[sourcecode language="shell"]su meu_usuario -c startx[/sourcecode]</p>
+<p><strong>Desabilitando proteção de tela</strong></p>
+<p>Maiores informações em: <a href="http://raspberrypi.stackexchange.com/questions/752/how-do-i-prevent-the-screen-from-going-blank">http://raspberrypi.stackexchange.com/questions/752/how-do-i-prevent-the-screen-from-going-blank</a></p>
+<p>Instale o pacote xset</p>
+<p>[sourcecode language="shell"]apt-get install x11-xserver-utils[/sourcecode]</p>
+<p>Abra ou crie o arquivo <strong>~/.xinitrc</strong> e adicione o seguinte conteúdo</p>
+<p>[sourcecode language="shell"]xset s off # don't activate screensaver<br />
+xset -dpms # disable DPMS (Energy Star) features.<br />
+xset s noblank # don't blank the video device<br />
+exec /etc/alternatives/x-session-manager # start lxde[/sourcecode]</p>
+<p><strong>Auto run</strong></p>
+<p>Maiores informações em: <a href="http://blog.flowbuzz.com/2012/07/raspberry-pi-and-autostart.html">http://blog.flowbuzz.com/2012/07/raspberry-pi-and-autostart.html</a><br />
+Supondo que o usuário utilizado para iniciar o startx foi o <strong>pi</strong>, iremos realizar as configurações abaixo. Caso contrário altere para o /home do usuário desejado.</p>
+<p>[sourcecode language="shell"]cd /home/pi/.config/<br />
+mkdir autostart[/sourcecode]</p>
+<p>Crie um arquivo nomeado<strong> /home/pi/.config/autostart/.desktop</strong> e adicione o seguinte conteúdo</p>
+<p>[sourcecode language="shell"][Desktop Entry]<br />
+Type=Application<br />
+Name=AppName<br />
+Comment=<br />
+Exec=/filetorun<br />
+StartupNotify=false<br />
+Terminal=false<br />
+Hidden=false<br />
+[/sourcecode]</p>

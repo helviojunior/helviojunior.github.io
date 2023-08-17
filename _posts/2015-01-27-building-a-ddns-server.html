@@ -1,0 +1,87 @@
+---
+layout: post
+title: Criando um servidor de DDNS
+date: 2015-01-27 20:38:52.000000000 -02:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- IT
+tags: []
+meta:
+  _edit_last: '1'
+  _yoast_wpseo_title: Criando um servidor de DDNS (Dynamic DNS)
+  _yoast_wpseo_metadesc: Crie o seu próprio serviço de DDNS (Dynamic DNS) utilizando
+    seu próprio domíno e sua própria estrutura de DNS
+  _syntaxhighlighter_encoded: '1'
+  _av_alb_posts_elements_state: a:0:{}
+  _av_el_mgr_version: '1.0'
+  _av_alb_element_mgr_version: 1.0.1
+  _av_css_styles: a:6:{s:7:"post_id";i:1172;s:8:"css_file";s:13:"post-1172.css";s:9:"timestamp";s:0:"";s:6:"status";s:6:"no_css";s:13:"processed_ids";a:0:{}s:13:"include_posts";a:0:{}}
+author:
+  login: helvio
+  email: helvio_junior@hotmail.com
+  display_name: Helvio Junior - M4v3r1ck - OSCE3 (OSEP + OSED + OSWE), OSCE, OSCP,
+    eCXD, eMAPT, CEH
+  first_name: Helvio
+  last_name: Junior - M4v3r1ck - OSCE3 (OSEP + OSED + OSWE), OSCE, OSCP, eCXD, eMAPT,
+    CEH
+permalink: "/it/building-a-ddns-server/"
+---
+<p>Neste post veremos como realizar a criação de um servidor de DDNS (Dynamic DNS) para ambientes corporativos, ou seja, utilizando o seu próprio servidor de DNS e servidor Web e tendo como cliente qualquer plataforma (Windows, Linux, Unix, Android, iOS e etc...).</p>
+<p><!--more--></p>
+<p>Mas antes de começarmos a parte técnica é importante entendermos o que é o DDNS e para que serve. DDNS é o acrônimo para Dynamic Domain Name System, ou seja um DNS dinâmico, porém continua a pergunta o que isso faz? Um DNS dinâmico permite que o seu cliente possa atualizar a sua informação.</p>
+<p>Como posso usar isso na prática? Atualmente temos diversos provedores de internet de baixo custo que em geral utiliza IP váli dinâmico, ou seja, de tempos em tempos o ip é trocado. Quando usamos isso em um ambiente residencial não temos problemas, porém em um ambiente corporativo fica bem complicado de saber o ip válido de uma filial (por exemplo).</p>
+<p>Em geral para resolver este problema diversas empresas e administradores usam serviços gratuitos ou pagos para ter um DDNS como DyDNS, No-IP entre outros, para poder ter um nome legal e atualizado como filial1.no-ip.org onde toda vez que trocar o ip da filial este host estará atualizado, porém ao fazer isso você precisa instalar um cliente de terceiro em seu ambiente que nem sempre são multi-plataforma, e precisa usar um domínio (nome) atribuído pelo provedor de serviço.</p>
+<p>Sendo assim este post objetiva ensinar como fazer este mesmo processo  usando um servidor web IIS, seu servidor de DNS (qualquer um) e no lado do cliente um app qualquer que acesse uma url como wget, curl ou até um navegador como Internet Explorer, Chrome, etc...</p>
+<h2>Passo 1 - Criando servidor Web</h2>
+<p>Antes de iniciar se certifique que haja instalado o .NET 4.0 em seu servidor.</p>
+<p>Realize o download do arquivo <a title="DDNSWeb.zip" href="http://www.helviojunior.com.br/wp-content/uploads/2015/01/DDNSWeb.zip">DDNSWeb.zip</a> e extraia em seu servidor web em nosso ambiente faremos isso em <strong>c:\Inetpub\DDNSWeb\. </strong></p>
+<p>Agora acesse a console do IIS, e crie o site conforme o exemplo abaixo</p>
+<p><a href="http://www.helviojunior.com.br/wp-content/uploads/2015/01/site.png"><img class="alignnone  wp-image-1292" alt="site" src="{{ site.baseurl }}/assets/2015/01/site.png" width="419" height="403" /></a></p>
+<p>Após isso se certifique que o ResourcePool do seu site está definido para utilizar o .NET 4.0</p>
+<p><a href="http://www.helviojunior.com.br/wp-content/uploads/2015/01/site2.png"><img class="alignnone  wp-image-1279" alt="site2" src="{{ site.baseurl }}/assets/2015/01/site2.png" width="514" height="288" /></a></p>
+<p><span style="line-height: 1.5;">Agora veremos alguns trechos do arquivo </span><strong style="line-height: 1.5;">update.aspx.cs</strong><span style="line-height: 1.5;"> e o que alterar para o correto funcionamento do seu servidor DDNS</span></p>
+<p>[sourcecode language="csharp"]if (auth_key != &quot;authtest123&quot;)<br />
+ {<br />
+ Response.Status = &quot;403 Access denied&quot;;<br />
+ Response.StatusCode = 403;<br />
+ Response.End();<br />
+ return;<br />
+ }<br />
+[/sourcecode]</p>
+<p>No bloco de código acima é verificado uma chave de autenticação, essa chave é passada pelo cliente para incrementar a segurança e se certificar que o cliente pode realizar essa atualização. Com poucas alterações você pode realizar uma verificação mais rebuscada vinda de um banco de dados por exemplo.</p>
+<p>Ainda neste arquivo, você pode ver o código abaixo</p>
+<p>[sourcecode language="csharp"]Dictionary&lt;String, String&gt; hosts = new Dictionary&lt;string, string&gt;();<br />
+hosts.Add(&quot;aae5cd33-5b51-49af-8b10-6e88d5af92a8&quot;, &quot;filial1&quot;);<br />
+hosts.Add(&quot;759eacaa-f2d9-4324-86c4-b599a709890a&quot;, &quot;filial2&quot;);<br />
+[/sourcecode]</p>
+<p>este código é na verdade uma tabela de ID versus host, onde estamos definindo um ID para cada host que desejamos atualizar, sendo assim nosso cliente passará somente o ID, e o sistema identifica qual é o host que ele deve atualizar.</p>
+<p>O próximo trecho de código que veremos é a definição da sua zona DNS e o IP do seu servidor DNS. Em nosso exemplo a zona é teste.com.br e o servidor 192.168.254.200. Existe algumas questões de segurança do servidor DNS, mas comentarei no momento que estivermos realizando a configuração do DNS.</p>
+<p>[sourcecode language="csharp"]String dnsZone = &quot;teste.com.br&quot;;<br />
+IPAddress server = IPAddress.Parse(&quot;192.168.254.200&quot;);<br />
+[/sourcecode]</p>
+<h2>Passo 2 - Servidor DNS</h2>
+<p>Para que este aplicativo funcione o servidor DNS precisa permitir atualização dinâmica sem DNSSec, o que é inseguro, desta forma é altamente recomendado que você só libere isso em uma zona específica para DDNS, e que o seu servidor não libere a porta 53 TCP para a internet.</p>
+<p>Abra o gerenciador de DNS, e edite a sua zona alterando o parâmetro de atualização para permitir atualizações não seguras, conforme a imagem abaixo.</p>
+<p><a href="http://www.helviojunior.com.br/wp-content/uploads/2015/01/dns1.png"><img class="alignnone  wp-image-1282" alt="dns1" src="{{ site.baseurl }}/assets/2015/01/dns1.png" width="248" height="298" /></a></p>
+<h2></h2>
+<h2>Passo 3 - Configurando cliente</h2>
+<p>Na pratica não existe um cliente em que você precisa fazer o download, instalar e configurar, qualquer navegador web pode ser cliente neste projeto, como Google Chrome, Wget, cURL, firefox entre outros. Esse conceito permite que usemos softwares como o wget e cURL para automatizar a requisição de tempos em tempos para sempre manter nosso host atualizado.</p>
+<p>Mas antes de chegar neste ponto irei mostrar como montar a URL para prover a atualização, testa-la no Google Chrome, assim fica facil para você entender e aplicar a mesma URL em outros navegadores como wget, cURL e etc...</p>
+<p>A url de atualização é composta basicamente por 3 partes:</p>
+<ul>
+<li><strong>Host</strong>: Host do seu servidor web, pode nome dns ou IP.</li>
+<li><strong>Host_id</strong>: ID do host conforme configurado no passo 1;</li>
+<li><strong>Auth_key</strong>: Chave de autenticação conforme configurado no passo 1.</li>
+</ul>
+<p>Sendo assim a url compleca ficará assim: http://host_do_servidor/update/host_id/auth_key, usando os valores do nosso exemplo e supondo que nosso servidor web responda pelo ip 192.168.254.100 a url ficará conforme abaixo:</p>
+<p>[sourcecode language="csharp"]http://192.168.254.100/update/aae5cd33-5b51-49af-8b10-6e88d5af92a8/authtest123/<br />
+[/sourcecode]</p>
+<p>Agora coloque essa URL em seu navegador preferido, em nosso teste utilizarei o Google Chrome.</p>
+<p><a href="http://www.helviojunior.com.br/wp-content/uploads/2015/01/teste1.png"><img class="alignnone  wp-image-1285" alt="teste1" src="{{ site.baseurl }}/assets/2015/01/teste1.png" width="545" height="97" /></a><br />
+Se você recebeu como retorno um texto <strong>OK</strong>, isso indica que tudo está configurado corretamente e seu host foi atualizado com seu IP.<br />
+Conforme a imagem abaixo o registro do tipo A com nome host1 foi criado automaticamente na minha zona de DNS e tendo como valor o meu IP.</p>
+<p><a href="http://www.helviojunior.com.br/wp-content/uploads/2015/01/dns2.png"><img class="alignnone  wp-image-1286" alt="dns2" src="{{ site.baseurl }}/assets/2015/01/dns2.png" width="536" height="163" /></a></p>

@@ -1,0 +1,82 @@
+---
+layout: post
+title: Text to speech para asterisk usando Google Translate
+date: 2015-08-21 16:39:28.000000000 -03:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Asterisk
+- VoIP
+tags:
+- agi
+- asterisk
+- elastix
+- googletts
+- tts
+meta:
+  _edit_last: '1'
+  _yoast_wpseo_title: Text to speech para asterisk usando Google Translate
+  _syntaxhighlighter_encoded: '1'
+  _yoast_wpseo_metadesc: Neste tutorial aprenda a usar o Google Translate para converter
+    texto em áudio e tocar este áudio no Asterisk.
+  _aviaLayoutBuilder_active: ''
+  _aviaLayoutBuilderCleanData: ''
+  layout: ''
+  sidebar: ''
+  footer: ''
+  header_title_bar: ''
+  header_transparency: ''
+  _avia_hide_featured_image: '0'
+  _av_alb_posts_elements_state: a:0:{}
+  _av_el_mgr_version: '1.0'
+  _av_alb_element_mgr_version: 1.0.1
+  _av_css_styles: a:6:{s:7:"post_id";i:1334;s:8:"css_file";s:13:"post-1334.css";s:9:"timestamp";s:0:"";s:6:"status";s:6:"no_css";s:13:"processed_ids";a:0:{}s:13:"include_posts";a:0:{}}
+author:
+  login: helvio
+  email: helvio_junior@hotmail.com
+  display_name: Helvio Junior - M4v3r1ck - OSCE3 (OSEP + OSED + OSWE), OSCE, OSCP,
+    eCXD, eMAPT, CEH
+  first_name: Helvio
+  last_name: Junior - M4v3r1ck - OSCE3 (OSEP + OSED + OSWE), OSCE, OSCP, eCXD, eMAPT,
+    CEH
+permalink: "/voip/text-to-speech-for-asterisk-using-google-translate-2/"
+---
+<p><span style="line-height: 1.5;">Este script AGI foi desenvolvido para que você possa dar a capacidade do seu Asterisk falar com o seu usuário/cliente.</span></p>
+<p>Este script utiliza a plataforma do Google Translate para reinderizar (converter) um texto para audio, e posteriormente tocar este audio no Asterisk. Como este script utiliza a plataforma do Google Translate, você pode realizar este processo em diversas linguagens, para maiores informações verifique a documentação do Google.</p>
+<p><!--more--></p>
+<h2>Dependências</h2>
+<ul>
+<li>PHP5: PHP 5 para processamento dos scripts</li>
+<li>cURL: Biblioteca de acesso web</li>
+<li><span style="line-height: 1.5;">Perc: </span><span style="line-height: 1.5;">Biblioteca para acesso web através do PHP</span></li>
+<li>sox : Sound eXchange, aplicativo para conversão/processamento de audio</li>
+<li>mpg123 : MPEG Audio Player and decoder, aplicativo para conversão de MP3</li>
+<li>Acesso a internet para conectar a plataforma do Google e efetuar o download do audio</li>
+</ul>
+<h2>Instalando as dependências</h2>
+<p>[sourcecode language="shell"]apt-get install -y php-http php5-dev libcurl3 libpcre3-dev libcurl4-openssl-dev mpg123 sox<br />
+pecl install pecl_http-1.7.6<br />
+[/sourcecode]</p>
+<p>Edite o arquivo <strong>/etc/php5/cli/php.ini</strong> adicionando a linha abaixo</p>
+<p>[sourcecode language="shell"]extension=http.so<br />
+[/sourcecode]</p>
+<h2>Instalando o script AGI</h2>
+<p>Antes de instalar o script AGI verifique o diretório agi-bin do seu Asterisk, geralmente o padrão é <strong>/var/lib/asterisk/agi-bin/</strong>, essa informação pode ser encontrada em <strong>/etc/asterisk/asterisk.conf</strong>. Considerando que este é o diretório padrão execute os comandos abaixo:</p>
+<p>[sourcecode language="shell"]wget http://www.helviojunior.com.br/wp-content/uploads/2015/08/googletts.tgz<br />
+tar -xzvf googletts.tgz -C /var/lib/asterisk/agi-bin/<br />
+chmod 777 /var/lib/asterisk/agi-bin/googletts.php<br />
+[/sourcecode]</p>
+<h2>Utilização</h2>
+<p><strong>agi(googletts.php,texto,[linguagem]): </strong>Este comando irá executar o script googletts.php que utilizar-a o Google Translate para converter texto para áudio e tocar esse áudio para o cliente. O Parâmetro linguagem é opcional, caso não definido o script utilizará a linguagem deste canal no Asterisk.</p>
+<p><span style="line-height: 1.5;">Exemplos de utilização no plano de discagem (dialplan) do Asterisk:</span></p>
+<p>[sourcecode language="shell"]exten =&gt; 1234,1,Answer()<br />
+  ;;Toca a mensagem usando a linguagem padrão deste canal:<br />
+exten =&gt; 1234,n,agi(googletts.php,&quot;Este é um exemplo simples.&quot;)<br />
+  ;;Toca a mensagem em Portugês:<br />
+exten =&gt; 1234,n,agi(googletts.php,&quot;Este é um exemplo simples usando Google TTS em português.&quot;,pt-BR)<br />
+  ;;Toca a mensagem em inglês:<br />
+exten =&gt; 1234,n,agi(googletts.php,&quot;This is a simple google text to speech test in english.&quot;,en)<br />
+[/sourcecode]</p>

@@ -1,0 +1,136 @@
+---
+layout: post
+title: Criando documentação em C# com doxygen (html e pdf)
+date: 2013-10-26 12:46:06.000000000 -02:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Desenvolvimento
+- IT
+tags: []
+meta:
+  _syntaxhighlighter_encoded: '1'
+  _edit_last: '1'
+  _av_alb_posts_elements_state: a:0:{}
+  _av_el_mgr_version: '1.0'
+  _av_alb_element_mgr_version: 1.0.1
+  _av_css_styles: a:6:{s:7:"post_id";i:778;s:8:"css_file";s:12:"post-778.css";s:9:"timestamp";s:0:"";s:6:"status";s:6:"no_css";s:13:"processed_ids";a:0:{}s:13:"include_posts";a:0:{}}
+author:
+  login: helvio
+  email: helvio_junior@hotmail.com
+  display_name: Helvio Junior - M4v3r1ck - OSCE3 (OSEP + OSED + OSWE), OSCE, OSCP,
+    eCXD, eMAPT, CEH
+  first_name: Helvio
+  last_name: Junior - M4v3r1ck - OSCE3 (OSEP + OSED + OSWE), OSCE, OSCP, eCXD, eMAPT,
+    CEH
+permalink: "/it/devel/criando-documentacao-em-csharp-com-doxygen/"
+---
+<p><a href="http://www.doxygen.org/">Doxygen </a>é um sistema  open-source para a geração de documentação e referência de código, o doxygen realiza a documentação de diversas linguagens como C#, C++, Java e etc. A documentação é gerada a partir de marcadores inseridos no próprio código-fonte.</p>
+<p>Escolhi este sistema pelos motivos acima e por ser amplamente utilizado e documentado pela comunidade.</p>
+<p><!--more--></p>
+<p><span style="line-height: 1.5;">Vamos ao passo a passo, primeiro realize o download do doxygen a partir do site oficial e realiza a instalação em seu windows. A instalação não requer comentários pois é extremamente simples e não necessita personalização.</span></p>
+<p>Existe diversas sintaxes para a utilização do doxygen , para este tutorial foi escolhida a de XML, todas as sintaxes podem serem encontradas no <a href="http://www.stack.nl/~dimitri/doxygen/manual/index.html">manual</a>.</p>
+<p>Segue abaixo um exemplo tipico da sintaxe de XML:</p>
+<p>[sourcecode language="csharp"]/// &lt;summary&gt;<br />
+/// Exemplo de descrição da classe.<br />
+/// &lt;/summary&gt;<br />
+class DoxygenSample<br />
+{<br />
+	/// &lt;summary&gt;<br />
+	/// Este método realiza a soma de 2 números<br />
+	/// &lt;/summary&gt;<br />
+	/// &lt;param name=&quot;a&quot;&gt;Primeiro número a ser somado&lt;/param&gt;<br />
+	/// &lt;param name=&quot;b&quot;&gt;Segundo número a ser somado&lt;/param&gt;<br />
+	/// &lt;returns&gt;Retorna a soma dos 2 números passados via parâmetro (a + b)&lt;/returns&gt;<br />
+	static Int32 Sum(Int32 a, Int32 b)<br />
+	{<br />
+		return a + b;<br />
+	}<br />
+}<br />
+[/sourcecode]</p>
+<p>Vamos ao exemplo prático, crie um novo projeto em C# conforme exemplo abaixo:</p>
+<p>[sourcecode language="csharp"]///<br />
+/// @file program.cs<br />
+/// &lt;summary&gt;<br />
+/// Decrição sucinta deste arquivo<br />
+/// &lt;/summary&gt;<br />
+/// Descrição detalhada deste arquivo<br />
+/// Esta descrição pode ter mais de uma linha<br />
+/// Conforme este exemplo<br />
+/// @author Helvio Junior &lt;helvio_junior@hotmail.com&gt;<br />
+/// @date 26/10/2013<br />
+/// $Id: program.cs, v1.0 2013/10/26 17:44:13 Helvio Junior $</p>
+<p>using System;<br />
+using System.Collections.Generic;<br />
+using System.Linq;<br />
+using System.Text;</p>
+<p>namespace DoxygenSample<br />
+{<br />
+    /// &lt;summary&gt;<br />
+    /// Uma descrição sobre a classe Program<br />
+    /// Você pode colocar o que deseja.<br />
+    /// &lt;/summary&gt;<br />
+    class Program<br />
+    {<br />
+        /// &lt;summary&gt;<br />
+        /// Método de inicialização do programa<br />
+        /// &lt;/summary&gt;<br />
+        /// &lt;param name=&quot;args&quot;&gt;Como parâmetro é recebido os argumentos passados via linha de comando pelo usuário&lt;/param&gt;<br />
+        static void Main(string[] args)<br />
+        {<br />
+            Console.WriteLine(Sum(10, 30));<br />
+        }</p>
+<p>        /// &lt;summary&gt;<br />
+        /// Este método realiza a soma de 2 números<br />
+        /// &lt;/summary&gt;<br />
+        /// &lt;param name=&quot;a&quot;&gt;Primeiro número a ser somado&lt;/param&gt;<br />
+        /// &lt;param name=&quot;b&quot;&gt;Segundo número a ser somado&lt;/param&gt;<br />
+        /// &lt;returns&gt;Retorna a soma dos 2 números passados via parâmetro (a + b)&lt;/returns&gt;<br />
+        static Int32 Sum(Int32 a, Int32 b)<br />
+        {<br />
+            return a + b;<br />
+        }<br />
+    }<br />
+}<br />
+[/sourcecode]</p>
+<p>Para os comandos especiais do cabeçalho do arquivo pode ser consultado a <a href="http://www.stack.nl/~dimitri/doxygen/manual/commands.html">documentação </a>do doxygen</p>
+<p>Agora que o código está pronto vamos a execução do doxygen. Abra o doxywizard, ele facilita bastante toda a configuração.</p>
+<p>Na janela inicial configure as seguintes opções:</p>
+<ul>
+<li>Diretório de execução (working directory)</li>
+<li>Na aba Wizard
+<ul>
+<li>Nome do projeto (project name)</li>
+<li>Sumário do projeto (project synopsis)</li>
+<li>Versão do projeto (project version)</li>
+<li>Diretório do código fonte (source code directory)</li>
+<li>Selecione a opção scan recursivo (scan recursively)</li>
+<li>Diretório de destino da documentação (destination directory)</li>
+</ul>
+</li>
+</ul>
+<p><a href="http://www.helviojunior.com.br/wp-content/uploads/2013/10/001.png"><img class="alignnone  wp-image-787" alt="Doxygen 001" src="{{ site.baseurl }}/assets/2013/10/001.png" width="545" height="439" /></a></p>
+<p>Clique em next ou no item mode e configure as seguintes opções:</p>
+<ul>
+<li>Todas as entidades (all entities)</li>
+<li>Otimizado para C# (optimize for C# and java output)</li>
+</ul>
+<p><a href="http://www.helviojunior.com.br/wp-content/uploads/2013/10/002.png"><img class="alignnone  wp-image-788" alt="Doxygen 002" src="{{ site.baseurl }}/assets/2013/10/002.png" width="545" height="439" /></a></p>
+<p>Clique em Next ou em Output e configure conforme abaixo:</p>
+<p><a href="http://www.helviojunior.com.br/wp-content/uploads/2013/10/003.png"><img class="alignnone  wp-image-790" alt="Doxygen 003" src="{{ site.baseurl }}/assets/2013/10/003.png" width="545" height="440" /></a></p>
+<p>Clique em next ou em Diagrams e configure conforme abaixo:</p>
+<p><a href="http://www.helviojunior.com.br/wp-content/uploads/2013/10/004.png"><img class="alignnone  wp-image-791" alt="Doxygen 004" src="{{ site.baseurl }}/assets/2013/10/004.png" width="545" height="440" /></a></p>
+<p>Por último clique na aba Expert depois em build e selecione todas as opções conforme imagem abaixo:</p>
+<p><a href="http://www.helviojunior.com.br/wp-content/uploads/2013/10/005.png"><img class="alignnone  wp-image-792" alt="Doxygen 005" src="{{ site.baseurl }}/assets/2013/10/005.png" width="545" height="517" /></a></p>
+<p>Toda a configuração está pronta, basta agora ir na aba run e clique no botão run doxygen:</p>
+<p><a href="http://www.helviojunior.com.br/wp-content/uploads/2013/10/006.png"><img class="alignnone  wp-image-793" alt="Doxygen 006" src="{{ site.baseurl }}/assets/2013/10/006.png" width="545" height="439" /></a></p>
+<p>Para visualizar a documentação clique em Show HTML output. A documentação gerada é semelhante as imagens abaixo:</p>
+<p><a href="http://www.helviojunior.com.br/wp-content/uploads/2013/10/007.png"><img class="alignnone  wp-image-794" alt="Doxygen 007" src="{{ site.baseurl }}/assets/2013/10/007.png" width="357" height="307" /></a></p>
+<p><a href="http://www.helviojunior.com.br/wp-content/uploads/2013/10/010.png"><img class="alignnone  wp-image-805" alt="Doxygen 010" src="{{ site.baseurl }}/assets/2013/10/010.png" width="434" height="257" /></a></p>
+<p><a href="http://www.helviojunior.com.br/wp-content/uploads/2013/10/008.png"><img class="alignnone  wp-image-795" alt="Doxygen 008" src="{{ site.baseurl }}/assets/2013/10/008.png" width="344" height="939" /></a></p>
+<p>Para gerar a documentação em PDF é necessário a instalação do Miktex disponível no site oficial <a href="http://www.miktex.org/">http://www.miktex.org/</a>.</p>
+<p>Após a geração da documentação através do doxygen 2 sub-diretórios são criados dentro diretório escolhido para saída da documentação (html e latex) onde HTML tem a documentação mostrada acima e o latex é a preparação para a geração do PDF.</p>
+<p>Após a instalação do miktex, entre no diretório latex e execute o arquivo bat nomeado make.bat o arquivo refman.pdf será gerado.</p>

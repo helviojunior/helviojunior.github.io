@@ -1,0 +1,66 @@
+---
+layout: post
+title: Restaurando MySQL com informações de progresso
+date: 2017-12-29 13:22:43.000000000 -02:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- MySQL
+tags: []
+meta:
+  _edit_last: '1'
+  _syntaxhighlighter_encoded: '1'
+  _yoast_wpseo_metadesc: Aprenda como ter um status/progresso em uma restauração de
+    banco de dados MySQL
+  _yoast_wpseo_content_score: '60'
+  _yoast_wpseo_primary_category: '54'
+  _aviaLayoutBuilder_active: ''
+  _aviaLayoutBuilderCleanData: ''
+  layout: ''
+  sidebar: ''
+  footer: ''
+  header_title_bar: ''
+  header_transparency: ''
+  _avia_hide_featured_image: '0'
+  _av_alb_posts_elements_state: a:0:{}
+  _av_el_mgr_version: '1.0'
+  _av_alb_element_mgr_version: 1.0.1
+  _av_css_styles: a:6:{s:7:"post_id";i:1709;s:8:"css_file";s:13:"post-1709.css";s:9:"timestamp";s:0:"";s:6:"status";s:6:"no_css";s:13:"processed_ids";a:0:{}s:13:"include_posts";a:0:{}}
+author:
+  login: helvio
+  email: helvio_junior@hotmail.com
+  display_name: Helvio Junior - M4v3r1ck - OSCE3 (OSEP + OSED + OSWE), OSCE, OSCP,
+    eCXD, eMAPT, CEH
+  first_name: Helvio
+  last_name: Junior - M4v3r1ck - OSCE3 (OSEP + OSED + OSWE), OSCE, OSCP, eCXD, eMAPT,
+    CEH
+permalink: "/it/mysql/restaurando-mysql-com-informacoes-de-progresso/"
+---
+<p>Uma das formas mais comuns de realização de Backup de uma base de Dados MySQL é através do mydqldump, porém quando necessita restaurar uma base de dados você fica sem um status de quanto ja foi processado para saber a final quanto tempo levará o processo todo.</p>
+<p>Este artigo entende que fizemos o backup com mysqldump e o arquivo está compactado com Zgip.</p>
+<p>Sendo assim a forma mais comum de realizar um restore é com um dos comandos abaixo:</p>
+<p>[sourcecode language="shell"]cat backup.sql.gz | grep gunzip | mysql -u usuario -p<br />
+ou<br />
+zcat backup.sql.gz | mysql -u usuario -p<br />
+[/sourcecode]</p>
+<p>Porém nestes casos não temos nenhum status de quanto ja foi restaurado, sendo assim podemos usar a ferramenta DD (ja abordada em outro post aqui) para realizar a leitura do arquivo, e assim utilizar um sinal do linux para saber o quanto o DD ja leu o arquivo. Confuso? Então vamos aos comandos que tudo ficará mais claro.</p>
+<p>Comando de restauração:</p>
+<p>[sourcecode language="shell"]dd if=backup.sql.gz | grep gunzip | mysql -u usuario -p<br />
+[/sourcecode]</p>
+<p>Até aqui nenhuma novidade, só substituímos o cat pelo DD, a novidade vem agora, podemos usar o sinal -USR1 no processo do DD que ele imprimirá em tela o quanto ja leu do arquivo backup.sql.gz.</p>
+<p>Primeiramente vamos descobrir o Process ID (PID) do DD com o comando:</p>
+<p>[sourcecode language="shell"]ps aux | grep -i &quot;command\|dd if&quot; | grep -v mysql | grep -v grep<br />
+[/sourcecode]</p>
+<p>O Resultado do comando será algo parecido com a imagem abaixo:<br />
+<a href="http://www.helviojunior.com.br/wp-content/uploads/2017/12/ps.jpg"><img class="alignnone wp-image-1710 size-full" src="{{ site.baseurl }}/assets/2017/12/ps.jpg" alt="ps" width="929" height="115" /></a></p>
+<p>Agora de posse do PID podemos executar o comando mágico que trará quanto o nosso DD ja leu do arquivo</p>
+<p>[sourcecode language="shell"]kill -USR1 26711<br />
+[/sourcecode]</p>
+<p>Quando executado este comando, na janela em que está sendo executado o DD ele irá trazer um resultado semelhante a imagem abaixo:<br />
+<a href="http://www.helviojunior.com.br/wp-content/uploads/2017/12/kill.jpg"><img class="alignnone wp-image-1711 size-full" src="{{ site.baseurl }}/assets/2017/12/kill.jpg" alt="kill" width="926" height="87" /></a></p>
+<p>Agora para fechar com chave de outro vamos criar um comando que fica enviando este sinal a nosso processo de tempo em tempo.</p>
+<p>[sourcecode language="shell"] while :; do kill -USR1 26711; sleep 30; done<br />
+[/sourcecode]</p>

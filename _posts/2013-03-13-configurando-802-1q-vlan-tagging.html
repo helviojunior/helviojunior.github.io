@@ -1,0 +1,52 @@
+---
+layout: post
+title: Configurando 802.1q VLAN Tagging no linux
+date: 2013-03-13 21:14:35.000000000 -03:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- IT
+tags: []
+meta:
+  _edit_last: '1'
+  _syntaxhighlighter_encoded: '1'
+  _av_alb_posts_elements_state: a:0:{}
+  _av_el_mgr_version: '1.0'
+  _av_alb_element_mgr_version: 1.0.1
+  _av_css_styles: a:6:{s:7:"post_id";i:492;s:8:"css_file";s:12:"post-492.css";s:9:"timestamp";s:0:"";s:6:"status";s:6:"no_css";s:13:"processed_ids";a:0:{}s:13:"include_posts";a:0:{}}
+author:
+  login: helvio
+  email: helvio_junior@hotmail.com
+  display_name: Helvio Junior - M4v3r1ck - OSCE3 (OSEP + OSED + OSWE), OSCE, OSCP,
+    eCXD, eMAPT, CEH
+  first_name: Helvio
+  last_name: Junior - M4v3r1ck - OSCE3 (OSEP + OSED + OSWE), OSCE, OSCP, eCXD, eMAPT,
+    CEH
+permalink: "/it/configurando-802-1q-vlan-tagging/"
+---
+<p>1 - Verifique se o módulo está carregado no kernel</p>
+<p>[sourcecode language="csharp"]lsmod | grep 8021q[/sourcecode]</p>
+<p>2 - Se o módulo não tiver carregado, carregue com o seguinte comando:<br />
+[sourcecode language="csharp"]modprobe 8021q[/sourcecode]</p>
+<p>3 - Configure a interface física em /etc/sysconfig/network-scripts/ifcfg-ethX, onde X é o número correspondente a interface específica, como abaixo:<br />
+[sourcecode language="csharp"]DEVICE=ethX<br />
+TYPE=Ethernet<br />
+BOOTPROTO=none<br />
+ONBOOT=yes<br />
+[/sourcecode]</p>
+<p>4 - Configure a interface VLAN em /etc/sysconfig/network-scripts. O arquivo de configuração precisa conter o nome da interface física mais o caracter . (ponto) mais o ID da VLAN. Por exemplo, se o ID da VLAN é 192, e a interface física é eth0, então o arquivo de configuração terá como nome ifcfg-eth0.192:<br />
+[sourcecode language="csharp"]DEVICE=ethX.192<br />
+BOOTPROTO=static<br />
+ONBOOT=yes<br />
+IPADDR=192.168.1.1<br />
+NETMASK=255.255.255.0<br />
+USERCTL=no<br />
+NETWORK=192.168.1.0<br />
+VLAN=yes<br />
+[/sourcecode]</p>
+<p>5 - Se houver a necessidade de configurar uma segunda VLAN, como por exemplo, VLAN ID 193, na mesma interface, adicione um novo arquivo com o nome ifcfg-eth0.193 seguindo o mesmo modelo apresentado.</p>
+<p>6 - Reinicie as interfaces de rede para que i linux carregue as informações, com o seguinte comando:<br />
+[sourcecode language="csharp"]service network restart[/sourcecode]</p>

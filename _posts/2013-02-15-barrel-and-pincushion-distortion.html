@@ -1,0 +1,371 @@
+---
+layout: post
+title: Barrel and pincushion distortion
+date: 2013-02-15 21:21:52.000000000 -02:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Desenvolvimento
+- Fotografia
+- IT
+tags: []
+meta:
+  _topsy_long_url: http://www.helviojunior.com.br/fotografia/barrel-and-pincushion-distortion/
+  _syntaxhighlighter_encoded: '1'
+  _edit_last: '1'
+  topsy_short_url: http://bit.ly/WNwwoL
+  _av_alb_posts_elements_state: a:0:{}
+  _av_el_mgr_version: '1.0'
+  _av_alb_element_mgr_version: 1.0.1
+  _av_css_styles: a:6:{s:7:"post_id";i:445;s:8:"css_file";s:12:"post-445.css";s:9:"timestamp";s:0:"";s:6:"status";s:6:"no_css";s:13:"processed_ids";a:0:{}s:13:"include_posts";a:0:{}}
+author:
+  login: helvio
+  email: helvio_junior@hotmail.com
+  display_name: Helvio Junior - M4v3r1ck - OSCE3 (OSEP + OSED + OSWE), OSCE, OSCP,
+    eCXD, eMAPT, CEH
+  first_name: Helvio
+  last_name: Junior - M4v3r1ck - OSCE3 (OSEP + OSED + OSWE), OSCE, OSCP, eCXD, eMAPT,
+    CEH
+permalink: "/fotografia/barrel-and-pincushion-distortion/"
+---
+<p>Distorção em barril (barrel distortion) ocorre quando a ampliação no centro da lente é maior do que nas extremidades. Lentes olho de peixe (fisheye) produzem este tipo de distorção em resultado de uma cena hemisférica a ser projetada sobre uma superfície plana.</p>
+<p>O inverso da distorção em barril é conhecido como pincushion distortion ( distorção almofada de alfinetes) ou inverse barrel distortion.</p>
+<p>Para ilustrar estes 2 tipos de distorção vamos utilizar uma imagem com gradeado. Ao lado esquerdo tem-se a imagem original seguida dos efeitos barrel e pincushion respectivamente.</p>
+<p><a href="http://www.helviojunior.com.br/wp-content/uploads/2013/02/001.png"><img class="alignnone  wp-image-452" title="001" src="{{ site.baseurl }}/assets/2013/02/001-300x214.png" alt="" width="180" height="128" /></a><a href="http://www.helviojunior.com.br/wp-content/uploads/2013/02/002-0.1.png"><img class="alignnone  wp-image-453" title="002 (0.1)" src="{{ site.baseurl }}/assets/2013/02/002-0.1-300x214.png" alt="" width="180" height="128" /></a><a href="http://www.helviojunior.com.br/wp-content/uploads/2013/02/003-0.1.png"><img class="alignnone  wp-image-454" title="003 (-0.1)" src="{{ site.baseurl }}/assets/2013/02/003-0.1-300x214.png" alt="" width="180" height="128" /></a></p>
+<p>A motivação deste post foi não encontrar nenhum algoritmo interessante para C# (CSharp) realizando estas duas distorções, desta forma após realizar algumas leituras pela internet, e achar muitas formulas que não funcionavam ou estavam incompletas, resolvi criar meu próprio algoritmo. Neste post não entrarei em detalhes do algoritmo, mas somente na forma de utilização final dele, porém o código dele está completo e funcional abaixo.</p>
+<p><!--more--></p>
+<p>A chamada principal da função é a:</p>
+<p>[sourcecode language="csharp"]<br />
+BarrelDistortion(Bitmap sourceImage, double factor, Boolean autoCrop, Color backgroundColor);<br />
+[/sourcecode]</p>
+<p><strong>Onde:</strong><br />
+sourceImage é a imagem que será distorcida;<br />
+factor é o fator de distorção, este campo aceita valores de -1 até 1;<br />
+autoCrop define se será realizado o corte automático da imagem;<br />
+backgroundColor é utilizaso, caso não haja o corte automático da imagem, para preenchimento do fundo.</p>
+<p><strong>Exemplo 1:</strong><br />
+Neste exemplo será utilizado um fator 0.1 sem corte da imagem.</p>
+<p>[sourcecode language="csharp"]<br />
+Bitmap bmp = (Bitmap)Bitmap.FromFile(&quot;nome_do_arquivo.jpg&quot;);<br />
+bmp = ImageEfects.BarrelDistortion(bmp, 0.1, false, Color.White);<br />
+bmp.Save(&quot;images_distorcida.jpg&quot;);<br />
+bmp.Dispose();<br />
+[/sourcecode]</p>
+<p><a href="http://www.helviojunior.com.br/wp-content/uploads/2013/02/002-0.1.png"><img class="alignnone size-medium wp-image-453" title="002 (0.1)" src="{{ site.baseurl }}/assets/2013/02/002-0.1-300x214.png" alt="" width="300" height="214" /></a></p>
+<p>Pode-se observar que o resultado foi uma leve distorção pincushion.</p>
+<p><strong>Exemplo 2:</strong><br />
+Neste exemplo será utilizado um fator -0.1 sem corte da imagem.</p>
+<p>[sourcecode language="csharp"]<br />
+Bitmap bmp = (Bitmap)Bitmap.FromFile(&quot;nome_do_arquivo.jpg&quot;);<br />
+bmp = ImageEfects.BarrelDistortion(bmp, -0.1, false, Color.White);<br />
+bmp.Save(&quot;images_distorcida.jpg&quot;);<br />
+bmp.Dispose();<br />
+[/sourcecode]</p>
+<p><a href="http://www.helviojunior.com.br/wp-content/uploads/2013/02/003-0.1.png"><img class="alignnone size-medium wp-image-454" title="003 (-0.1)" src="{{ site.baseurl }}/assets/2013/02/003-0.1-300x214.png" alt="" width="300" height="214" /></a></p>
+<p>Pode-se observar que o resultado foi uma leve distorção de barril.</p>
+<p>Por estes 2 efeitos pode-se observar que o fator negativo implica na distorção barril e o positivo na distorção pincushion.</p>
+<p><strong>Exemplo 3:</strong><br />
+Neste exemplo será utilizado um fator 0.5 sem corte da imagem.</p>
+<p>[sourcecode language="csharp"]<br />
+Bitmap bmp = (Bitmap)Bitmap.FromFile(&quot;nome_do_arquivo.jpg&quot;);<br />
+bmp = ImageEfects.BarrelDistortion(bmp, 0.5, false, Color.White);<br />
+bmp.Save(&quot;images_distorcida.jpg&quot;);<br />
+bmp.Dispose();<br />
+[/sourcecode]</p>
+<p><a href="http://www.helviojunior.com.br/wp-content/uploads/2013/02/004-0.5.png"><img class="alignnone size-medium wp-image-460" title="004 (0.5)" src="{{ site.baseurl }}/assets/2013/02/004-0.5-300x214.png" alt="" width="300" height="214" /></a></p>
+<p><strong>Exemplo 4:</strong><br />
+Neste exemplo será utilizado um fator -0.5 sem corte da imagem.</p>
+<p>[sourcecode language="csharp"]<br />
+Bitmap bmp = (Bitmap)Bitmap.FromFile(&quot;nome_do_arquivo.jpg&quot;);<br />
+bmp = ImageEfects.BarrelDistortion(bmp, -0.5, false, Color.White);<br />
+bmp.Save(&quot;images_distorcida.jpg&quot;);<br />
+bmp.Dispose();<br />
+[/sourcecode]</p>
+<p><a href="http://www.helviojunior.com.br/wp-content/uploads/2013/02/005-0.5.png"><img class="alignnone size-medium wp-image-461" title="005 (-0.5)" src="{{ site.baseurl }}/assets/2013/02/005-0.5-300x214.png" alt="" width="300" height="214" /></a></p>
+<p><strong>Exemplo de corte:</strong><br />
+Os próximos exemplos utilizam o parâmetro de corte para não deixar áreas vazias na imagem. Em cada um deles será mostrado 2 imagens a primeira com um quadrado vermelho indicando onde será realizado o corte, e a outra, a imagem com o corte realizado.</p>
+<p><strong>Exemplo 5:</strong><br />
+Neste exemplo será utilizado um fator 0.1 com corte da imagem.</p>
+<p>[sourcecode language="csharp"]<br />
+Bitmap bmp = (Bitmap)Bitmap.FromFile(&quot;nome_do_arquivo.jpg&quot;);<br />
+bmp = ImageEfects.BarrelDistortion(bmp, 0.1, true, Color.White);<br />
+bmp.Save(&quot;images_distorcida.jpg&quot;);<br />
+bmp.Dispose();<br />
+[/sourcecode]</p>
+<p><a href="http://www.helviojunior.com.br/wp-content/uploads/2013/02/006-0.1.png"><img class="alignnone size-medium wp-image-464" title="006 (0.1)" src="{{ site.baseurl }}/assets/2013/02/006-0.1-300x214.png" alt="" width="300" height="214" /></a><a href="http://www.helviojunior.com.br/wp-content/uploads/2013/02/010-0.1.png"><img class="alignnone size-medium wp-image-466" title="010 (0.1)" src="{{ site.baseurl }}/assets/2013/02/010-0.1-300x214.png" alt="" width="300" height="214" /></a></p>
+<p><strong>Exemplo 6:</strong><br />
+Neste exemplo será utilizado um fator -0.1 com corte da imagem.</p>
+<p>[sourcecode language="csharp"]<br />
+Bitmap bmp = (Bitmap)Bitmap.FromFile(&quot;nome_do_arquivo.jpg&quot;);<br />
+bmp = ImageEfects.BarrelDistortion(bmp, -0.1, true, Color.White);<br />
+bmp.Save(&quot;images_distorcida.jpg&quot;);<br />
+bmp.Dispose();<br />
+[/sourcecode]</p>
+<p><a href="http://www.helviojunior.com.br/wp-content/uploads/2013/02/007-0.1.png"><img class="alignnone size-medium wp-image-465" title="007 (-0.1)" src="{{ site.baseurl }}/assets/2013/02/007-0.1-300x214.png" alt="" width="300" height="214" /></a><a href="http://www.helviojunior.com.br/wp-content/uploads/2013/02/011-0.1.png"><img class="alignnone size-medium wp-image-467" title="011 (-0.1)" src="{{ site.baseurl }}/assets/2013/02/011-0.1-300x214.png" alt="" width="300" height="214" /></a></p>
+<p><strong>Exemplo 7:</strong><br />
+Neste exemplo será utilizado um fator 0.5 com corte da imagem.</p>
+<p>[sourcecode language="csharp"]<br />
+Bitmap bmp = (Bitmap)Bitmap.FromFile(&quot;nome_do_arquivo.jpg&quot;);<br />
+bmp = ImageEfects.BarrelDistortion(bmp, 0.5, true, Color.White);<br />
+bmp.Save(&quot;images_distorcida.jpg&quot;);<br />
+bmp.Dispose();<br />
+[/sourcecode]</p>
+<p><a href="http://www.helviojunior.com.br/wp-content/uploads/2013/02/008-0.5.png"><img class="alignnone size-medium wp-image-468" title="008 (0.5)" src="{{ site.baseurl }}/assets/2013/02/008-0.5-300x214.png" alt="" width="300" height="214" /></a><a href="http://www.helviojunior.com.br/wp-content/uploads/2013/02/012-0.5.png"><img class="alignnone size-medium wp-image-469" title="012 (0.5)" src="{{ site.baseurl }}/assets/2013/02/012-0.5-300x214.png" alt="" width="300" height="214" /></a></p>
+<p><strong>Exemplo 8:</strong><br />
+Neste exemplo será utilizado um fator -0.5 com corte da imagem.</p>
+<p>[sourcecode language="csharp"]<br />
+Bitmap bmp = (Bitmap)Bitmap.FromFile(&quot;nome_do_arquivo.jpg&quot;);<br />
+bmp = ImageEfects.BarrelDistortion(bmp, -0.5, true, Color.White);<br />
+bmp.Save(&quot;images_distorcida.jpg&quot;);<br />
+bmp.Dispose();<br />
+[/sourcecode]</p>
+<p><a href="http://www.helviojunior.com.br/wp-content/uploads/2013/02/009-0.5.png"><img class="alignnone size-medium wp-image-470" title="009 (-0.5)" src="{{ site.baseurl }}/assets/2013/02/009-0.5-300x214.png" alt="" width="300" height="214" /></a><a href="http://www.helviojunior.com.br/wp-content/uploads/2013/02/013-0.5.png"><img class="alignnone size-medium wp-image-471" title="013 (-0.5)" src="{{ site.baseurl }}/assets/2013/02/013-0.5-300x214.png" alt="" width="300" height="214" /></a></p>
+<p><strong>Exemplo com fotos reais:</strong><br />
+Nestes exemplos será utilizado a foto abaixo:</p>
+<p><a href="http://www.helviojunior.com.br/wp-content/uploads/2013/02/foto1.jpg"><img class="alignnone size-medium wp-image-473" title="foto1" src="{{ site.baseurl }}/assets/2013/02/foto1-300x199.jpg" alt="" width="300" height="199" /></a></p>
+<p><strong>Fator 0.1 sem corte:</strong></p>
+<p><a href="http://www.helviojunior.com.br/wp-content/uploads/2013/02/014-0.1.jpg"><img class="alignnone size-medium wp-image-474" title="014 (0.1)" src="{{ site.baseurl }}/assets/2013/02/014-0.1-300x199.jpg" alt="" width="300" height="199" /></a></p>
+<p>Fator 0.1 com corte:</p>
+<p><a href="http://www.helviojunior.com.br/wp-content/uploads/2013/02/015-0.1.jpg"><img class="alignnone size-medium wp-image-475" title="015 (0.1)" src="{{ site.baseurl }}/assets/2013/02/015-0.1-300x199.jpg" alt="" width="300" height="199" /></a></p>
+<p><strong>Fator -0.1 sem corte:</strong></p>
+<p><a href="http://www.helviojunior.com.br/wp-content/uploads/2013/02/016-0.1.jpg"><img class="alignnone size-medium wp-image-476" title="016 (0.1)" src="{{ site.baseurl }}/assets/2013/02/016-0.1-300x199.jpg" alt="" width="300" height="199" /></a></p>
+<p><strong>Fator -0.1 com corte:</strong></p>
+<p><a href="http://www.helviojunior.com.br/wp-content/uploads/2013/02/017-0.1.jpg"><img class="alignnone size-medium wp-image-477" title="017 (0.1)" src="{{ site.baseurl }}/assets/2013/02/017-0.1-300x199.jpg" alt="" width="300" height="199" /></a></p>
+<p>Para finalizar segue o código completo do aplicativo.</p>
+<p>Download: <a href="http://www.helviojunior.com.br/wp-content/uploads/2013/02/Barrel.zip">Código fonte Barrel.cs</a></p>
+<p>Código:</p>
+<p>[sourcecode language="csharp"]<br />
+using System;<br />
+using System.Drawing;<br />
+using System.Drawing.Imaging;<br />
+using System.Drawing.Drawing2D;<br />
+using System.Runtime.InteropServices;</p>
+<p>namespace HelvioJunior<br />
+{<br />
+ class Program<br />
+ {<br />
+ static void Main(string[] args)<br />
+ {</p>
+<p>Bitmap bmp = (Bitmap)Bitmap.FromFile(&quot;test.jpg&quot;);<br />
+ bmp = BarrelDistortion(bmp, 0.1, false, Color.White);<br />
+ bmp.Save(&quot;new_test.jpg&quot;);<br />
+ bmp.Dispose();</p>
+<p>Console.WriteLine(&quot;Pressione ENTER para finalizar&quot;);<br />
+ Console.ReadLine();<br />
+ }</p>
+<p>static public Bitmap BarrelDistortion(Bitmap StartImage, double factor)<br />
+ {<br />
+ return BarrelDistortion(StartImage, factor, true, Color.Transparent);<br />
+ }</p>
+<p>static public Bitmap BarrelDistortion(Bitmap sourceImage, double factor, Boolean autoCrop, Color backgroundColor)<br />
+ {<br />
+ Bitmap StartImage = null;<br />
+ BitmapData srcBitmapData = null;<br />
+ Byte[] srcPixels = null;<br />
+ Byte[] dstPixels = null;<br />
+ Bitmap NewImage = null;<br />
+ BitmapData dstBitmapData = null;</p>
+<p>try<br />
+ {</p>
+<p>// Verifica se bpp (Bits Per Pixel) é 8, 24, ou 32<br />
+ int Depth = System.Drawing.Bitmap.GetPixelFormatSize(sourceImage.PixelFormat);<br />
+ if (Depth != 8 &amp;&amp; Depth != 24 &amp;&amp; Depth != 32)<br />
+ {<br />
+ throw new ArgumentException(&quot;Only 8, 24 and 32 bpp images are supported.&quot;);<br />
+ }</p>
+<p>// Recupera a contagem dos componentes de cor<br />
+ int cCount = Depth / 8;</p>
+<p>Size baseSize = new Size(sourceImage.Width, sourceImage.Height);</p>
+<p>//verifica se é uma imagem de baixa e precisa redimencionar para melhorar a qualidade<br />
+ //e não gerar serrilhamento da imagem<br />
+ Int32 maxSize = Math.Max(sourceImage.Width, sourceImage.Height);<br />
+ if (maxSize &lt; 3000)<br />
+ {<br />
+ float percent = 3000F / (float)maxSize;<br />
+ baseSize = new Size((Int32)((float)sourceImage.Width * percent), (Int32)((float)sourceImage.Height * percent));<br />
+ }</p>
+<p>StartImage = new Bitmap(baseSize.Width, baseSize.Height, sourceImage.PixelFormat);<br />
+ StartImage.SetResolution(sourceImage.HorizontalResolution, sourceImage.VerticalResolution);</p>
+<p>//Cria o objeto de desenho e fundo branco<br />
+ Graphics g = Graphics.FromImage(StartImage);<br />
+ g.SmoothingMode = SmoothingMode.AntiAlias;<br />
+ g.InterpolationMode = InterpolationMode.HighQualityBicubic;<br />
+ g.PixelOffsetMode = PixelOffsetMode.HighQuality;<br />
+ g.DrawImage(sourceImage, new Rectangle(-1, -1, baseSize.Width + 1, baseSize.Height + 1), 0, 0, sourceImage.Width, sourceImage.Height, GraphicsUnit.Pixel);<br />
+ g.Dispose();<br />
+ // Bloqueia a imagem de origem e copia para o array de bytes e libera a imagem de origem<br />
+ srcBitmapData = StartImage.LockBits(new Rectangle(0, 0, StartImage.Width, StartImage.Height), ImageLockMode.ReadOnly, StartImage.PixelFormat);<br />
+ srcPixels = new byte[StartImage.Width * StartImage.Height * (Depth / 8)];<br />
+ Marshal.Copy(srcBitmapData.Scan0, srcPixels, 0, srcPixels.Length);<br />
+ StartImage.UnlockBits(srcBitmapData);<br />
+ srcBitmapData = null;</p>
+<p>//Cria o array de bytes da imagem de destino<br />
+ dstPixels = new Byte[srcPixels.Length];</p>
+<p>//Preenche todo o quadro com a cor de fundo selecionada<br />
+ Int32 index = ((1 * StartImage.Width) + 1) * cCount; //index = ((Y * Width) + X) * cCount<br />
+ do<br />
+ {<br />
+ if (Depth == 32) // Para 32 bpp define Red, Green, Blue e Alpha<br />
+ {<br />
+ dstPixels[index++] = backgroundColor.B;<br />
+ dstPixels[index++] = backgroundColor.G;<br />
+ dstPixels[index++] = backgroundColor.R;<br />
+ dstPixels[index++] = backgroundColor.A; // a<br />
+ }<br />
+ if (Depth == 24) // Para 24 bpp define Red, Green e Blue<br />
+ {<br />
+ dstPixels[index++] = backgroundColor.B;<br />
+ dstPixels[index++] = backgroundColor.G;<br />
+ dstPixels[index++] = backgroundColor.R;<br />
+ }<br />
+ if (Depth == 8)<br />
+ // Para 8 bpp define o valor da cor (Red, Green and Blue como sendo a mesma coisa)<br />
+ {<br />
+ dstPixels[index++] = backgroundColor.B;<br />
+ }</p>
+<p>} while (index &lt; srcPixels.Length);<br />
+ //Calcula a amplitude máxima possível para a imagem e multiplica pelo fator desejados<br />
+ double amp = 0;<br />
+ double ang = Math.PI * 0.5;<br />
+ for (Int32 a = 0; a &lt; StartImage.Height; a++)<br />
+ {<br />
+ int y = (int)((StartImage.Height / 2) - amp * Math.Sin(ang));<br />
+ if ((y &lt; 0) || (y &gt; StartImage.Height))<br />
+ break;<br />
+ amp = a;<br />
+ }<br />
+ amp = (amp - 2) * (factor &lt; -1 ? -1 : (factor &gt; 1 ? 1 : factor));<br />
+ //Define variáveis que calcula os pontos de corte (se houver)<br />
+ Int32 x1, y1, x2, y2;<br />
+ x1 = StartImage.Width;<br />
+ y1 = StartImage.Height;<br />
+ x2 = 0;<br />
+ y2 = 0;</p>
+<p>//Copia pixel a pixel para as novas posições<br />
+ index = ((1 * StartImage.Width) + 1) * cCount;<br />
+ do<br />
+ {</p>
+<p>Int32 y = (Int32)((index / cCount) / StartImage.Width);<br />
+ Int32 x = (index / cCount) - (y * StartImage.Width);</p>
+<p>Point pt = NewPoint(new Point(x, y), StartImage.Width, StartImage.Height, amp, factor &lt; 0);</p>
+<p>//Valores para crop<br />
+ if (factor &gt;= 0)<br />
+ {<br />
+ if (x == StartImage.Width / 2)<br />
+ {<br />
+ if (pt.Y &lt; y1)<br />
+ y1 = pt.Y;</p>
+<p>if (pt.Y &gt; y2)<br />
+ y2 = pt.Y;<br />
+ }</p>
+<p>if (y == StartImage.Height / 2)<br />
+ {<br />
+ if (pt.X &lt; x1)<br />
+ x1 = pt.X;</p>
+<p>if (pt.X &gt; x2)<br />
+ x2 = pt.X;<br />
+ }<br />
+ }<br />
+ else<br />
+ {<br />
+ if ((x == 1) &amp;&amp; (y == 1))<br />
+ {<br />
+ y1 = pt.Y;<br />
+ x1 = pt.X;<br />
+ }</p>
+<p>if ((x == StartImage.Width - 1) &amp;&amp; (y == StartImage.Height - 1))<br />
+ {<br />
+ y2 = pt.Y;<br />
+ x2 = pt.X;<br />
+ }<br />
+ }</p>
+<p>//Indice de bytes onde será aplicada o pixel<br />
+ Int32 dstIndex = ((pt.Y * StartImage.Width) + pt.X) * cCount;</p>
+<p>if (Depth == 32)<br />
+ {<br />
+ dstPixels[dstIndex] = srcPixels[index++];<br />
+ dstPixels[dstIndex + 1] = srcPixels[index++];<br />
+ dstPixels[dstIndex + 2] = srcPixels[index++];<br />
+ dstPixels[dstIndex + 3] = srcPixels[index++]; // a<br />
+ }<br />
+ if (Depth == 24)<br />
+ {<br />
+ dstPixels[dstIndex] = srcPixels[index++];<br />
+ dstPixels[dstIndex + 1] = srcPixels[index++];<br />
+ dstPixels[dstIndex + 2] = srcPixels[index++];<br />
+ }<br />
+ if (Depth == 8)<br />
+ {<br />
+ dstPixels[dstIndex] = srcPixels[index++];<br />
+ }</p>
+<p>} while (index &lt; srcPixels.Length);</p>
+<p>//Cria a nova imagem com base no array de bytes previamente criado<br />
+ NewImage = new Bitmap(StartImage.Width, StartImage.Height, StartImage.PixelFormat);<br />
+ NewImage.SetResolution(StartImage.HorizontalResolution, StartImage.VerticalResolution);<br />
+ dstBitmapData = NewImage.LockBits(new Rectangle(0, 0, StartImage.Width, StartImage.Height), ImageLockMode.WriteOnly, StartImage.PixelFormat);<br />
+ Marshal.Copy(dstPixels, 0, dstBitmapData.Scan0, dstPixels.Length);<br />
+ NewImage.UnlockBits(dstBitmapData);</p>
+<p>/*<br />
+ // Para efeito de visualização, desenha o quadrado onde será realizado o corte<br />
+ Graphics g2 = Graphics.FromImage(NewImage);<br />
+ g2.SmoothingMode = SmoothingMode.AntiAlias;<br />
+ g2.InterpolationMode = InterpolationMode.HighQualityBicubic;<br />
+ g2.PixelOffsetMode = PixelOffsetMode.HighQuality;<br />
+ g2.DrawRectangle(new Pen(new SolidBrush(Color.Red), 3), new Rectangle(x1, y1, x2 - x1, y2 - y1));<br />
+ g2.Dispose();*/</p>
+<p>//Gera a imagem final, com crop ou coo o redimencionamento real<br />
+ Bitmap FinalImage = new Bitmap(sourceImage.Width, sourceImage.Height, StartImage.PixelFormat);<br />
+ NewImage.SetResolution(StartImage.HorizontalResolution, StartImage.VerticalResolution);</p>
+<p>Graphics g1 = Graphics.FromImage(FinalImage);<br />
+ g1.SmoothingMode = SmoothingMode.AntiAlias;<br />
+ g1.InterpolationMode = InterpolationMode.HighQualityBicubic;<br />
+ g1.PixelOffsetMode = PixelOffsetMode.HighQuality;</p>
+<p>//Realiza o corte se estiver habilitado o corte automático e houver necessidade de corte<br />
+ if ((autoCrop) &amp;&amp; ((x1 &gt; 0) || (y1 &gt; 0) || (x2 &lt; NewImage.Height) || (y2 &lt; NewImage.Height)))<br />
+ {<br />
+ Rectangle cropRect = new Rectangle(x1, y1, x2 - x1, y2 - y1);<br />
+ g1.DrawImage(NewImage, new Rectangle(-1, -1, FinalImage.Width + 1, FinalImage.Height + 1), cropRect.X, cropRect.Y, cropRect.Width, cropRect.Height, GraphicsUnit.Pixel);<br />
+ }<br />
+ else<br />
+ {<br />
+ g1.DrawImage(NewImage, new Rectangle(-1, -1, FinalImage.Width + 1, FinalImage.Height + 1), 0, 0, NewImage.Width, NewImage.Height, GraphicsUnit.Pixel);<br />
+ }</p>
+<p>g1.Dispose();<br />
+ g1 = null;</p>
+<p>NewImage = null;<br />
+ return FinalImage;<br />
+ }<br />
+ finally<br />
+ {<br />
+ srcBitmapData = null;<br />
+ srcPixels = null;<br />
+ dstPixels = null;<br />
+ dstBitmapData = null;<br />
+ }</p>
+<p>}</p>
+<p>private static Point NewPoint(Point AtualPoint, Int32 Width, Int32 Height, double Aplitude, Boolean inverse)<br />
+ {<br />
+ Point uP = AtualPoint;</p>
+<p>int pY, pX;<br />
+ double aY, aX;</p>
+<p>aY = aX = 0;</p>
+<p>double angX = Math.PI * 1 * (double)uP.X / (double)Width;<br />
+ double caX = Aplitude * ((((double)Height / 2F) - (double)uP.Y) / ((double)Height / 2F));</p>
+<p>double angY = Math.PI * 1 * (double)uP.Y / (double)Height;<br />
+ double caY = Aplitude * ((((double)Width / 2F) - (double)uP.X) / ((double)Width / 2F));</p>
+<p>if (inverse)<br />
+ {<br />
+ double iAng = Math.PI * -1 * 0.5;<br />
+ aX = (caX * Math.Sin(iAng));<br />
+ aY = (caY * Math.Sin(iAng));<br />
+ }</p>
+<p>pY = (int)(uP.Y + aX + caX * Math.Sin(angX));<br />
+ pX = (int)(uP.X + aY + caY * Math.Sin(angY));</p>
+<p>return new Point(pX, pY);</p>
+<p>}</p>
+<p>}<br />
+}<br />
+[/sourcecode]</p>

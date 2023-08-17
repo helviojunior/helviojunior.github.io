@@ -1,0 +1,144 @@
+---
+layout: post
+title: Como configurar o linux para utilizar todo o espaço em disco?
+date: 2020-04-08 17:26:53.000000000 -03:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- IT
+tags: []
+meta:
+  _edit_last: '1'
+  _yoast_wpseo_focuskw: Todo disco lvm ubuntu kali debian
+  _yoast_wpseo_metadesc: Como configurar o linux para utilizar todo o espaço em disco?
+    Aprenda como corrigir o tamanho do disco LVM que foi instalado não utilizando
+    todo o espaço dispoível.
+  _yoast_wpseo_linkdex: '33'
+  _yoast_wpseo_content_score: '90'
+  _yoast_wpseo_primary_category: ''
+  _aviaLayoutBuilder_active: ''
+  _aviaLayoutBuilderCleanData: ''
+  layout: ''
+  sidebar: ''
+  footer: ''
+  header_title_bar: ''
+  header_transparency: ''
+  _avia_hide_featured_image: '0'
+  _syntaxhighlighter_encoded: '1'
+  _av_alb_posts_elements_state: a:0:{}
+  _av_el_mgr_version: '1.0'
+  _av_alb_element_mgr_version: 1.0.1
+  _av_css_styles: a:6:{s:7:"post_id";i:2097;s:8:"css_file";s:13:"post-2097.css";s:9:"timestamp";s:0:"";s:6:"status";s:6:"no_css";s:13:"processed_ids";a:0:{}s:13:"include_posts";a:0:{}}
+author:
+  login: helvio
+  email: helvio_junior@hotmail.com
+  display_name: Helvio Junior - M4v3r1ck - OSCE3 (OSEP + OSED + OSWE), OSCE, OSCP,
+    eCXD, eMAPT, CEH
+  first_name: Helvio
+  last_name: Junior - M4v3r1ck - OSCE3 (OSEP + OSED + OSWE), OSCE, OSCP, eCXD, eMAPT,
+    CEH
+permalink: "/it/como-configurar-o-linux-para-utilizar-todo-o-espaco-em-disco/"
+---
+<p>Algumas distribuições baseadas no Debian como Ubuntu, Kali e etc... no processo de instalação quando utilizado LVM no processo de formatação o mesmo cria um LV (Logical Volume) com somente 4GB e deixando o restante do disco inutilizado. Neste post abordaremos os comandos necessários para expandir o volume bem como a partição ext4.</p>
+<p><!--more--></p>
+<p>Antes de iniciar o processo de correção vamos entender o comportamento e situação da maquina atual.</p>
+<p>Em meu ambiente realizei a instalação de um Ubuntu 18.04.4 LTS, conforme visualizado abaixo.</p>
+<p>[sourcecode language="shell"]root@M4v3r1ck:~# cat /etc/lsb-release<br />
+DISTRIB_ID=Ubuntu<br />
+DISTRIB_RELEASE=18.04<br />
+DISTRIB_CODENAME=bionic<br />
+DISTRIB_DESCRIPTION=&quot;Ubuntu 18.04.4 LTS&quot;<br />
+[/sourcecode]</p>
+<p>A instalação foi no modo Next, Next, Finish, de forma que não realizei nenhuma personalização ou alteração durante o wizard de instalação.</p>
+<p>Assim que finalizado a instalação posso verificar através do DF que o volume lógico não utiliza o tamanho total do meu disco.</p>
+<p>[sourcecode language="shell"]root@M4v3r1ck:~# df -h<br />
+Filesystem                         Size  Used Avail Use% Mounted on<br />
+udev                               463M     0  463M   0% /dev<br />
+tmpfs                               99M  1.1M   98M   2% /run<br />
+/dev/mapper/ubuntu--vg-ubuntu--lv  3.9G  3.2G  478M  88% /<br />
+tmpfs                              493M     0  493M   0% /dev/shm<br />
+tmpfs                              5.0M     0  5.0M   0% /run/lock<br />
+tmpfs                              493M     0  493M   0% /sys/fs/cgroup<br />
+/dev/loop0                          90M   90M     0 100% /snap/core/8268<br />
+/dev/sda2                          976M   77M  832M   9% /boot<br />
+tmpfs                               99M     0   99M   0% /run/user/0<br />
+[/sourcecode]</p>
+<p>Bem como podemos visualizar/confirmar a mesma condição com o pvdisplay, gvdisplay e lvdisplay</p>
+<p>[sourcecode language="shell"]root@M4v3r1ck:~# pvdisplay<br />
+  --- Physical volume ---<br />
+  PV Name               /dev/sda3<br />
+  VG Name               ubuntu-vg<br />
+  PV Size               &lt;19.00 GiB / not usable 0<br />
+  Allocatable           yes<br />
+  PE Size               4.00 MiB<br />
+  Total PE              4863<br />
+  Free PE               3839<br />
+  Allocated PE          1024<br />
+  PV UUID               mXnKPZ-kYUU-6nVL-bys8-1OhC-Sd2Q-CshTCg</p>
+<p>root@M4v3r1ck:~# vgdisplay ubuntu-vg<br />
+  --- Volume group ---<br />
+  VG Name               ubuntu-vg<br />
+  System ID<br />
+  Format                lvm2<br />
+  Metadata Areas        1<br />
+  Metadata Sequence No  2<br />
+  VG Access             read/write<br />
+  VG Status             resizable<br />
+  MAX LV                0<br />
+  Cur LV                1<br />
+  Open LV               1<br />
+  Max PV                0<br />
+  Cur PV                1<br />
+  Act PV                1<br />
+  VG Size               &lt;19.00 GiB<br />
+  PE Size               4.00 MiB<br />
+  Total PE              4863<br />
+  Alloc PE / Size       1024 / 4.00 GiB<br />
+  Free  PE / Size       3839 / &lt;15.00 GiB<br />
+  VG UUID               VQvN5o-ErRP-BrzE-htzN-cD5o-ig2Y-vLJG79</p>
+<p>root@M4v3r1ck:~# lvdisplay<br />
+  --- Logical volume ---<br />
+  LV Path                /dev/ubuntu-vg/ubuntu-lv<br />
+  LV Name                ubuntu-lv<br />
+  VG Name                ubuntu-vg<br />
+  LV UUID                qGLYII-fSE1-dMb4-Y8MF-5D0L-j3p2-WXXywh<br />
+  LV Write Access        read/write<br />
+  LV Creation host, time ubuntu-server, 2020-04-08 19:49:53 +0000<br />
+  LV Status              available<br />
+  # open                 1<br />
+  LV Size                4.00 GiB<br />
+  Current LE             1024<br />
+  Segments               1<br />
+  Allocation             inherit<br />
+  Read ahead sectors     auto<br />
+  - currently set to     256<br />
+  Block device           253:0<br />
+[/sourcecode]</p>
+<p>Agora podemos realizar a extensão, ou seja, aumentar o tamanho do volume lógico para que o mesmo utilize 100% do disco com o comando abaixo:</p>
+<p>[sourcecode language="shell"]root@M4v3r1ck:~# lvextend -l+100%FREE /dev/ubuntu-vg/ubuntu-lv<br />
+  Size of logical volume ubuntu-vg/ubuntu-lv changed from 4.00 GiB (1024 extents) to &lt;19.00 GiB (4863 extents).<br />
+  Logical volume ubuntu-vg/ubuntu-lv successfully resized.<br />
+[/sourcecode]</p>
+<p>E posteriormente redimensionar a nossa partição ext4 para utilizar 100% do novo espaço disponível no volume</p>
+<p>[sourcecode language="shell"]root@M4v3r1ck:~# resize2fs /dev/ubuntu-vg/ubuntu-lv<br />
+resize2fs 1.44.1 (24-Mar-2018)<br />
+Filesystem at /dev/ubuntu-vg/ubuntu-lv is mounted on /; on-line resizing required<br />
+old_desc_blocks = 1, new_desc_blocks = 3<br />
+The filesystem on /dev/ubuntu-vg/ubuntu-lv is now 4979712 (4k) blocks long.<br />
+[/sourcecode]</p>
+<p>E confirmar que todas as alterações surtiram com sucesso.</p>
+<p>[sourcecode language="shell"]root@M4v3r1ck:~# df -h<br />
+Filesystem                         Size  Used Avail Use% Mounted on<br />
+udev                               463M     0  463M   0% /dev<br />
+tmpfs                               99M  1.1M   98M   2% /run<br />
+/dev/mapper/ubuntu--vg-ubuntu--lv   19G  3.2G   15G  18% /<br />
+tmpfs                              493M     0  493M   0% /dev/shm<br />
+tmpfs                              5.0M     0  5.0M   0% /run/lock<br />
+tmpfs                              493M     0  493M   0% /sys/fs/cgroup<br />
+/dev/loop0                          90M   90M     0 100% /snap/core/8268<br />
+/dev/sda2                          976M   77M  832M   9% /boot<br />
+tmpfs                               99M     0   99M   0% /run/user/0<br />
+[/sourcecode]</p>

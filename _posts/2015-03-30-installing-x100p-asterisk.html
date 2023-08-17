@@ -1,0 +1,99 @@
+---
+layout: post
+title: Instalando placa X100P no Asterisk
+date: 2015-03-30 20:48:01.000000000 -03:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Asterisk
+- VoIP
+tags: []
+meta:
+  _edit_last: '1'
+  _yoast_wpseo_title: Instalando placa X100P no Asterisk
+  _yoast_wpseo_metadesc: Aprenda como realizar a instalação e configuração de placas
+    X100P e X101P Clone e como utiliza-las no Asterisk para realizar e receber ligações
+  _syntaxhighlighter_encoded: '1'
+  _av_alb_posts_elements_state: a:0:{}
+  _av_el_mgr_version: '1.0'
+  _av_alb_element_mgr_version: 1.0.1
+  _av_css_styles: a:6:{s:7:"post_id";i:1205;s:8:"css_file";s:13:"post-1205.css";s:9:"timestamp";s:0:"";s:6:"status";s:6:"no_css";s:13:"processed_ids";a:0:{}s:13:"include_posts";a:0:{}}
+author:
+  login: helvio
+  email: helvio_junior@hotmail.com
+  display_name: Helvio Junior - M4v3r1ck - OSCE3 (OSEP + OSED + OSWE), OSCE, OSCP,
+    eCXD, eMAPT, CEH
+  first_name: Helvio
+  last_name: Junior - M4v3r1ck - OSCE3 (OSEP + OSED + OSWE), OSCE, OSCP, eCXD, eMAPT,
+    CEH
+permalink: "/voip/installing-x100p-asterisk/"
+---
+<h2>Introdução</h2>
+<p>Este post demonstra a minha primeira experiência na instalação de placas Intel X100P original (e X100P clone), esta é uma placa FXO (Foreign eXchange Office) para permitir realizar e receber ligações telefônicas através de linha telefônica analógica.</p>
+<p><!--more--></p>
+<h2>Hardware</h2>
+<p>Para conectar o seu PBX a uma linha telefônica analógica você necessita de uma placa FXO. O Asterisk é um aplicativo gratuito, porém as placas FXO geralmente são caras, porém existem alguns modelos de Fax Modem que são suportados pelo Asterisk, os modelos suportados necessitam ser dos seguintes chipsets:</p>
+<ul>
+<li>Intel 537PG and 537PU</li>
+<li>Ambient MD3200</li>
+<li>Motorola 62802</li>
+</ul>
+<p>Caso, a sua placa seja uma de fax-mode, verifique se sua placa é compatível com o Asterisk usando o comando lspci, este comando deve retornar um valor similar ao abaixo</p>
+<p>[sourcecode language="shell"]00:0a.0 Communication controller: Tiger Jet Network Inc. Tiger3XX Modem/ISDN interface<br />
+[/sourcecode]</p>
+<h2><span style="line-height: 1.5;">Configurando X100P com DAHDI</span></h2>
+<p><span style="line-height: 1.5;">Carregue o driver wcfxo que é responsável pelas placas X100P (e clones) e configure para que ao iniciar o linux o driver inicie automaticamente</span></p>
+<p>[sourcecode language="shell"]modprobe wcfxo<br />
+sudo sh -c 'grep -q wcfxo /etc/modules || echo wcfxo &gt;&gt; /etc/modules'<br />
+[/sourcecode]</p>
+<p><span style="line-height: 1.5;">Execute o comando abaixo para identificar as placas e gerar os arquivos de configuração <strong>/etc/dahdi/system.conf</strong> e <strong>/etc/asterisk/dahdi-channels.conf</strong></span></p>
+<p>[sourcecode language="shell"]dahdi_genconf -vvvv<br />
+[/sourcecode]</p>
+<p>Edite o arquivo <strong>/etc/dahdi/system.conf</strong> e altere o código de localidade conforme abaixo</p>
+<p>[sourcecode language="shell"]loadzone = br<br />
+defaultzone = br<br />
+[/sourcecode]</p>
+<p>Execute o comando abaixo para verificar a configuração e canais disponíveis</p>
+<p>[sourcecode language="shell"]dahdi_cfg -vvv<br />
+[/sourcecode]</p>
+<p>Este comando irá reproduzir um texto similar a <strong>X channels to configure</strong>, onde X indica o número de canais disponíveis. Se isso aconteceu, podemos continuar com o procesimento, caso contrário verifique se o hardware está OK e funcionando com os comandos <strong>dahdi_scan</strong>, <strong>dahdi_hardware</strong>, <strong>dahdi_test</strong>... enfim, algumas placas são sensíveis a mudanças de IRQ e podem não funcionar corretamente em alguns slots PCI</p>
+<p>Edite o arquivo <strong>/etc/asterisk/chan_dahdi.conf</strong> com o conteúdo abaixo</p>
+<p>[sourcecode language="shell"][channels]<br />
+language=pt_BR<br />
+context=from-trunk<br />
+signalling=fxs_ks<br />
+faxdetect=incoming<br />
+usecallerid=yes<br />
+echocancel=yes<br />
+echocancelwhenbridged=no<br />
+echotraining=800<br />
+group=0<br />
+channel=1<br />
+[/sourcecode]</p>
+<p><span style="line-height: 1.5;">Edite o arquivo <strong>/etc/asterisk/modules.conf</strong></span></p>
+<p>[sourcecode language="shell"]load =&gt; chan_dahdi.so<br />
+[/sourcecode]</p>
+<p>Reinicie o asterisk</p>
+<h3>Exemplos no extension.conf</h3>
+<p>Segue abaixo alguns exemplos de utilização no extensions.conf</p>
+<p>[sourcecode language="shell"]; Realizando ligação através do grupo 0<br />
+exten = _X.,1,Dial(DAHDI/g0/${EXTEN},20,r)</p>
+<p>; Realisando ligação através do canal 1<br />
+exten = 0,1,Dial(DAHDI/1,20,r)</p>
+<p>; Encaminhando qualquer chamada de entrada para o ramal SIP 2000<br />
+exten = s,1,Dial(SIP/2000,15,r)</p>
+<p>; Exemplo de URA<br />
+exten = s,1,Answer(1) ; Atende a chamada de entrada<br />
+exten = s,n,Playback(boas-vindas) ; Toda o arquivo e audio boas-vindas.wav<br />
+exten = s,n,Hangup(1) ; Desliga a ligação<br />
+[/sourcecode]</p>
+<h3>Erros</h3>
+<p>Segue alguns erros encontrados no processo:</p>
+<p>1 - Comando dahdi não é listado na console do Asterisk<br />
+Reinicie o módulo chan_dahdi.so com o comando module load chan_dahdi.so, reload chan_dahdi.so e dahdi restart</p>
+<p>2 - Asterisk não realiza e nem recebe chamadas e no dmesg apresenta o erro wcfxo: Out of space to write register 05 with 0a<br />
+Este erro indica problema de irq, ou seja, a placa FXO não está recebendo interrupções de irq. O Hardware pode necessitar um irq próprio.</p>
+<h3></h3>

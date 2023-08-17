@@ -1,0 +1,378 @@
+---
+layout: post
+title: Balanceamento de carga usando Iptables e Squid
+date: 2015-09-24 21:03:39.000000000 -03:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Linux
+tags: []
+meta:
+  _edit_last: '1'
+  _yoast_wpseo_title: Balanceamento de carga usando Iptables e Squid
+  _yoast_wpseo_metadesc: Aprenda passo-a-passo como realizar balanceamento de carga
+    de rede usando Iptables + Squid
+  _syntaxhighlighter_encoded: '1'
+  _aviaLayoutBuilder_active: ''
+  _aviaLayoutBuilderCleanData: ''
+  layout: ''
+  sidebar: ''
+  footer: ''
+  header_title_bar: ''
+  header_transparency: ''
+  _avia_hide_featured_image: '0'
+  _av_alb_posts_elements_state: a:0:{}
+  _av_el_mgr_version: '1.0'
+  _av_alb_element_mgr_version: 1.0.1
+  _av_css_styles: a:6:{s:7:"post_id";i:1359;s:8:"css_file";s:13:"post-1359.css";s:9:"timestamp";s:0:"";s:6:"status";s:6:"no_css";s:13:"processed_ids";a:0:{}s:13:"include_posts";a:0:{}}
+author:
+  login: helvio
+  email: helvio_junior@hotmail.com
+  display_name: Helvio Junior - M4v3r1ck - OSCE3 (OSEP + OSED + OSWE), OSCE, OSCP,
+    eCXD, eMAPT, CEH
+  first_name: Helvio
+  last_name: Junior - M4v3r1ck - OSCE3 (OSEP + OSED + OSWE), OSCE, OSCP, eCXD, eMAPT,
+    CEH
+permalink: "/it/linux/balanceamento-de-carga-usando-iptables-e-squid/"
+---
+<p>Após muita pesquisa em fóruns on-line, bem como muitas configurações erradas, muitos cabelos perdidos, estou trazendo a você um passo-a-passo para configurar o Iptables e Squid para possibilitar o balanceamento de carga utilizando uma única instancia (instalação) do Squid e Iptables.</p>
+<p>O balanceamento de carga, neste nosso ambiente, tem o objetivo de possibilidar que você tenha 2 ou mais provedores de acesso a internet (ex.: ADSL, Cable, etc...) balanceanco o seu tráfego de rede balanceado entre eles.</p>
+<p><!--more--><img title="Mais..." src="{{ site.baseurl }}/assets/2015/09/trans.gif" alt="" /></p>
+<h2>Preparação do ambiente</h2>
+<p>Para este passo-a-passo utilizei como distribuição linux o Ubuntu 14.04.</p>
+<p>O primeiro passo, em qualquer instalação de servidor ao meu ver, é garantir que todos os pacotes básicos estejam devidamente atualizados.</p>
+<p>[sourcecode language="shell"]apt-get update;<br />
+apt-get upgrade;<br />
+[/sourcecode]</p>
+<p>Na sequência vamos instalar os pacotes básicos para nosso ambiente.</p>
+<p>[sourcecode language="shell"]apt-get install iptables squid iproute<br />
+[/sourcecode]</p>
+<h2>Ambiente</h2>
+<p>Para  o correto entendimento de todo o procedimento e objetivo nada melhor que visualizarmos o ambiente gráficamente, e as configurações iniciais. Na imagem abaixo pode-se visualizar que temos 3 links de internet, que chamamos de ISP (do inglês Internet Service provider, que significa provedor de acesso a internet). Este ISP pode ser qualquer provedor de acesso a internet como GVT, NET, Oi, Copel e etc... e cada um utilizando sua tecnologia como ADSL, Cabo, Fibra e etc.</p>
+<p><a href="http://www.helviojunior.com.br/wp-content/uploads/2015/09/Lab-Balanceamento.png"><img class="alignnone wp-image-1391" src="{{ site.baseurl }}/assets/2015/09/Lab-Balanceamento.png" alt="Lab Balanceamento" width="256" height="340" /></a></p>
+<p>Segue abaixo o arquivo da configuração das placas de rede (<strong>/etc/network/interfaces</strong>)</p>
+<p>[sourcecode language="shell"]# The loopback network interface<br />
+auto lo<br />
+iface lo inet loopback</p>
+<p># Interface ligada ao ISP1<br />
+auto eth0<br />
+iface eth0 inet static<br />
+address 192.168.50.4<br />
+netmask 255.255.255.0<br />
+gateway 192.168.50.1</p>
+<p># Interface ligada ao ISP2<br />
+auto eth1<br />
+iface eth1 inet static<br />
+address 192.168.60.4<br />
+netmask 255.255.255.0</p>
+<p># Interface ligada ao ISP3<br />
+auto eth2<br />
+iface eth2 inet static<br />
+address 192.168.70.4<br />
+netmask 255.255.255.0</p>
+<p># Interface da minha rede interna<br />
+auto eth3<br />
+iface eth3 inet static<br />
+address 192.168.254.101<br />
+netmask 255.255.255.0<br />
+[/sourcecode]</p>
+<h2>Configurando o Squid</h2>
+<p>A configuração do squid baseia-se no artigo do blog Tasty Placement disponível neste link (<a href="https://www.tastyplacement.com/squid-proxy-multiple-outgoing-ip-addresses" target="_blank">https://www.tastyplacement.com/squid-proxy-multiple-outgoing-ip-addresses</a>). Basicamente a configuração deve ocorrer no arquivo <strong>/etc/squid3/squid.conf</strong> usando as sequintes diretivas:</p>
+<ul>
+<li>http_port</li>
+<li>name=</li>
+<li>myportname</li>
+<li>acl</li>
+<li>http_access</li>
+<li>tcp_outgoing_address</li>
+</ul>
+<p>Primeiramente necessitamos definir quais portas o Squid realizará escuta, estas portas serão utilizadas para posteriormente definirmos por qual link este tráfego de rede deverá sair, em outras palavras, cada porta que o Squid receber uma requisição estará atrelada a um link de acesso a internet. Segue a configuração:</p>
+<p>[sourcecode language="shell"]http_port 3128 transparent name=isp1<br />
+http_port 3129 transparent name=isp2<br />
+http_port 3130 transparent name=isp3<br />
+[/sourcecode]</p>
+<p>Nestas configurações acima habilitamos o squid para escutar nas portas (3128, 3129 e 3130), e definimos um nome para cada uma dessas portas (isp1, isp2 e isp3). Agora iremos criar as regras (ACL) baseando-se nessas portas para definir por qual ISP será a saída do trafego.</p>
+<p>[sourcecode language="shell"]acl acl_isp1 myportname isp1<br />
+acl acl_isp2 myportname isp2<br />
+acl acl_isp3 myportname isp3</p>
+<p>tcp_outgoing_address 192.168.50.4 acl_isp1<br />
+tcp_outgoing_address 192.168.60.4 acl_isp2<br />
+tcp_outgoing_address 192.168.70.4 acl_isp3<br />
+[/sourcecode]</p>
+<p>Agora que vimos as principais personalizações necessárias no squid segue abaixo meu arquivo <strong>/etc/squid3/squid.conf</strong> completo</p>
+<p>[sourcecode language="shell"]<br />
+acl localhost src 127.0.0.1/32 ::1<br />
+acl to_localhost dst 127.0.0.0/8 0.0.0.0/32 ::1</p>
+<p>access_log /var/log/squid3/access.log squid</p>
+<p>visible_hostname seudominio.com.br<br />
+cache_mgr email@seudominio.com.br</p>
+<p>acl SSL_ports port 443<br />
+acl Safe_ports port 80 # http<br />
+acl Safe_ports port 21 # ftp<br />
+acl Safe_ports port 443 # https<br />
+acl Safe_ports port 70 # gopher<br />
+acl Safe_ports port 210 # wais<br />
+acl Safe_ports port 1025-65535 # unregistered ports<br />
+acl Safe_ports port 280 # http-mgmt<br />
+acl Safe_ports port 488 # gss-http<br />
+acl Safe_ports port 591 # filemaker<br />
+acl Safe_ports port 777 # multiling http<br />
+acl CONNECT method CONNECT</p>
+<p>acl rede_interna src 192.168.0.0/255.255.0.0</p>
+<p>http_access allow manager localhost<br />
+http_access deny manager<br />
+http_access deny !Safe_ports<br />
+http_access deny CONNECT !SSL_ports<br />
+http_access allow localhost<br />
+http_access allow rede_interna<br />
+http_access deny all</p>
+<p>#Configuração das portas por link de saída<br />
+http_port 3128 transparent name=isp1<br />
+http_port 3129 transparent name=isp2<br />
+http_port 3130 transparent name=isp3</p>
+<p>acl acl_isp1 myportname isp1<br />
+acl acl_isp2 myportname isp2<br />
+acl acl_isp3 myportname isp3</p>
+<p>tcp_outgoing_address 192.168.50.4 acl_isp1<br />
+tcp_outgoing_address 192.168.60.4 acl_isp2<br />
+tcp_outgoing_address 192.168.70.4 acl_isp3</p>
+<p>coredump_dir /var/spool/squid3<br />
+refresh_pattern ^ftp: 1440 20% 10080<br />
+refresh_pattern ^gopher: 1440 0% 1440<br />
+refresh_pattern -i (/cgi-bin/|\?) 0 0% 0<br />
+refresh_pattern (Release|Packages(.gz)*)$ 0 20% 2880<br />
+refresh_pattern . 0 20% 4320<br />
+quick_abort_max 16 KB<br />
+quick_abort_pct 95<br />
+quick_abort_min 16 KB<br />
+request_header_max_size 20 KB<br />
+reply_header_max_size 20 KB<br />
+request_body_max_size 0 KB</p>
+<p>cache_mem 1024 MB</p>
+<p>cache_log /var/log/squid3/cache.log<br />
+cache_access_log none<br />
+cache_store_log none<br />
+[/sourcecode]</p>
+<h2>Configurando IPTables</h2>
+<p>Para efeitos de aprendizado o processo de configuração será realizado em 2 etapas, na primeira iremos fazer o que é exclusivo para o funcionamento do Squid (realização de proxy transparente, ou seja, encaminhamento das conexões HTTP), na segunda fase incluiremos a configuração para o balanceamento das outras conexões de rede (E-mail, Torrent, etc...)</p>
+<h3>Fase 1</h3>
+<p>Para o correto funcionamento do balanceamento de link precisaremos definir os roteadores padrão (Default Gateway) de cada um dos links conforme demonstrado abaixo:</p>
+<p><strong>Configuração para o ISP1</strong></p>
+<p>[sourcecode language="shell"]ip route flush table 5<br />
+ip rule add fwmark 5 table 5<br />
+ip rule add from 192.168.50.0/24 table 5<br />
+ip rule add to 192.168.50.0/24 table 5<br />
+ip route add table 5 default via 192.168.50.1<br />
+[/sourcecode]</p>
+<p><strong>Configuração para o ISP2</strong></p>
+<p>[sourcecode language="shell"]ip route flush table 6<br />
+ ip rule add fwmark 6 table 6<br />
+ ip rule add from 192.168.60.0/24 table 6<br />
+ ip rule add to 192.168.60.0/24 table 6<br />
+ ip route add table 6 default via 192.168.60.1<br />
+[/sourcecode]</p>
+<p><strong>Configuração para o ISP3</strong></p>
+<p>[sourcecode language="shell"]ip route flush table 7<br />
+ ip rule add fwmark 7 table 7<br />
+ ip rule add from 192.168.70.0/24 table 7<br />
+ ip rule add to 192.168.70.0/24 table 7<br />
+ ip route add table 7 default via 192.168.70.1<br />
+[/sourcecode]</p>
+<p>Com essas configurações acima definimos qual o gateway de saída de cada um dos links bem como a rede de operação. Este gateway deve ser o endereço IP do modem da sua operadora.</p>
+<p>Com isso basta direcionar os pacotes de acesso web para o squid utilizando os compandos iptables abaixo</p>
+<p>[sourcecode language="shell"]iptables -t nat -A PREROUTING -s 192.168.254.0/24 -p TCP -m statistic --mode random --probability 0.33 -m multiport --dports 80,8080 -j REDIRECT --to-port 3129<br />
+iptables -t nat -A PREROUTING -s 192.168.254.0/24 -p TCP -m statistic --mode random --probability 0.33 -m multiport --dports 80,8080 -j REDIRECT --to-port 3130<br />
+iptables -t nat -A PREROUTING -s 192.168.254.0/24 -p TCP -m multiport --dports 80,8080 -j REDIRECT --to-port 3128<br />
+[/sourcecode]</p>
+<p>O segredo do balanceamento está na forma e na ordem de execução destes comandos. Estes comandos tem 2 informações importantes que merecem um pouco mais de atenção:</p>
+<ol>
+<li><strong>-m statistic --mode random --probability 0.33</strong> este trecho do comando indica que essa regra será aplicada de forma randômica a uma média de 33% dos acessos web;</li>
+<li><strong>REDIRECT --to-port XXXX</strong> este trecho redireciona o pacote para a respectiva porta do Squid.</li>
+</ol>
+<p>Sendo assim podemos observar que as 2 primeiras regras seguem o padrão de probablilidade de 33% para cada uma, e caso nenhuma dassas 2 regras tratem o trafego web, cairá na regra padrão que é a terceira regra.</p>
+<h3>Fase 2</h3>
+<p>Neste fase finalizaremos a configuração do iptables para realizar o balanceamento do restante do trafego web (E-mail, Torrent, etc...). Este processo é um pouco mais complicado pois não podemos somente marcar os pacotes aleatoriamente, mas sim marcar a conexão como um todo e garantir que durante toda essa conexão a mesma saia pelo link inicialmente marcado.</p>
+<p>Desta forma para este processo criaremos uma cadeia (Chain) no iptables, depois encaminharemos para esa cadeia somente os pacotes de novas conexões, a cadeia responsável por este processo é a <strong>balance1</strong>. Adicionalmente é necessário a cada novo pacote da mesma conexão identificar a marcação inicial, este segundo processo fica a cargo da cadeia <strong>RESTOREMARK.</strong></p>
+<p>Abaixo segue o script completo do iptables.</p>
+<h3>Script iptables final</h3>
+<p>Segue abaixo o script final do iptables, este conteúdo deve ser salvo no arquivo <strong>/etc/init.d/firewall</strong></p>
+<p>[sourcecode language="shell"]#!/bin/bash<br />
+#</p>
+<p>if [ ! -x /sbin/iptables ]; then<br />
+exit 0<br />
+fi<br />
+# criar este arquivo como /etc/init.d/firewall<br />
+# Executar o comando abaixo para definir script como inicializavel<br />
+# chmod +x /etc/init.d/firewall<br />
+# sudo update-rc.d -f firewall defaults<br />
+# Comandos<br />
+IPTABLES=/sbin/iptables<br />
+IFCONFIG=/sbin/ifconfig<br />
+ROUTE=/sbin/route<br />
+IP=/bin/ip</p>
+<p>start()<br />
+ {<br />
+ # clear all<br />
+ clearall</p>
+<p># Limpa as regras atuais<br />
+ $IPTABLES -F<br />
+ $IPTABLES -X<br />
+ $IPTABLES -t nat -F<br />
+ $IPTABLES -t nat -X<br />
+ $IPTABLES -t mangle -F<br />
+ $IPTABLES -t mangle -X<br />
+ $IPTABLES --flush</p>
+<p># Regra padrão (Bloqueia tudo)<br />
+ $IPTABLES -P INPUT ACCEPT<br />
+ $IPTABLES -P OUTPUT ACCEPT<br />
+ $IPTABLES -P FORWARD ACCEPT</p>
+<p># Libera os retornos de stados e pacotes de saida<br />
+ $IPTABLES -A INPUT -m state --state ESTABLISHED,RELATED -j ACCEPT<br />
+ $IPTABLES -A OUTPUT -m state --state NEW,ESTABLISHED,RELATED -j ACCEPT<br />
+ $IPTABLES -A FORWARD -m state --state ESTABLISHED,RELATED -j ACCEPT</p>
+<p># Liberando tudo da Loopback<br />
+ $IPTABLES -A INPUT -i lo -j ACCEPT</p>
+<p># Libera forward e adiciona as rotas<br />
+echo 1 &gt; /proc/sys/net/ipv4/ip_forward<br />
+for f in /proc/sys/net/ipv4/conf/*/rp_filter ; do echo 0 &gt; $f ; done<br />
+echo 0 &gt; /proc/sys/net/ipv4/route/flush</p>
+<p># Indica para rebotar após 1 segundos em caso de kernel panic<br />
+echo 1 &gt; /proc/sys/kernel/panic</p>
+<p># Carrega módulos para FTP<br />
+ modprobe ip_nat_ftp<br />
+ modprobe nf_conntrack_ftp<br />
+ modprobe ip_conntrack_netlink</p>
+<p># Variaveis globais de definições<br />
+ internal_net=192.168.254.0/24</p>
+<p>isp1_net=192.168.50.0/24<br />
+isp1_table=5<br />
+isp1_gw=192.168.50.1<br />
+isp1_weight=1</p>
+<p>isp2_net=192.168.60.0/24<br />
+isp2_table=6<br />
+isp2_gw=192.168.60.1<br />
+isp2_weight=1</p>
+<p>isp3_net=192.168.70.0/24<br />
+isp3_table=7<br />
+isp3_gw=192.168.70.1<br />
+isp3_weight=1</p>
+<p> # Rotas e marcações para link 1<br />
+ $IP rule del fwmark $isp1_table table $isp1_table 2&gt;/dev/null<br />
+ $IP rule del from $isp1_net table $isp1_table 2&gt;/dev/null<br />
+ $IP rule del to $isp1_net table $isp1_table 2&gt;/dev/null<br />
+ $IP route del table $isp1_table default via $isp1_gw  2&gt;/dev/null<br />
+ $IP route flush table $isp1_table<br />
+ $IP rule add fwmark $isp1_table table $isp1_table<br />
+ $IP rule add from $isp1_net table $isp1_table<br />
+ $IP rule add to $isp1_net table $isp1_table<br />
+ $IP route add table $isp1_table default via $isp1_gw</p>
+<p># Rotas e marcações para link 2<br />
+ $IP rule del fwmark $isp2_table table $isp2_table 2&gt;/dev/null<br />
+ $IP rule del from $isp2_net table $isp2_table 2&gt;/dev/null<br />
+ $IP rule del to $isp2_net table $isp2_table 2&gt;/dev/null<br />
+ $IP route del table $isp2_table default via $isp2_gw 2&gt;/dev/null<br />
+ $IP route flush table $isp2_table<br />
+ $IP rule add fwmark $isp2_table table $isp2_table<br />
+ $IP rule add from $isp2_net table $isp2_table<br />
+ $IP rule add to $isp2_net table $isp2_table<br />
+ $IP route add table $isp2_table default via $isp2_gw</p>
+<p># Rotas e marcações para link 3<br />
+ $IP rule del fwmark $isp3_table table $isp3_table 2&gt;/dev/null<br />
+ $IP rule del from $isp3_net table $isp3_table 2&gt;/dev/null<br />
+ $IP rule del to $isp3_net table $isp3_table 2&gt;/dev/null<br />
+ $IP route del table $isp3_table default via $isp3_gw 2&gt;/dev/null<br />
+ $IP route flush table $isp3_table<br />
+ $IP rule add fwmark $isp3_table table $isp3_table<br />
+ $IP rule add from $isp3_net table $isp3_table<br />
+ $IP rule add to $isp3_net table $isp3_table<br />
+ $IP route add table $isp3_table default via $isp3_gw</p>
+<p># Restaura a mesma marcacao para os pacotes saintes<br />
+$IPTABLES -t mangle -N RESTOREMARK<br />
+$IPTABLES -t mangle -A RESTOREMARK -d $isp1_net -j RETURN<br />
+$IPTABLES -t mangle -A RESTOREMARK -d $isp2_net -j RETURN<br />
+$IPTABLES -t mangle -A RESTOREMARK -d $isp3_net -j RETURN<br />
+$IPTABLES -t mangle -A RESTOREMARK -j CONNMARK  --restore-mark<br />
+$IPTABLES -t mangle -A PREROUTING -m state --state ESTABLISHED,RELATED -j RESTOREMARK</p>
+<p># Regra de balanceamento (Divite 33% para cada link)<br />
+$IPTABLES -t mangle -F balance1 &gt;/dev/null 2&gt;&amp;1 # flush balance1 if exists<br />
+$IPTABLES -t mangle -X balance1 &gt;/dev/null 2&gt;&amp;1 # delete balance1 if exists<br />
+$IPTABLES -t mangle -N balance1<br />
+$IPTABLES -t mangle -A balance1 -d $internal_net -j RETURN<br />
+$IPTABLES -t mangle -A balance1 -m connmark ! --mark 0 -j RETURN<br />
+$IPTABLES -t mangle -A balance1 -m state --state ESTABLISHED,RELATED -j RETURN<br />
+$IPTABLES -t mangle -A balance1 -m statistic --mode nth --every 3 --packet 0 -j CONNMARK --set-mark $isp1_table<br />
+$IPTABLES -t mangle -A balance1 -m statistic --mode nth --every 3 --packet 1 -j CONNMARK --set-mark $isp2_table<br />
+$IPTABLES -t mangle -A balance1 -m statistic --mode nth --every 3 --packet 2 -j CONNMARK --set-mark $isp3_table<br />
+$IPTABLES -t mangle -A balance1 -m connmark --mark 0 -j CONNMARK --set-mark $isp1_table<br />
+$IPTABLES -t mangle -A balance1 -m connmark --mark $isp1_table -j MARK --set-mark $isp1_table<br />
+$IPTABLES -t mangle -A balance1 -m connmark --mark $isp2_table -j MARK --set-mark $isp2_table<br />
+$IPTABLES -t mangle -A balance1 -m connmark --mark $isp3_table -j MARK --set-mark $isp3_table<br />
+$IPTABLES -t mangle -A balance1 -m connmark ! --mark 0  -j CONNMARK --save-mark</p>
+<p># Encaminha as novas conexoes para o Balancer<br />
+$IPTABLES  -t mangle -A PREROUTING -s $internal_net -m state --state NEW -j balance1</p>
+<p># Caso deseje, habilite essa regra para efetuar log dos pacotes com marcação<br />
+#$IPTABLES -t mangle -A FORWARD -m connmark ! --mark 0 -j LOG --log-prefix 'FORWARD Marked: ' --log-level info</p>
+<p> # Comandos para direcionamento balanceado ao Squid<br />
+ $IPTABLES -t nat -A PREROUTING -s $internal_net -p TCP -m statistic --mode random --probability 0.33 -m multiport --dports 80,8080 -j REDIRECT --to-port 3129<br />
+ $IPTABLES -t nat -A PREROUTING -s $internal_net -p TCP -m statistic --mode random --probability 0.33 -m multiport --dports 80,8080 -j REDIRECT --to-port 3130<br />
+ $IPTABLES -t nat -A PREROUTING -s $internal_net -p TCP -m multiport --dports 80,8080 -j REDIRECT --to-port 3128</p>
+<p># Regras de NAT<br />
+ $IPTABLES -t nat -A POSTROUTING -o eth0 -j MASQUERADE<br />
+ $IPTABLES -t nat -A POSTROUTING -o eth1 -j MASQUERADE<br />
+ $IPTABLES -t nat -A POSTROUTING -o eth2 -j MASQUERADE</p>
+<p>$IP route flush cache<br />
+}</p>
+<p>clearall()<br />
+ {<br />
+ $IPTABLES -F<br />
+ $IPTABLES -X<br />
+ $IPTABLES -t nat -F<br />
+ $IPTABLES -t nat -X<br />
+ $IPTABLES -t mangle -F<br />
+ $IPTABLES -t mangle -X<br />
+ $IPTABLES --flush</p>
+<p># Regra padrão (Libera tudo)<br />
+ $IPTABLES -P INPUT ACCEPT<br />
+ $IPTABLES -P OUTPUT ACCEPT<br />
+ $IPTABLES -P FORWARD DROP</p>
+<p>$IP route flush table 5<br />
+ $IP route flush table 6<br />
+ $IP route flush table 7<br />
+ $IP route flush cache</p>
+<p>}</p>
+<p>case &quot;$1&quot; in<br />
+ restart|start)<br />
+ start<br />
+ ;;<br />
+ stop)<br />
+ clearall<br />
+ ;;<br />
+ *)<br />
+ echo &quot;Usage: $0 {start|stop|restart}&quot;<br />
+ exit 1<br />
+ esac</p>
+<p>exit 0<br />
+[/sourcecode]</p>
+<p>Para que este script se execute automaticamente no inicio do sistema operacional execute os comandos abaixo</p>
+<p>[sourcecode language="shell"]chmod +x /etc/init.d/firewall<br />
+sudo update-rc.d -f firewall defaults<br />
+[/sourcecode]</p>
+<h2>Extras</h2>
+<p>Caso você precise realizar um balanceamento do link com base em peso, ou seja, um link tem maior capacidade que o outro e você quer balancear a carga conforme a capacidade do link, você pode utilizar a metodologia proposta nest <a href="https://home.regit.org/netfilter-en/links-load-balancing/" target="_blank">link</a>, que explicarei de forma breve aqui.</p>
+<p>Vamos supor que você tem 2 links e um deles e eles seguem a seguinte fração 1/4 e 3/4, desta forma iremos marcar os pacotes de forma a usar um contador de 4 distribuindo da seguinte forma</p>
+<ol>
+<li>Marca o pacote para o <strong>primeiro</strong> link</li>
+<li>Marca o pacote para o <strong>segundo</strong> link</li>
+<li>Marca o pacote para o <strong>primeiro</strong> link</li>
+<li>Marca o pacote para o <strong>primeiro</strong> link</li>
+</ol>
+<p>Basicamente as regras do iptables para implantar essa lógica ficará assim:</p>
+<p>[sourcecode language="shell"]<br />
+iptables -A PREROUTING  -t mangle -m mark --mark 0x0 -m statistic --mode nth --every 4 --packet 0 -j MARK --set-mark 1<br />
+iptables -A PREROUTING  -t mangle -m mark --mark 0x0 -m statistic --mode nth --every 4 --packet 1 -j MARK --set-mark 2<br />
+iptables -A PREROUTING  -t mangle -m mark --mark 0x0 -m statistic --mode nth --every 4 --packet 2 -j MARK --set-mark 1<br />
+iptables -A PREROUTING  -t mangle -m mark --mark 0x0 -m statistic --mode nth --every 4 --packet 3 -j MARK --set-mark 1<br />
+[/sourcecode]</p>

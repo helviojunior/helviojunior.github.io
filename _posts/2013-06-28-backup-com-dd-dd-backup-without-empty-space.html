@@ -1,0 +1,53 @@
+---
+layout: post
+title: Backup com dd (dd backup without empty space)
+date: 2013-06-28 14:43:10.000000000 -03:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- IT
+- Linux
+- Zabbix
+tags: []
+meta:
+  _edit_last: '1'
+  _syntaxhighlighter_encoded: '1'
+  _av_alb_posts_elements_state: a:0:{}
+  _av_el_mgr_version: '1.0'
+  _av_alb_element_mgr_version: 1.0.1
+  _av_css_styles: a:6:{s:7:"post_id";i:661;s:8:"css_file";s:12:"post-661.css";s:9:"timestamp";s:0:"";s:6:"status";s:6:"no_css";s:13:"processed_ids";a:0:{}s:13:"include_posts";a:0:{}}
+author:
+  login: helvio
+  email: helvio_junior@hotmail.com
+  display_name: Helvio Junior - M4v3r1ck - OSCE3 (OSEP + OSED + OSWE), OSCE, OSCP,
+    eCXD, eMAPT, CEH
+  first_name: Helvio
+  last_name: Junior - M4v3r1ck - OSCE3 (OSEP + OSED + OSWE), OSCE, OSCP, eCXD, eMAPT,
+    CEH
+permalink: "/it/backup-com-dd-dd-backup-without-empty-space/"
+---
+<p>Com a utilização do Raspberry tive a necessidade de preparar uma imagem base para clonar em outros dispositivos ou até mesmo para fins de backup. A melhor ferramenta para realizar essa operação é o <strong>dd</strong>, porém se não for definido a área que se deseja realizar o backup ele faz de todo o disco mesmo das áreas vazias (sem partição).</p>
+<p>Este post mostra como verificar a área utilizada do disco (ou cartão de memória no caso do Raspberry) e realizar o backup somente dessas áreas. Adicionalmente mostra como realizar o backup e compactar com gzip.</p>
+<p><!--more--></p>
+<p><strong>Verificando área utilizada</strong></p>
+<p>Execute o comando abaixo substituindo o X pelo seu dispositivo</p>
+<p>[sourcecode language="shell"]fdisk -l /dev/sdX[/sourcecode]</p>
+<p>O retorno do comando será similar ao mostrado abaixo</p>
+<p><a href="http://www.helviojunior.com.br/wp-content/uploads/2013/06/fdisk.png"><img class=" wp-image-665 alignnone" alt="fdisk" src="{{ site.baseurl }}/assets/2013/06/fdisk.png" width="460" height="158" /></a></p>
+<p><a href="http://www.helviojunior.com.br/wp-content/uploads/2013/06/fdisk.png"><br />
+</a>O retorno do comando mostra os blocos utilizados por cada partição bem como o bloco inicial, final e o tamanho do bloco.</p>
+<p>Neste retorno a ultima partição <strong>/dev/sdb2 </strong>tem o seu final no bloco 6266879, desta forma o comando dd necessita realizar o backup até este bloco, porém por preciosismo faremos o backup de um bloco a mais.</p>
+<p><strong>Backup sem gzip</strong></p>
+<p>[sourcecode language="shell"]dd if=/dev/sdb bs=512 count=6266880 of=/path/to/imagefile.img[/sourcecode]</p>
+<p><strong>Backup com gzip</strong></p>
+<p>[sourcecode language="shell"]dd if=/dev/sdb bs=512 count=6266880 | gzip | dd of=/path/to/imagefile.img.gz[/sourcecode]</p>
+<p>Nos 2 comandos acima utilizamos o tamanho do bloco (bs=) como 512 e a contagem como o último bloco a ser copiado.</p>
+<p><strong>Restauração sem gzip</strong></p>
+<p>[sourcecode language="shell"]dd if=/path/to/imagefile.img of=/dev/sdX[/sourcecode]</p>
+<p><strong>Restauração com gzip</strong></p>
+<p>[sourcecode language="shell"]dd if=/path/to/imagefile.img.gz | gunzip | dd of=/dev/sdX[/sourcecode]</p>
+<p><strong>Cópia dos dados de disco para disco</strong></p>
+<p>[sourcecode language="shell"]dd if=/dev/sdb bs=512 count=6266880 of=/dev/sdX[/sourcecode]</p>

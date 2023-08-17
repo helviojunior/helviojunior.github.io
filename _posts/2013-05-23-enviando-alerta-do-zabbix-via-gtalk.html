@@ -1,0 +1,122 @@
+---
+layout: post
+title: Enviando alerta do Zabbix via Gtalk
+date: 2013-05-23 12:30:02.000000000 -03:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Desenvolvimento
+- IT
+- Monitoramento
+- Zabbix
+tags: []
+meta:
+  _edit_last: '1'
+  _syntaxhighlighter_encoded: '1'
+  _av_alb_posts_elements_state: a:0:{}
+  _av_el_mgr_version: '1.0'
+  _av_alb_element_mgr_version: 1.0.1
+  _av_css_styles: a:6:{s:7:"post_id";i:596;s:8:"css_file";s:12:"post-596.css";s:9:"timestamp";s:0:"";s:6:"status";s:6:"no_css";s:13:"processed_ids";a:0:{}s:13:"include_posts";a:0:{}}
+author:
+  login: helvio
+  email: helvio_junior@hotmail.com
+  display_name: Helvio Junior - M4v3r1ck - OSCE3 (OSEP + OSED + OSWE), OSCE, OSCP,
+    eCXD, eMAPT, CEH
+  first_name: Helvio
+  last_name: Junior - M4v3r1ck - OSCE3 (OSEP + OSED + OSWE), OSCE, OSCP, eCXD, eMAPT,
+    CEH
+permalink: "/it/devel/enviando-alerta-do-zabbix-via-gtalk/"
+---
+<p>Este post tem o objetivo de demonstrar como criar um script para que o Zabbix possa enviar os alertas via Gtalk.</p>
+<p><!--more--></p>
+<p><strong>Instalação dos pre-requisitos</strong></p>
+<p>[sourcecode language="shell"]apt-get install python python-xmpp python-dnspython[/sourcecode]</p>
+<p><strong>Criação do script</strong><br />
+Verificar o local de armazenamento dos script no arquivo de configuração do zabbix, o parâmetro a ser verificado é AlertScriptsPath. No meu caso está em <strong>/usr/lib/zabbix/alertscripts</strong></p>
+<p>Crie o arquivo, nomeado <strong>gtalk.py</strong>, com o conteúdo abaixo no local indicado. No meu caso em <strong>/usr/lib/zabbix/alertscripts/gtalk.py</strong></p>
+<p>[sourcecode language="python" wraplines="false"]#!/usr/bin/python -W ignore::DeprecationWarning<br />
+import sys, os, xmpp, getopt, syslog</p>
+<p>def main(argv):<br />
+	login=&quot;your_email@gmail.com&quot;<br />
+	pwd=&quot;xxxxxx&quot;<br />
+	_debug = 0</p>
+<p>	if len(sys.argv) &lt; 3:<br />
+		usage()<br />
+		sys.exit(2)</p>
+<p>	#log dos parametros recebidos<br />
+	#log(' '.join(sys.argv[1:]))</p>
+<p>	rcptto=None<br />
+	subject=None<br />
+	msg=None</p>
+<p>	rcptto=sys.argv[1]<br />
+	subject=sys.argv[2]<br />
+	msg=sys.argv[3]</p>
+<p>	if subject != None and msg == None:<br />
+		msg = subject;<br />
+		subject = None;</p>
+<p>	if rcptto == None or msg == None:<br />
+		usage()<br />
+		sys.exit(2)</p>
+<p>	log(msg)</p>
+<p>	print &quot;Starting process...&quot;</p>
+<p>	def presenceHandler(conn, presence):<br />
+		if presence:<br />
+			if presence.getType() == &quot;subscribe&quot;:<br />
+				cl.PresenceManager.ApproveSubscriptionRequest(pres.From)</p>
+<p>	login=xmpp.protocol.JID(login)</p>
+<p>	if _debug == 1:<br />
+		cl=xmpp.Client(login.getDomain())<br />
+	else:<br />
+		cl=xmpp.Client(login.getDomain(),debug=[])</p>
+<p>	print &quot;Connecting...&quot;<br />
+	if cl.connect( server=('google.com',5222)  ) == &quot;&quot;:<br />
+			print &quot;not connected&quot;<br />
+			sys.exit(0)</p>
+<p>	print &quot;Authentication...&quot;<br />
+	if cl.auth(login.getNode(),pwd) == None:<br />
+			print &quot;authentication failed&quot;<br />
+			sys.exit(0)</p>
+<p>	# habilita que este cliente aceite automaticamente requisicao de contato<br />
+	#cl.RegisterHandler('presence',presenceHandler)<br />
+	#cl.sendInitPresence()</p>
+<p>	print &quot;Add user &quot;+rcptto<br />
+	pres = xmpp.Presence(to=rcptto, typ='subscribe')<br />
+	cl.send(pres)</p>
+<p>	print &quot;Sending message to &quot;+rcptto<br />
+	cl.send(xmpp.protocol.Message(rcptto,msg,&quot;chat&quot;))<br />
+	cl.disconnect()</p>
+<p>	print &quot;Message Sent!&quot;</p>
+<p>def usage():<br />
+	print &quot;Usage:  {-d} [to] [subject] [body]&quot;<br />
+	print &quot;&quot;<br />
+	print &quot;Options:&quot;<br />
+	print &quot;  [to]	destination of messages&quot;<br />
+	print &quot;  [subject]	subect of message&quot;<br />
+	print &quot;  [body]	destination of messages&quot;</p>
+<p>def log(text):<br />
+	syslog.syslog(syslog.LOG_ERR, text)</p>
+<p>if __name__ == &quot;__main__&quot;:<br />
+	main(sys.argv[1:])<br />
+[/sourcecode]</p>
+<p>Altere as linhas abaixo (no script) para o e-mail e senha que serão a origem do Gtalk</p>
+<p>[sourcecode language="python"]login=&quot;your_email@gmail.com&quot;<br />
+pwd=&quot;xxxxxx&quot;<br />
+[/sourcecode]</p>
+<p><strong>Defina as permições para este arquivo</strong></p>
+<p>[sourcecode language="shell"]chown -R zabbix:zabbix /usr/lib/zabbix/alertscripts/<br />
+chmod +x /usr/lib/zabbix/alertscripts/gtalk.py[/sourcecode]</p>
+<p>Realize um teste de execução do script com o comando abaixo, apenas alterando seu e-mail.</p>
+<p>[sourcecode language="shell"]sudo -u zabbix /usr/lib/zabbix/alertscripts/gtalk.py seu_email@gmail.com &quot;Teste 001&quot; &quot;Mensagem de teste Gtalk&quot;[/sourcecode]</p>
+<p><strong>Configurando o Zabbix para enviar os alertas através deste script</strong></p>
+<p>Vá em <strong>Administration</strong> &gt; <strong>Media Types</strong></p>
+<p style="text-align: center;"><a href="http://www.helviojunior.com.br/wp-content/uploads/2013/05/0011.png"><img class="size-full wp-image-601 aligncenter" alt="001" src="{{ site.baseurl }}/assets/2013/05/0011.png" width="391" height="89" /></a></p>
+<p>Clique em <strong>Create Media</strong> e preencha os campos conforme demonstrado abaixo e clique em <strong>Save</strong></p>
+<p style="text-align: center;"><a href="http://www.helviojunior.com.br/wp-content/uploads/2013/05/0021.png"><img class="size-full wp-image-602 aligncenter" alt="002" src="{{ site.baseurl }}/assets/2013/05/0021.png" width="422" height="112" /></a></p>
+<p>Vá em <strong>Administration</strong> &gt; <strong>Users</strong>, selecione o usuário que deseja receber o alerta através do Gtalk, clique em <strong>Media</strong> e depois em <strong>Add</strong></p>
+<p style="text-align: center;"><img class="size-full wp-image-603 aligncenter" alt="003" src="{{ site.baseurl }}/assets/2013/05/0031.png" width="441" height="260" /></p>
+<p>Preencha as informações, alterando o <strong>Type</strong> para <strong>Gtalk</strong> e o <strong>Send to</strong> para o e-mail do gmail que receberá via Gtalk e clique em <strong>Add</strong>.</p>
+<p style="text-align: center;"><a href="http://www.helviojunior.com.br/wp-content/uploads/2013/05/0041.png"><img class="size-full wp-image-604 aligncenter" alt="004" src="{{ site.baseurl }}/assets/2013/05/0041.png" width="365" height="257" /></a></p>
+<p>Pronto, seu usuário será alertado via gtalk.</p>

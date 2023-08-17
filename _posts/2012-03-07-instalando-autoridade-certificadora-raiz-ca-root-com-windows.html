@@ -1,0 +1,73 @@
+---
+layout: post
+title: Instalando autoridade certificadora raiz (CA Root) com windows
+date: 2012-03-07 13:08:58.000000000 -03:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- IT
+- Segurança da Informação
+tags:
+- autoridade certificadora
+- ca
+- certificate authority
+- openssl
+- windows
+meta:
+  _edit_last: '1'
+  _topsy_long_url: http://www.helviojunior.com.br/it/security/instalando-autoridade-certificadora-raiz-ca-root-com-windows/
+  topsy_short_url: ''
+  _av_alb_posts_elements_state: a:0:{}
+  _av_el_mgr_version: '1.0'
+  _av_alb_element_mgr_version: 1.0.1
+  _av_css_styles: a:6:{s:7:"post_id";i:126;s:8:"css_file";s:12:"post-126.css";s:9:"timestamp";s:0:"";s:6:"status";s:6:"no_css";s:13:"processed_ids";a:0:{}s:13:"include_posts";a:0:{}}
+author:
+  login: helvio
+  email: helvio_junior@hotmail.com
+  display_name: Helvio Junior - M4v3r1ck - OSCE3 (OSEP + OSED + OSWE), OSCE, OSCP,
+    eCXD, eMAPT, CEH
+  first_name: Helvio
+  last_name: Junior - M4v3r1ck - OSCE3 (OSEP + OSED + OSWE), OSCE, OSCP, eCXD, eMAPT,
+    CEH
+permalink: "/it/security/instalando-autoridade-certificadora-raiz-ca-root-com-windows/"
+---
+<p>1 - Para efetuar a instalação da Autoridade certificadora (CA - Certificate Authority) vá até o Windows 2003, entre no <strong>Painel de controle</strong>, selecione a opção de <strong>Adicionar e remover programas</strong> e clique no item <strong>Adicionar/remover componentes do Windows</strong>. Ao aparecer a lista de opções, selecione a opção <strong>“Certificate services”</strong> e clique em <strong>“next”</strong>. Se for questionado com relação à instalação do IIS (Internet Information Services), selecione a opção de instalar, pois será necessário para que possa ser feito as requisições e downloads dos certificados.</p>
+<p><!--more--></p>
+<p style="text-align: center;"><a href="http://www.helviojunior.com.br/wp-content/uploads/2012/03/low_image21.jpg"><img class="aligncenter  wp-image-129" title="low_image2" src="{{ site.baseurl }}/assets/2012/03/low_image21.jpg" alt="" width="302" height="245" /></a></p>
+<p>2 - Quando solicitado o tipo de CA a ser instalada selecione a opção “Stand-alone CA” e clique em “next”.</p>
+<p style="text-align: center;"><a href="http://www.helviojunior.com.br/wp-content/uploads/2012/03/low_image31.jpg"><img class="aligncenter  wp-image-130" title="low_image3" src="{{ site.baseurl }}/assets/2012/03/low_image31.jpg" alt="" width="302" height="245" /></a></p>
+<p>3 - Preencha os dados solicitados para o cadastramento da CA conforme ilustra a imagem abaixo.</p>
+<h3><a href="http://www.helviojunior.com.br/wp-content/uploads/2012/03/low_image41.jpg"><img class="aligncenter  wp-image-131" title="low_image4" src="{{ site.baseurl }}/assets/2012/03/low_image41.jpg" alt="" width="302" height="245" /></a></h3>
+<h3></h3>
+<h3>Exportando o certificado PKCS#12 da CA</h3>
+<p>1 – Abra a console de gerenciamento de autoridade certificadora em<strong> Start &gt; Administrative Tools &gt; Certification Authority (Iniciar &gt; Ferramentas Administrativas &gt; Autoridade de certificação)</strong></p>
+<p style="text-align: center;"><a href="http://www.helviojunior.com.br/wp-content/uploads/2012/03/low_image51.jpg"><img class="aligncenter  wp-image-133" title="low_image5" src="{{ site.baseurl }}/assets/2012/03/low_image51.jpg" alt="" width="346" height="303" /></a></p>
+<p>2 – Selecione a sua CA</p>
+<p style="text-align: center;"><a href="http://www.helviojunior.com.br/wp-content/uploads/2012/03/low_image61.jpg"><img class="aligncenter  wp-image-134" title="low_image6" src="{{ site.baseurl }}/assets/2012/03/low_image61.jpg" alt="" width="141" height="138" /></a></p>
+<p>3 – Nestes próximos passos iremos exportar o certificado X.509 da CA.</p>
+<p>Clique com o botão direito do mouse e clique em <strong>Properties (Propriedades)</strong></p>
+<p style="text-align: center;"><a href="http://www.helviojunior.com.br/wp-content/uploads/2012/03/low_image71.jpg"><img class="aligncenter  wp-image-135" title="low_image7" src="{{ site.baseurl }}/assets/2012/03/low_image71.jpg" alt="" width="135" height="179" /></a></p>
+<p>4 – Selecione o último certificado da CA e clique em <strong>View Certificate (Exibir certificado)</strong></p>
+<p><img class="aligncenter  wp-image-137" style="border-style: initial; border-color: initial;" title="low_image8" src="{{ site.baseurl }}/assets/2012/03/low_image81.jpg" alt="" width="247" height="292" /></p>
+<p>4 – Na tela de visualização do certificado clique em <strong>Details (detalhes)</strong> e depois em <strong>Copy to file (Copiar para arquivo)</strong></p>
+<p style="text-align: center;"><a href="http://www.helviojunior.com.br/wp-content/uploads/2012/03/low_image91.jpg"><img class="aligncenter  wp-image-138" title="low_image9" src="{{ site.baseurl }}/assets/2012/03/low_image91.jpg" alt="" width="252" height="291" /></a></p>
+<p>5 – Selecione um local para salvar o arquivo. Este é o arquivo que será utilizado futuramente.</p>
+<p>6 – Nestes próximos passos iremos Exportar o arquivo no formato PKCS#12.</p>
+<p>Volte para a tela principal da autoridade certificadora. Clique com o botão direito do mouse no nome da CA e clique em <strong>All Tasks (Todas as tarefas)</strong> e clique em <strong>Back up CA (Fazer Backup da autoridade de cert...)</strong></p>
+<p style="text-align: center;"><a href="http://www.helviojunior.com.br/wp-content/uploads/2012/03/low_image101.jpg"><img class="aligncenter  wp-image-139" title="low_image10" src="{{ site.baseurl }}/assets/2012/03/low_image101.jpg" alt="" width="205" height="154" /></a></p>
+<p>7 - Na próxima tela clique em <strong>Avançar</strong>. Na tela subseqüente selecione somente o item <strong>Private key and CA certificate (Chave particular e certificado de autoridade de certificação)</strong>, indique o diretório onde será salvo o arquivo, clique em <strong>avançar</strong>.</p>
+<p style="text-align: center;"><a href="http://www.helviojunior.com.br/wp-content/uploads/2012/03/low_image111.jpg"><img class="aligncenter  wp-image-140" title="low_image11" src="{{ site.baseurl }}/assets/2012/03/low_image111.jpg" alt="" width="307" height="238" /></a></p>
+<p>8 - Nesta tela (baixo) indique a senha de proteção do arquivo PKCS#12. Esta senha será utilizada no momento da importação do arquivo PKCS#12 em outros sistemas.</p>
+<p style="text-align: center;"><a href="http://www.helviojunior.com.br/wp-content/uploads/2012/03/low_image121.jpg"><img class="aligncenter  wp-image-141" title="low_image12" src="{{ site.baseurl }}/assets/2012/03/low_image121.jpg" alt="" width="308" height="238" /></a></p>
+<p>Após este processo será gerado o arquivo PKCS#12 com a chave privada e o certificado desta CA.</p>
+<h2></h2>
+<h3>Efetuando o download do certificado X.509 da CA</h3>
+<p>1 - Para acessar a console de usuário, onde efetuaremos os downloads e requisições, basta entrar em um navegador como o Internet Explorer, Firefox, etc, e acessar o endereço “http://ip_do_servidor/CertSrv/”.</p>
+<p style="text-align: center;"><a href="http://www.helviojunior.com.br/wp-content/uploads/2012/03/low_image131.jpg"><img class="aligncenter  wp-image-143" title="low_image13" src="{{ site.baseurl }}/assets/2012/03/low_image131.jpg" alt="" width="470" height="277" /></a></p>
+<p>2 - Após acessar esta tela, selecione o link <strong>Download a CA certificate, certificate chain, or CRL</strong> para acessar a tela de download do certificado root.</p>
+<p style="text-align: center;"><a href="http://www.helviojunior.com.br/wp-content/uploads/2012/03/low_image141.jpg"><img class="aligncenter  wp-image-144" title="low_image14" src="{{ site.baseurl }}/assets/2012/03/low_image141.jpg" alt="" width="470" height="277" /></a></p>
+<p>3 - Selecione o certificado, geralmente há somente um, selecione o método de compactação (Base 64), clique em <strong>Download CA certificate</strong> e salve o arquivo.</p>
+<p>Alguns produtos de mercado só trabalham com certificados o formato <strong>Base 64</strong>, desta forma todos os arquivos devem ser feito com esta codificação.</p>

@@ -1,0 +1,78 @@
+---
+layout: post
+title: Resgatando IP válido do agente zabbix
+date: 2013-07-20 10:47:17.000000000 -03:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- IT
+- Monitoramento
+- Zabbix
+tags: []
+meta:
+  _edit_last: '1'
+  _syntaxhighlighter_encoded: '1'
+  _wp_old_slug: resgatando-ip-valido-do-agente-xabbix
+  _av_alb_posts_elements_state: a:0:{}
+  _av_el_mgr_version: '1.0'
+  _av_alb_element_mgr_version: 1.0.1
+  _av_css_styles: a:6:{s:7:"post_id";i:735;s:8:"css_file";s:12:"post-735.css";s:9:"timestamp";s:0:"";s:6:"status";s:6:"no_css";s:13:"processed_ids";a:0:{}s:13:"include_posts";a:0:{}}
+author:
+  login: helvio
+  email: helvio_junior@hotmail.com
+  display_name: Helvio Junior - M4v3r1ck - OSCE3 (OSEP + OSED + OSWE), OSCE, OSCP,
+    eCXD, eMAPT, CEH
+  first_name: Helvio
+  last_name: Junior - M4v3r1ck - OSCE3 (OSEP + OSED + OSWE), OSCE, OSCP, eCXD, eMAPT,
+    CEH
+permalink: "/it/resgatando-ip-valido-do-agente-zabbix/"
+---
+<p>Em uma das construtivas discuções do grupo Zabbix Brasil (<a href="http://zabbixbrasil.org/">Blog </a>| <a href="http://br.groups.yahoo.com/group/zabbix-brasil/">Yahoo</a>), foi levantado a necessidade de obter o IP válido dos agentes ou dos proxies em caso de ambiente com IP dinâmico.</p>
+<p>Uma das soluções possíveis para resolver este problema foi proposta pelo membro do grupo Igor Araujo, esta solução consiste em criar uma página no proprio servidor apache do zabbix server que retorne o IP em que o agente está conectando e utilizar esta URL pelo agente que por sua vez irá obter o seu próprio IP e informa-lo ao Zabbix server.</p>
+<p><!--more--></p>
+<p>Chega de lero, lero e vamos ao passo a passo desta solução.</p>
+<p><strong>Criando a página no apache</strong></p>
+<p>Localize o diretório onde estão os arquivos do front-end (web) do zabbix, no meu ambiente está em <strong>/usr/share/zabbix. </strong></p>
+<p>Crie um subdiretório dentro deste com o nome <strong>ip</strong></p>
+<p>[sourcecode language="shell"]mkdir /usr/share/zabbix/ip<br />
+[/sourcecode]</p>
+<p>Crie um arquivo nomeado <strong>/usr/share/zabbix/ip/index.php</strong> com o seguinte conteúdo</p>
+<p>[sourcecode language="php"]&lt;?php<br />
+ $ip = $_SERVER['REMOTE_ADDR'];<br />
+ echo $ip;<br />
+ ?&gt;<br />
+[/sourcecode]</p>
+<p>Caso as permissões dos seus arquivos web estejam para outro usuário que não o root, defina as permissões para o usuário especificado.</p>
+<p>Realize o teste de acesso com a url do seu servidor web ex.: http://meuservidor.com.br/zabbix/ip/</p>
+<p><a href="http://www.helviojunior.com.br/wp-content/uploads/2013/07/IP_001.png"><img class="alignnone size-full wp-image-740" alt="IP_001" src="{{ site.baseurl }}/assets/2013/07/IP_001.png" width="364" height="111" /></a></p>
+<p><strong>Configurando o agente</strong></p>
+<p>O Zabbix suporta diversos sistemas operacional como cliente (Linux, Windows MAC e etc...), porem para o objetivo deste tutorial a unica diferença entre eles será a forma de instalação do aplicativo cURL e o caminho de chamada deste na configuração do agente,  desta forma serão mostrados como realizar em windows e linux.</p>
+<p>Linux</p>
+<p>Instale o aplicativo cURL através do comando</p>
+<p>[sourcecode language="shell"]apt-get install curl[/sourcecode]</p>
+<p>Windows e outras plataformas</p>
+<p>Realize o download do executável do aplicativo no site oficial do fabricante (http://curl.haxx.se/download.html)</p>
+<p>Descompacte o executável no mesmo diretório de instalação do agente do zabbix. No meu ambiente é c:\zabbix.</p>
+<p>Este aplicativo terá a função de acessar a url que criamos no servidor e extrair somente o ip, para isso a sintaze de execução é curl -s url, onde o -s extrai todo o cabeçalho http deixando somente o conteúdo.</p>
+<p>Edite o arquivo de configuração do agente zabbix (zabbix_agentd.conf) e adicione as seguintes linhas</p>
+<p>Para linux</p>
+<p>[sourcecode language="shell"]#Endereço IP WAN<br />
+UserParameter=net.ipaddress,curl -s http://meuservidor.com.br/zabbix/ip/[/sourcecode]</p>
+<p>Para windows</p>
+<p>[sourcecode language="shell"]#Endereço IP WAN<br />
+UserParameter=net.ipaddress,c:\zabbix\commands\curl -s http://meuservidor.com.br/zabbix/ip/[/sourcecode]</p>
+<p>Reinicie o agente</p>
+<p><strong>Criando o item de nomitoramento no Host no zabbix</strong></p>
+<p>Vá no host desejado, clique em Items e clique em Novo Item</p>
+<p>Cadastre o novo item conforme informações abaixo:</p>
+<ul>
+<li><span style="line-height: 13px;">Key: net.ipaddress</span></li>
+<li>Type of information: Text</li>
+<li>Update interval: 180</li>
+</ul>
+<p>Quanto ao item <strong>Update interval</strong> vale a pena considerar qual é o tempo ideal para o seu ambiente para não sobrecarregar o seu servidor do zabbix.</p>
+<p><a href="http://www.helviojunior.com.br/wp-content/uploads/2013/07/IP_002.png"><img class=" wp-image-753 alignnone" alt="IP_002" src="{{ site.baseurl }}/assets/2013/07/IP_002.png" width="389" height="285" /></a></p>
+<p>Basta salvar o item que automaticamente o IP do host será capturado na próxima verificação.</p>

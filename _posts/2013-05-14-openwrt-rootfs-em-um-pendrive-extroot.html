@@ -1,0 +1,59 @@
+---
+layout: post
+title: OpenWRT rootfs em um pendrive (extroot)
+date: 2013-05-14 15:28:28.000000000 -03:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Zabbix
+tags: []
+meta:
+  _edit_last: '1'
+  _syntaxhighlighter_encoded: '1'
+  _av_alb_posts_elements_state: a:0:{}
+  _av_el_mgr_version: '1.0'
+  _av_alb_element_mgr_version: 1.0.1
+  _av_css_styles: a:6:{s:7:"post_id";i:556;s:8:"css_file";s:12:"post-556.css";s:9:"timestamp";s:0:"";s:6:"status";s:6:"no_css";s:13:"processed_ids";a:0:{}s:13:"include_posts";a:0:{}}
+author:
+  login: helvio
+  email: helvio_junior@hotmail.com
+  display_name: Helvio Junior - M4v3r1ck - OSCE3 (OSEP + OSED + OSWE), OSCE, OSCP,
+    eCXD, eMAPT, CEH
+  first_name: Helvio
+  last_name: Junior - M4v3r1ck - OSCE3 (OSEP + OSED + OSWE), OSCE, OSCP, eCXD, eMAPT,
+    CEH
+permalink: "/it/monitoramento/zabbix/openwrt-rootfs-em-um-pendrive-extroot/"
+---
+<p>O objetivo deste post é demonstrar como utilizar um armazenamento externo, como pendrive, para complementar o espaço em disco no OpenWRT. A motivação para este procedimento foi a necessidade de superar a pouca memória flash contida na maioria dos dispositivos, o meu por exemplo contém somente 4Mb, desta forma depois da instalação super enxuta do OpenWRT sobram mais ou menos 1.2 Mb para os aplicativos.</p>
+<p><!--more--></p>
+<p>A versão utilizada neste artigo é a OpenWrt Backfire 10.03+.</p>
+<p><strong>Pré-requisitos</strong></p>
+<p>Instale os pacotes abaixo:</p>
+<p>[sourcecode language="shell"]<br />
+opkg update<br />
+opkg install block-extroot block-hotplug block-mount<br />
+opkg install kmod-usb-core kmod-usb2 kmod-usb-storage kmod-usb-ohci<br />
+opkg install kmod-fs-ext3<br />
+opkg install e2fsprogs<br />
+[/sourcecode]</p>
+<p><strong>Instalando o pendrive</strong></p>
+<p>Insira o pendrive no seu dispositivo e realize o reboot, após o reboot formate o seu pendrive com o comando</p>
+<p>[sourcecode language="shell"]<br />
+mkfs.ext3 /dev/sda1<br />
+[/sourcecode]</p>
+<p>Edite o arquivo <strong>/etc/config/fstab </strong>conforme o exemplo abaixo</p>
+<p>[sourcecode language="shell"]<br />
+config mount<br />
+option device /dev/sda1<br />
+option fstype ext3<br />
+option options rw,sync<br />
+option enabled 1<br />
+option enabled_fsck 0<br />
+option is_rootfs 1<br />
+[/sourcecode]</p>
+<p>Pronto, basta reiniciar seu dispositivo e o /overlay ja estará montado no pendrive.</p>
+<p>Para se certificar disso basta executar o comando df -h</p>
+<p>Referência original: <a href="http://wiki.openwrt.org/doc/howto/extroot">http://wiki.openwrt.org/doc/howto/ex troot</a></p>

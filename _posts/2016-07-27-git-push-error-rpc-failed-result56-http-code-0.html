@@ -1,0 +1,71 @@
+---
+layout: post
+title: 'git push error: RPC failed; result=56, HTTP code = 0'
+date: 2016-07-27 11:49:03.000000000 -03:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Desenvolvimento
+tags: []
+meta:
+  _edit_last: '1'
+  _syntaxhighlighter_encoded: '1'
+  _yoast_wpseo_content_score: '60'
+  _yoast_wpseo_primary_category: '4'
+  _aviaLayoutBuilder_active: ''
+  _aviaLayoutBuilderCleanData: ''
+  layout: ''
+  sidebar: ''
+  footer: ''
+  header_title_bar: ''
+  header_transparency: ''
+  _avia_hide_featured_image: '0'
+  _av_alb_posts_elements_state: a:0:{}
+  _av_el_mgr_version: '1.0'
+  _av_alb_element_mgr_version: 1.0.1
+  _av_css_styles: a:6:{s:7:"post_id";i:1585;s:8:"css_file";s:13:"post-1585.css";s:9:"timestamp";s:0:"";s:6:"status";s:6:"no_css";s:13:"processed_ids";a:0:{}s:13:"include_posts";a:0:{}}
+author:
+  login: helvio
+  email: helvio_junior@hotmail.com
+  display_name: Helvio Junior - M4v3r1ck - OSCE3 (OSEP + OSED + OSWE), OSCE, OSCP,
+    eCXD, eMAPT, CEH
+  first_name: Helvio
+  last_name: Junior - M4v3r1ck - OSCE3 (OSEP + OSED + OSWE), OSCE, OSCP, eCXD, eMAPT,
+    CEH
+permalink: "/it/devel/git-push-error-rpc-failed-result56-http-code-0/"
+---
+<p>Ao tentar migrar um repositório do GitHub para um servidor local usando Bonobo Git Server (<a href="https://bonobogitserver.com/" target="_blank">https://bonobogitserver.com/</a>), tive o seguinte erro:</p>
+<p>[sourcecode language="shell"]Counting objects: 5682, done.<br />
+Delta compression using up to 4 threads.<br />
+Compressing objects: 100% (3751/3751), done.<br />
+error: unable to rewind rpc post data - try increasing http.postBuffer<br />
+error: RPC failed; result=56, HTTP code = 0<br />
+Writing objects:  10% (619/5682), fatal: The remote end4.75 M huniB | 3g u6p unexpecte.00 Kdly<br />
+Writing objects: 100% (5682/5682), 34.68 MiB | 22.00 KiB/s, done.<br />
+Total 5682 (delta 1827), reused 5682 (delta 1827)<br />
+fatal: The remote end hung up unexpectedly<br />
+[/sourcecode]</p>
+<p>Pesquisando na internet verifiquei que este erro está associado ao tamanho do pacote que necessita ser enviado pelo cliente ao servidor, sendo assim a solução do mesmo é ajustar o cliente e o servidor para receber pacotes maiores.</p>
+<p>No cliente fiz o ajuste com o seguinte comando</p>
+<p>[sourcecode language="shell"]git config --global http.postBuffer 100M<br />
+[/sourcecode]</p>
+<p>Ja no servidor alterei o arquivo web.config do Bonobo para permitir o conteúdo com 100Mb (conforme abaixo)</p>
+<p>[sourcecode language="shell"]<br />
+&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;<br />
+&lt;configuration&gt;<br />
+...<br />
+  &lt;system.web&gt;<br />
+    &lt;httpRuntime maxRequestLength=&quot;104857600&quot; /&gt;<br />
+    ...<br />
+  &lt;system.webServer&gt;<br />
+    &lt;security&gt;<br />
+      &lt;requestFiltering&gt;<br />
+        &lt;requestLimits executionTimeout=&quot;18000&quot; maxAllowedContentLength=&quot;104857600&quot; /&gt;<br />
+        ...<br />
+[/sourcecode]</p>
+<p>Após este procedimento e a aplicação do HotFix Microsoft (<a href="http://support.microsoft.com/kb/2634328/en-us" target="_blank">KB2634328</a>) tudo funcionou normalmente em meu ambiente.</p>
+<p>Referência:<br />
+<a href="https://bonobogitserver.com/frequently-asked-questions/" target="_blank">https://bonobogitserver.com/frequently-asked-questions/</a></p>

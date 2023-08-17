@@ -1,0 +1,73 @@
+---
+layout: post
+title: Gerando varios hashes (MD5, SHA1 e SHA256) ao mesmo tempo
+date: 2018-05-28 11:56:17.000000000 -03:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Linux
+tags: []
+meta:
+  _edit_last: '1'
+  _yoast_wpseo_content_score: '60'
+  _yoast_wpseo_primary_category: '26'
+  _aviaLayoutBuilder_active: ''
+  _aviaLayoutBuilderCleanData: ''
+  layout: ''
+  sidebar: ''
+  footer: ''
+  header_title_bar: ''
+  header_transparency: ''
+  _avia_hide_featured_image: '0'
+  _syntaxhighlighter_encoded: '1'
+  _av_alb_posts_elements_state: a:0:{}
+  _av_el_mgr_version: '1.0'
+  _av_alb_element_mgr_version: 1.0.1
+  _av_css_styles: a:6:{s:7:"post_id";i:1745;s:8:"css_file";s:13:"post-1745.css";s:9:"timestamp";s:0:"";s:6:"status";s:6:"no_css";s:13:"processed_ids";a:0:{}s:13:"include_posts";a:0:{}}
+author:
+  login: helvio
+  email: helvio_junior@hotmail.com
+  display_name: Helvio Junior - M4v3r1ck - OSCE3 (OSEP + OSED + OSWE), OSCE, OSCP,
+    eCXD, eMAPT, CEH
+  first_name: Helvio
+  last_name: Junior - M4v3r1ck - OSCE3 (OSEP + OSED + OSWE), OSCE, OSCP, eCXD, eMAPT,
+    CEH
+permalink: "/it/linux/gerando-varios-hashes-md5-sha1-e-sha256-ao-mesmo-tempo/"
+---
+<p>O objetivo deste post é mostrar um script, simples, em bash para gerar os hashes MD5, SHA1 e SHA256 de um arquivo qualquer.</p>
+<p>Mas ai você pode se perguntar, porque eu quero isso se posso simplesmente rodar os comandos manualmente e obter os hashes, simples, pois com este comando vc tem tudo em um unico comando e com a identificação de qual foi o algorítmo e o seu hash.</p>
+<p>&nbsp;</p>
+<p>Crie o script abaixo com o nome <strong>/sbin/gethash</strong></p>
+<p>[sourcecode language="shell"]#!/bin/bash<br />
+#</p>
+<p>if [ &quot;$(id -u)&quot; != &quot;0&quot; ]; then<br />
+   echo &quot;Sorry, you must run this script as root.&quot; 1&gt;&amp;2<br />
+   exit 1<br />
+fi</p>
+<p>if [ $# -lt 1 ]<br />
+  then<br />
+    echo &quot;Usage: $0 file_name&quot;<br />
+    exit 1<br />
+fi</p>
+<p>echo &quot;Generating hash, please wait...&quot;</p>
+<p>md5=$(md5sum &quot;$1&quot; | awk '{ print $1 }')<br />
+echo &quot;MD5($1)= $md5&quot;</p>
+<p>sha1=$(sha1sum &quot;$1&quot; | awk '{ print $1 }')<br />
+echo &quot;SHA1($1)= $sha1&quot;</p>
+<p>sha256=$(sha256sum &quot;$1&quot; | awk '{ print $1 }')<br />
+echo &quot;SHA256($1)= $sha256&quot;<br />
+[/sourcecode]</p>
+<p>&nbsp;</p>
+<p>Defina a permissão de execução para este script</p>
+<p>[sourcecode language="shell"]chmod +x /sbin/gethash<br />
+[/sourcecode]</p>
+<p>E seja feliz!!!</p>
+<p>[sourcecode language="shell"]# gethash teste.txt<br />
+Generating hash, please wait...<br />
+MD5(teste.txt)= 7ded919cba92b59c28671227b1364297<br />
+SHA1(teste.txt)= 023749462808478515826213cb9eccf77c2823eb<br />
+SHA256(teste.txt)= c1b2ad9e5d95367f43ad67e5120cbdf868a3085d0a183b06af8101a2dc1bd258<br />
+[/sourcecode]</p>

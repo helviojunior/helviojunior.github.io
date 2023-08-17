@@ -1,0 +1,748 @@
+---
+layout: post
+title: Tratando código CNL para ligações conurbadas no Asterisk e FreePBX
+date: 2016-07-02 09:55:54.000000000 -03:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Asterisk
+tags: []
+meta:
+  header_transparency: ''
+  header_title_bar: ''
+  footer: ''
+  sidebar: ''
+  layout: ''
+  _aviaLayoutBuilderCleanData: ''
+  _aviaLayoutBuilder_active: ''
+  _edit_last: '1'
+  _avia_hide_featured_image: '0'
+  _yoast_wpseo_metadesc: Aprenda neste post passo-a-passo como importar o Cadastro
+    Nacional de Localidades - CNL da Anatel e utiliza-lo em seu Asterisk para ligações
+    conurbadas.
+  _syntaxhighlighter_encoded: '1'
+  _yoast_wpseo_primary_category: ''
+  _yoast_wpseo_title: Tratando código CNL para ligações conurbadas no Asterisk
+  _yoast_wpseo_content_score: '60'
+  _av_alb_posts_elements_state: a:0:{}
+  _av_el_mgr_version: '1.0'
+  _av_alb_element_mgr_version: 1.0.1
+  _av_css_styles: a:6:{s:7:"post_id";i:1537;s:8:"css_file";s:13:"post-1537.css";s:9:"timestamp";s:0:"";s:6:"status";s:6:"no_css";s:13:"processed_ids";a:0:{}s:13:"include_posts";a:0:{}}
+author:
+  login: helvio
+  email: helvio_junior@hotmail.com
+  display_name: Helvio Junior - M4v3r1ck - OSCE3 (OSEP + OSED + OSWE), OSCE, OSCP,
+    eCXD, eMAPT, CEH
+  first_name: Helvio
+  last_name: Junior - M4v3r1ck - OSCE3 (OSEP + OSED + OSWE), OSCE, OSCP, eCXD, eMAPT,
+    CEH
+permalink: "/voip/asterisk/tratando-codigo-cnl-para-ligacoes-no-asterisk/"
+---
+<h2>Introdução e contextualização</h2>
+<p>Antes de qualquer coisa vamos direto ao problema que pretendemos resolver neste post. O sistema de telefonia fixa no Brasil adota um padrão de separação das localidades e uma subordinação político-administrativa (isso será explicado um pouco mais a frente com mais detalhes). Basicamente com essa separação poderemos ter 2 municípios com o mesmo DDD onde para realizar ligações um deles não é necessário adicionar o código de DDD, e para outro sim.</p>
+<p>Exemplo: Moro na cidade de Curitiba (cujo DDD é 41), temos diversos municípios de Curitiba e região metropolitana como Curitiba, Lapa, São José dos Pinhais, Colombo e etc... Quando em Curitiba não necessito utilizar o DDD para efetuar uma ligação a estes municípios, porém quando ligamos para Paranaguá, uma cidade a +- 100 Km de Curitiba, que utiliza o mesmo DDD, ja é necessário utilizar o DDD para realizar ligações.</p>
+<p>Sendo assim surge o nosso problema, se o DDD não é quem difere se devo ou não colocar o DDD ao realizar uma chamada, como podemos realizar essa distinção? A resposta esta na base de dados CNL.</p>
+<p><!--more--></p>
+<p>Mas ai surge a pergunta o que é CNL? CNL é o acronimo de "Cadastro Nacional de Localidades", que tem como definição legal no Inciso III do art. 3º do anexo da Resolução da Anatel nº 83, de 30/12/1998 como "Conjunto de informações relativo às disponibilidades de serviços de telecomunicações em localidades do território nacional.".</p>
+<p>Na pratica o Cadastro de Localidades Brasileira, fornece os nomes, a subordinação político-administrativa (a que grande região, estado, meso ou microrregião pertencem), as coordenadas (latitudes e longitudes) e altitudes médias das sedes de localidades como municípios, vilas, assentamentos rurais e aldeias indígenas, entre outras.</p>
+<p>Agora que conhecemos um pouco mais da estruturação da telefonia podemos entrar no detalhamento da base de dados CNL, para posteriormente entender como poderemos distinguir se nossa ligação deve ou não utilizar DDD.</p>
+<h2>Atualizações</h2>
+<ul>
+<li>2017-05-15
+<ul>
+<li>Alteração da biblioteca de download do arquivo para usar CURL;</li>
+<li>Correção de erro SSL no download do site da Anatel;</li>
+<li>Correção de erro HTTP 100-Continue;</li>
+<li>Alteração para usar HTTPS ao invés de HTTP.</li>
+</ul>
+</li>
+<li>2017-09-30
+<ul>
+<li>Corrigido bug de parse no PHP 5.3;</li>
+<li>Incluído padronização para utilização em FreePBX</li>
+</ul>
+</li>
+</ul>
+<h2>Entendendo o arquivo CNL</h2>
+<p>A base CNL pode ser baixada a qualquer momento através do link <a href="http://sistemas.anatel.gov.br/areaarea/N_Download/Tela.asp?varMod=Publico&amp;SISQSmodulo=7179" target="_blank">http://sistemas.anatel.gov.br/areaarea/N_Download/Tela.asp?varMod=Publico&amp;SISQSmodulo=7179</a> selecionando como tipo de arquivo Central CNL, tipo de central Fixo e sigla UF Todas conforme a imagem abaixo:</p>
+<p><a href="http://www.helviojunior.com.br/wp-content/uploads/2016/07/asterisk_cnl_001.png"><img class="alignnone wp-image-1541 size-medium" src="{{ site.baseurl }}/assets/2016/07/asterisk_cnl_001-300x215.png" alt="asterisk_cnl_001" width="300" height="215" /></a></p>
+<p>Este processo realizará o download de um arquivo ZIP e detro deste conterá 2 arquivos: Um documento com o layout do arquivo texto, e o arquivo texto contendo a base de dados CNL completa.</p>
+<p><a href="http://www.helviojunior.com.br/wp-content/uploads/2016/07/asterisk_cnl_002.png"><img class="alignnone size-full wp-image-1543" src="{{ site.baseurl }}/assets/2016/07/asterisk_cnl_002.png" alt="asterisk_cnl_002" width="582" height="64" /></a></p>
+<p>Abrindo o arquivo DOC temos o seguinte conteúdo</p>
+<p>[sourcecode language="text"]-----------------------------------------------------------<br />
+ANATEL - AGENCIA NACIONAL DE TELECOMUNICACOES<br />
+LAY-OUT DO ARQUIVO CE_F_HHMMSS.TXT<br />
+-----------------------------------------------------------<br />
+ID NOME DO CAMPO                       TIPO TAMANHO<br />
+-- ----------------------------------  ---- -------<br />
+01 Sigla UF                            char 02<br />
+02 Sigla CNL                           char 04<br />
+03 Codigo CNL                          char 05<br />
+04 Nome da Localidade                  char 50<br />
+05 Nome do Municipio                   char 50<br />
+06 Cod. da Area Tarifacao              char 05<br />
+07 Prefixo                             char 07<br />
+08 Prestadora                          char 30<br />
+09 Num. da Faixa Inicial               char 04<br />
+10 Num. da Faixa Final                 char 04<br />
+11 Latitude                            char 08 (*)<br />
+12 Hemisferio                          char 05<br />
+13 Longitude                           char 08 (*)<br />
+14 Sigla CNL da Área Local             char 04</p>
+<p>OBSERVAÇÕES:<br />
+1) Os campos marcados com (*), Latitude e Longitude foram<br />
+   alterados para o formato GGMMSSCC,<br />
+   onde:<br />
+   GG = Grau,<br />
+   MM = Minuto,<br />
+   SS = Segundo e<br />
+   CC = Centésimos de Segundo<br />
+[/sourcecode]</p>
+<p>Agora abrindo o arquivo texto com a base CNL, extrai 3 linhas para exemplificar e ilustrar como poderemos identificar se devemos ou não colocar DDD em nossas ligações.</p>
+<p>As linhas são:</p>
+<p>[sourcecode language="text"]PRCTA 41000CURITIBA                                          CURITIBA                                          412  412027 Aerotech                      0   999 25254692S    49161884CTA<br />
+PRSJP 41585SÃO JOSÉ DOS PINHAIS                              SÃO JOSÉ DOS PINHAIS                              412  412094 INTELIG TELECOM               0   999 25315268S    49121115CTA<br />
+PRPNG 41464PARANAGUÁ                                         PARANAGUÁ                                         414  412152 CLARO S.A.                    0   999 25305796S    48312100PNG<br />
+[/sourcecode]</p>
+<p>Para o nosso propósito vou extrair alguns trechos das nossas linhas conforme abaixo:</p>
+<ul>
+<li>Linha 1:
+<ul>
+<li>Campo 05 (Município): Curitiba</li>
+<li>Campo 07 (Prefixo): 412027</li>
+<li>Campo 15 (Sigla CNL da Área Local): CTA</li>
+</ul>
+</li>
+<li>Linha 2:
+<ul>
+<li>Campo 05 (Município): São José dos Pinhais</li>
+<li>Campo 07 (Prefixo): 412094</li>
+<li>Campo 15 (Sigla CNL da Área Local): CTA</li>
+</ul>
+</li>
+<li>Linha 3:
+<ul>
+<li>Campo 05 (Município): Paranaguá</li>
+<li>Campo 07 (Prefixo): 412152</li>
+<li>Campo 15 (Sigla CNL da Área Local): PNG</li>
+</ul>
+</li>
+</ul>
+<p>Observem que as 3 linhas detêm no prefixo o mesmo DDD (41), porém Paranaguá detêm uma Sigla CNL da Área Local diferente de Curitiba e São José dos Pinhais, isso indica que qualquer ligação vinda de Curitiba para Paranaguá (ou vice versa) deve conter o DDD, ja entre Curitiba e São José dos Pinhais não se faz necessário a utilização do DDD. Sendo assim teremos que analisar não somente o DDD mas o prefixo completo para poder diagnosticar de que cidade é o número que desejamos discar.</p>
+<h2>Pré-requisitos</h2>
+<ul>
+<li>PHP cli v5.5.9</li>
+<li>MySQL v5.5.47</li>
+</ul>
+<p>Caso desje segue abaixo os comandos de instalação dos pré-requisitos</p>
+<p><strong>MySQL v5.7 + PHP v.7.0</strong></p>
+<p>[sourcecode language="shell"]sudo apt-get install mysql-client-5.7 mysql-server-5.7<br />
+sudo apt-get install php7.0-cli php7.0-mysql php7.0-zip php7.0-mbstring php7.0-xml<br />
+[/sourcecode]</p>
+<p><strong>Versões anteriores</strong><br />
+Caso deseje outra versão do MySQL utilize este procedimento (<a href="http://www.helviojunior.com.br/it/mysql/instalando-e-otimizando-mysql-para-alto-trafego-de-dados/" target="_blank">http://www.helviojunior.com.br/it/mysql/instalando-e-otimizando-mysql-para-alto-trafego-de-dados/</a>)</p>
+<p>[sourcecode language="shell"]sudo apt-get install php5-cli php5-mysql libxml2-dev<br />
+[/sourcecode]</p>
+<p>Os scripts abaixo foram testados no Ubuntu 14.04 com PHP cli v5.5.9 e MySQL v5.5.47 bem como no Ubuntu 16.02 com PHP cli v7.0.4 e MySQL v5.7.12</p>
+<p>&nbsp;</p>
+<h2>Criando estrutura de base de dados e importação</h2>
+<p>Agora que temos todo o conhecimento do arquivo da base vamos as operações técnicas. Desenvolvi um script PHP que realiza o Download, tratamento e importação dessas informações CNL para uma base de dados MySQL.</p>
+<p>Sendo assim o primeiro passo é criarmos as tabelas na base de dados no MySQL utilizando o script abaixo. Como o objetivo deste post não é ensinar como utilizar o MySQL entende-se que você detém este conhecimento e sabe como executar este script dentro da sua base de dados existente.</p>
+<p>[sourcecode language="sql"]-- Criando estrutura para tabela cnl<br />
+CREATE TABLE IF NOT EXISTS `cnl` (<br />
+  `cod_cnl` int(11) NOT NULL,<br />
+  `cod_cnl_local` int(11) NOT NULL DEFAULT '0',<br />
+  `sigla_cnl` varchar(5) NOT NULL,<br />
+  `uf` varchar(2) NOT NULL,<br />
+  `ddd` varchar(2) NOT NULL,<br />
+  `localidade` varchar(200) NOT NULL,<br />
+  `municipio` varchar(200) NOT NULL,<br />
+  PRIMARY KEY (`cod_cnl`),<br />
+  UNIQUE KEY `sigla_cnl` (`sigla_cnl`)<br />
+)COLLATE='utf8_general_ci';</p>
+<p>-- Criando estrutura para tabela cnl_tarifacao<br />
+CREATE TABLE IF NOT EXISTS `cnl_tarifacao` (<br />
+  `cod_cnl` int(11) NOT NULL,<br />
+  `cod_area_tarifacao` varchar(5) NOT NULL,<br />
+  `ddd` varchar(2) NOT NULL,<br />
+  `prefixo` varchar(5) NOT NULL,<br />
+  `prestadora` varchar(60) NOT NULL,<br />
+  `faixa_inicial` int(11) NOT NULL,<br />
+  `faixa_final` int(11) NOT NULL,<br />
+  PRIMARY KEY (`cod_cnl`,`ddd`,`prefixo`,`faixa_inicial`,`faixa_final`),<br />
+  KEY `ddd_prefixo` (`ddd`,`prefixo`),<br />
+  CONSTRAINT `FK_cnl_tarifacao_cnl` FOREIGN KEY (`cod_cnl`) REFERENCES `cnl` (`cod_cnl`) ON DELETE CASCADE ON UPDATE CASCADE<br />
+)COLLATE='utf8_general_ci';<br />
+[/sourcecode]</p>
+<p>&nbsp;</p>
+<p>Agora que criamos as tabelas na base de dados vamos criar o script PHP que irá realizar o download e importação dos dados. Copie o conteúdo abaixo em um script PHP (em nosso exemplo colocarei em <strong>/usr/local/bin/importacnl.php</strong>).</p>
+<p>[sourcecode language="php"]#!/usr/bin/php -q<br />
+&lt;?php<br />
+//-------------------------------------------------------------------+<br />
+// Autor        : Helvio Junior (helvio_junior@hotmail.com)          |<br />
+// Data         : 2016-06-02                                         |<br />
+// Atualizado   : 2017-09-30                                         |<br />
+// Versão       : 1.2                                                |<br />
+// Finalidade   : Realizar download e tratamento                     |<br />
+//                da base CNL para o MySQL                           |<br />
+//                                                                   |<br />
+// Atualizacoes : * Incluido checagem da config do FreePBX           |<br />
+//                * Corrigido BUG de parse do PHP 5.3                |<br />
+//-------------------------------------------------------------------+</p>
+<p>//================ &lt; Variaveis &gt; ===================================<br />
+$dbhost='127.0.0.1';<br />
+$dbname='cnldb';<br />
+$dbuser='root';<br />
+$dbpass='cnlpwd';<br />
+$freepbx_configfile='/etc/amportal.conf';</p>
+<p>//================ &lt; Funções &gt; ===================================</p>
+<p>// Funcao utilizada em caso do servidor ser um FreePBX, para carregas as configs do mesmo<br />
+function parse_amportal_conf($filename) {<br />
+	$conf = array();</p>
+<p>	/* defaults<br />
+	* This defines defaults and formatting to assure consistency across the system so that<br />
+	* components don't have to keep being 'gun shy' about these variables.<br />
+	*<br />
+	* we will read these settings out of the db, but only when $filename is writeable<br />
+	* otherwise, we read the $filename<br />
+	*/<br />
+	// If conf file is not writable, then we use it as the master so parse it.<br />
+	$file = file($filename);<br />
+	if (is_array($file)) {<br />
+			$write_back = false;<br />
+			foreach ($file as $line) {<br />
+					if (preg_match(&quot;/^\s*([a-zA-Z0-9_]+)=([a-zA-Z0-9 .&amp;-@=_!&lt;&gt;\&quot;\']+)\s*$/&quot;,$line,$matches)) {<br />
+							// overrite anything that was initialized from the db with the conf file authoritative source<br />
+							// if different from the db value then let's write it back to the db<br />
+							// TODO: massage any data we read from the conf file with _preapre_conf_value since it is<br />
+							//       written back to the DB here if different from the DB.<br />
+							//<br />
+							if (!isset($conf[$matches[1]]) || $conf[$matches[1]] != $matches[2]) {<br />
+								$conf[$matches[1]] = $matches[2];<br />
+							}<br />
+					}<br />
+			 }<br />
+	} else {<br />
+			die_freepbx(sprintf(_(&quot;Missing or unreadable config file [%s]...cannot continue&quot;), $filename));<br />
+	}<br />
+	// Need to handle transitionary period where modules are adding new settings. So once we parsed the file<br />
+	// we still go read from the database and add anything that isn't there from the conf file.<br />
+	//</p>
+<p>	$convert = array(<br />
+			'astetcdir'    =&gt; 'ASTETCDIR',<br />
+			'astmoddir'    =&gt; 'ASTMODDIR',<br />
+			'astvarlibdir' =&gt; 'ASTVARLIBDIR',<br />
+			'astagidir'    =&gt; 'ASTAGIDIR',<br />
+			'astspooldir'  =&gt; 'ASTSPOOLDIR',<br />
+			'astrundir'    =&gt; 'ASTRUNDIR',<br />
+			'astlogdir'    =&gt; 'ASTLOGDIR'<br />
+	);</p>
+<p>	$file = file($conf['ASTETCDIR'].'/asterisk.conf');<br />
+	foreach ($file as $line) {<br />
+			if (preg_match(&quot;/^\s*([a-zA-Z0-9]+)\s* =&gt; \s*(.*)\s*([;#].*)?/&quot;,$line,$matches)) {<br />
+					$this-&gt;asterisk_conf[ $matches[1] ] = rtrim($matches[2],&quot;/ \t&quot;);<br />
+			}<br />
+	}</p>
+<p>	// Now that we parsed asterisk.conf, we need to make sure $amp_conf is consistent<br />
+	// so just set it to what we found, since this is what asterisk will use anyhow.<br />
+	//<br />
+	foreach ($convert as $ast_conf_key =&gt; $amp_conf_key) {<br />
+			if (isset($conf[$ast_conf_key])) {<br />
+					$conf[$amp_conf_key] = $this-&gt;asterisk_conf[$ast_conf_key];<br />
+			}<br />
+	}</p>
+<p>	return $conf;<br />
+}</p>
+<p>//Função responsável por realizar o explode da linha em uma array<br />
+function pc_fixed_width_substr($fields,$data) {<br />
+    $r = array();<br />
+    $line_pos = 0;<br />
+    foreach($fields as $field_name =&gt; $field_length) {<br />
+      //Identifica se os primeiros caracteres são espaço<br />
+      $tmp_data = substr($data,$line_pos,$field_length);<br />
+      if (strlen($tmp_data) != strlen(ltrim($tmp_data)))<br />
+          $line_pos += strlen($tmp_data) - strlen(ltrim($tmp_data));<br />
+      $r[$field_name] = utf8_encode(trim(substr($data,$line_pos,$field_length)));<br />
+      $line_pos += $field_length;<br />
+    }</p>
+<p>  return $r;<br />
+}</p>
+<p>//Em caso do servidor ser um FreePbx, carrega as informações do DB com base na config do FreePBX<br />
+if (file_exists($freepbx_configfile)){}<br />
+	$amp_conf = parse_amportal_conf($freepbx_configfile);</p>
+<p>	$dbhost=$amp_conf['AMPDBHOST'];<br />
+	$dbname=$amp_conf['AMPDBNAME'];<br />
+	$dbuser=$amp_conf['AMPDBUSER'];<br />
+	$dbpass=$amp_conf['AMPDBPASS'];<br />
+}</p>
+<p>//================ &lt; Inicio &gt; =====================================</p>
+<p>$info = pathinfo(__FILE__);<br />
+openlog($info['basename'], LOG_PID | LOG_PERROR, LOG_LOCAL0);</p>
+<p>date_default_timezone_set('America/Sao_Paulo');</p>
+<p>//Cria a conexão com a base de dados<br />
+$conn = new PDO(&quot;mysql:host=$dbhost;dbname=$dbname;charset=utf8&quot;, $dbuser, $dbpass);<br />
+$conn-&gt;setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);</p>
+<p>//Realiza o download do arquivo da Anatel<br />
+echo &quot;Realizando download do arquivo (Telefone Fixo)...\n&quot;;<br />
+$filename='/tmp/anatel-'.date(&quot;YmdHis&quot;).'.zip';<br />
+$filename2='/tmp/anatel-'.date(&quot;YmdHis&quot;).'.txt';<br />
+$filename3='/tmp/anatel-'.date(&quot;YmdHis&quot;).'-converted.txt';</p>
+<p>$options = array(<br />
+        CURLOPT_RETURNTRANSFER =&gt; true,     // return web page<br />
+        CURLOPT_HEADER         =&gt; false,    // do not return headers<br />
+        CURLOPT_FOLLOWLOCATION =&gt; true,     // follow redirects<br />
+        CURLOPT_USERAGENT      =&gt; &quot;Mozilla/5.0 (Windows NT 10.0; WOW64; rv:53.0) Gecko/20100101 Firefox/53.0&quot;, // who am i<br />
+        CURLOPT_AUTOREFERER    =&gt; true,     // set referer on redirect<br />
+        CURLOPT_CONNECTTIMEOUT =&gt; 120,      // timeout on connect<br />
+        CURLOPT_TIMEOUT        =&gt; 120,      // timeout on response<br />
+        CURLOPT_MAXREDIRS      =&gt; 10,       // stop after 10 redirects<br />
+        CURLOPT_POST           =&gt; true,         // POST<br />
+        CURLOPT_SSL_VERIFYHOST =&gt; false,<br />
+        CURLOPT_SSL_VERIFYPEER =&gt; false,<br />
+        CURLOPT_URL            =&gt; 'https://sistemas.anatel.gov.br/areaarea/N_Download/Tela.asp',<br />
+        CURLOPT_POSTFIELDS     =&gt; 'varTIPO=CentralCNL&amp;varPRESTADORA=&amp;varCENTRAL=F&amp;varUF=&amp;varPERIODO=&amp;acao=c&amp;cmd=&amp;varMOD=Publico',<br />
+        CURLOPT_HTTPHEADER     =&gt; array(<br />
+                        'Content-type: application/x-www-form-urlencoded',<br />
+                        'Expect:'<br />
+                )<br />
+);</p>
+<p>$ch      = curl_init( );<br />
+curl_setopt_array( $ch, $options );<br />
+$content = curl_exec( $ch );<br />
+$err     = curl_errno( $ch );<br />
+$errmsg  = curl_error( $ch );</p>
+<p>curl_close( $ch );</p>
+<p>$zipFile = fopen($filename, &quot;w&quot;) or die(&quot;Unable to open file!&quot;);<br />
+fwrite($zipFile, $content);<br />
+fclose($zipFile);</p>
+<p>if (!file_exists($filename)) die(&quot;Erro realizando download do arquivo&quot;);</p>
+<p>//Descompacta o arquivo texto com os dados<br />
+echo &quot;Descompactando arquivo...\n&quot;;<br />
+$zip = new ZipArchive;<br />
+if ($zip-&gt;open($filename) === true) {<br />
+    for($i = 0; $i &lt; $zip-&gt;numFiles; $i++) {<br />
+        $file = $zip-&gt;getNameIndex($i);<br />
+        $fileinfo = pathinfo($file);<br />
+        if (strcasecmp($fileinfo['extension'], &quot;txt&quot;) == 0) {<br />
+            copy(&quot;zip://&quot;.$filename.&quot;#&quot;.$file, $filename2);<br />
+        }</p>
+<p>    }<br />
+    $zip-&gt;close();<br />
+}</p>
+<p>//Processa o arquivo<br />
+if (!file_exists($filename2)) die(&quot;Erro descompactando o arquivo&quot;);</p>
+<p>$fields = array('uf' =&gt; 2,<br />
+             'sigla_cnl' =&gt; 4,<br />
+             'cod_cnl' =&gt; 5,<br />
+             'localidade' =&gt; 50,<br />
+             'municipio' =&gt; 50,<br />
+             'cod_area_tarifacao' =&gt; 5,<br />
+             'ddd' =&gt; 2,<br />
+             'prefixo' =&gt; 5,<br />
+             'prestadora' =&gt; 30,<br />
+             'faixa_inicial' =&gt; 4,<br />
+             'faixa_final' =&gt; 4,<br />
+             'latitude' =&gt; 8,<br />
+             'hemisferio' =&gt; 5,<br />
+             'longitude' =&gt; 8,<br />
+             'cnl_local' =&gt; 4);</p>
+<p>//Converte o arquivo<br />
+echo &quot;Convertendo arquivo...\n&quot;;<br />
+exec(&quot;iconv -f iso-8859-1 -t UTF-8 $filename2 | sed 'y/áÁàÀãÃâÂéÉêÊíÍóÓõÕôÔúÚçÇ/aAaAaAaAeEeEiIoOoOoOuUcC/' &gt; $filename3&quot;);</p>
+<p>//Processa o arquivo<br />
+if (!file_exists($filename3)) die(&quot;Erro convertendo o arquivo&quot;);</p>
+<p>//Realiza a primeira leitura do arquivo, para cadastrar todos os CNLs<br />
+//Depois realizará uma segunda leitura para cadastrar as tarifas<br />
+//Isso é necessário pois na tarida existe vínculo com o CNL da área<br />
+echo &quot;Inserindo CNL...\n&quot;;<br />
+$handle = fopen($filename3, &quot;r&quot;);<br />
+if ($handle) {<br />
+    while (($line = fgets($handle)) !== false) {</p>
+<p>        //$line = trim(mb_convert_encoding($line, &quot;UTF-8&quot;, &quot;Windows-1252&quot;));<br />
+        $line = trim($line);<br />
+        $data = pc_fixed_width_substr($fields,$line);</p>
+<p>        //Executa a inserção<br />
+        try{<br />
+            $stmt = $conn-&gt;prepare( &quot;INSERT INTO cnl (`cod_cnl`, `sigla_cnl`, `uf`, `ddd`, `localidade`, `municipio`) VALUES(:cod_cnl, :sigla_cnl, :uf, :ddd, :localidade, :municipio) ON DUPLICATE KEY UPDATE uf=VALUES(uf), ddd=VALUES(ddd), localidade=VALUES(localidade), municipio=VALUES(municipio)&quot; );<br />
+            $stmt-&gt;bindValue(':cod_cnl', $data['cod_cnl']);<br />
+            $stmt-&gt;bindValue(':sigla_cnl', $data['sigla_cnl']);<br />
+            $stmt-&gt;bindValue(':uf', $data['uf']);<br />
+            $stmt-&gt;bindValue(':ddd', $data['ddd']);<br />
+            $stmt-&gt;bindValue(':localidade', $data['localidade']);<br />
+            $stmt-&gt;bindValue(':municipio', $data['municipio']);<br />
+            $stmt-&gt;execute();</p>
+<p>            $stmt = $conn-&gt;prepare( &quot;INSERT INTO cnl_tarifacao (`cod_cnl`, `cod_area_tarifacao`, `ddd`, `prefixo`, `prestadora`, `faixa_inicial`, `faixa_final`) VALUES(:cod_cnl, :cod_area_tarifacao, :ddd, :prefixo, :prestadora, :faixa_inicial, :faixa_final)  ON DUPLICATE KEY UPDATE cod_area_tarifacao=VALUES(cod_area_tarifacao),prestadora=VALUES(prestadora)&quot; );<br />
+            $stmt-&gt;bindValue(':cod_cnl', $data['cod_cnl']);<br />
+            $stmt-&gt;bindValue(':cod_area_tarifacao', $data['cod_area_tarifacao']);<br />
+            $stmt-&gt;bindValue(':ddd', $data['ddd']);<br />
+            $stmt-&gt;bindValue(':prefixo', $data['prefixo']);<br />
+            $stmt-&gt;bindValue(':prestadora', substr($data['prestadora'],0,50));<br />
+            $stmt-&gt;bindValue(':faixa_inicial', intval($data['faixa_inicial']));<br />
+            $stmt-&gt;bindValue(':faixa_final', intval($data['faixa_final']));<br />
+            $stmt-&gt;execute();</p>
+<p>        } catch (Exception $ex) {<br />
+            syslog(LOG_SYSLOG, &quot;Erro na linha $line: &quot;. $ex-&gt;getMessage());<br />
+            $debug = var_export($data, true);<br />
+            syslog(LOG_SYSLOG, $debug);<br />
+            die(&quot;Erro na linha $line: &quot;. $ex-&gt;getMessage());<br />
+        }</p>
+<p>        if (empty($data['ddd'])){<br />
+            var_dump($line);<br />
+            var_dump($data);<br />
+            die();<br />
+        }</p>
+<p>    }</p>
+<p>    fclose($handle);<br />
+} else {<br />
+    syslog(LOG_SYSLOG,&quot;Erro abrindo o arquivo&quot;);<br />
+    die(&quot;Erro abrindo o arquivo&quot;);<br />
+}</p>
+<p>//Realiza a releitura do arquivo<br />
+//Para atualizar a hierarquia de CNL<br />
+echo &quot;Atualizando hierarquia de CNL, Passo 1...\n&quot;;<br />
+$handle = fopen($filename3, &quot;r&quot;);<br />
+if ($handle) {<br />
+    while (($line = fgets($handle)) !== false)<br />
+    {</p>
+<p>        //$line = trim(mb_convert_encoding($line, &quot;UTF-8&quot;, &quot;Windows-1252&quot;));<br />
+        $line = trim($line);<br />
+        $data = pc_fixed_width_substr($fields,$line);<br />
+        $cod_cnl_local = -1;</p>
+<p>        //Resgata o cód da CNL local<br />
+        //Em diversos casos a informação 'CNL local' vem em branco<br />
+        //estes casos serão tratados no passo 2<br />
+        if (!empty($data['cnl_local']))<br />
+        {<br />
+            $stmt = $conn-&gt;prepare('SELECT cod_cnl from cnl WHERE sigla_cnl = :sigla_cnl');<br />
+            $stmt-&gt;bindValue(':sigla_cnl', $data['cnl_local']);<br />
+            $stmt-&gt;execute();</p>
+<p>            if ($row = $stmt-&gt;fetch(PDO::FETCH_ASSOC)){<br />
+                $cod_cnl_local = $row[&quot;cod_cnl&quot;];<br />
+            }<br />
+        }</p>
+<p>        if ($cod_cnl_local != -1){<br />
+            try{</p>
+<p>                $stmt = $conn-&gt;prepare( &quot;UPDATE cnl SET cod_cnl_local = :cod_cnl_local where cod_cnl = :cod_cnl&quot; );<br />
+                $stmt-&gt;bindValue(':cod_cnl', $data['cod_cnl']);<br />
+                $stmt-&gt;bindValue(':cod_cnl_local', $cod_cnl_local);<br />
+                $stmt-&gt;execute();</p>
+<p>            } catch (Exception $ex) {<br />
+                syslog(LOG_SYSLOG, &quot;Erro na linha $line: &quot;. $ex-&gt;getMessage());<br />
+                $debug = var_export($data, true);<br />
+                syslog(LOG_SYSLOG, $debug);<br />
+                die(&quot;Erro na linha $line: &quot;. $ex-&gt;getMessage());<br />
+            }<br />
+        }</p>
+<p>    }</p>
+<p>    fclose($handle);<br />
+} else {<br />
+    syslog(LOG_SYSLOG, &quot;Erro na linha $line: &quot;. $ex-&gt;getMessage());<br />
+    die(&quot;Erro abrindo o arquivo&quot;);<br />
+}</p>
+<p>//Realiza a releitura do arquivo<br />
+//Para atualizar a hierarquia de CNL<br />
+echo &quot;Atualizando hierarquia de CNL, Passo 2...\n&quot;;<br />
+try{<br />
+    $stmt = $conn-&gt;prepare( &quot;select * from cnl where cod_cnl_local = 0&quot; );<br />
+    $stmt-&gt;execute();</p>
+<p>    while ($row = $stmt-&gt;fetch(PDO::FETCH_ASSOC))<br />
+    {<br />
+        $cod_cnl_local = -1;<br />
+        $track = &quot;&quot;;<br />
+        $ddd = $row['ddd'];</p>
+<p>        //Resgata o cód da CNL local<br />
+        //Em diversos casos a informação 'CNL local' vem em branco<br />
+        //Nestes casos verificar qual é a CNL mais expressiva a partir do DDD e usa-la<br />
+        if (!empty($data['cnl_local']))<br />
+            continue;</p>
+<p>        //Em diversos casos a informação 'CNL local' vem em branco<br />
+        //Nestes casos verificar qual é a CNL mais expressiva a partir do DDD e usa-la<br />
+        $track = &quot;$track cnl = -1\n&quot;;</p>
+<p>        $s1 = $conn-&gt;prepare('select * ,(select count(*) from cnl c1 where c1.cod_cnl_local = c.cod_cnl) as `chields` from cnl c where c.cod_cnl != c.cod_cnl_local and ddd = :ddd order by c.ddd, 8 desc limit 1');<br />
+        $s1-&gt;bindValue(':ddd', $ddd);<br />
+        $s1-&gt;execute();</p>
+<p>        $debug = var_export($s1, true);<br />
+        $track = &quot;$track $debug\n&quot;;</p>
+<p>        $track = &quot;$track :ddd = $ddd\n&quot;;</p>
+<p>        $r1 = $s1-&gt;fetch(PDO::FETCH_ASSOC);</p>
+<p>        $debug = var_export($r1, true);<br />
+        $track = &quot;$track $debug\n&quot;;</p>
+<p>        if ($r1){<br />
+            $cod_cnl_local = $r1[&quot;cod_cnl&quot;];<br />
+            $track = &quot;$track cod_cnl = $cod_cnl_local\n&quot;;<br />
+        }</p>
+<p>        if ($cod_cnl_local != -1){<br />
+            try{</p>
+<p>                $s1 = $conn-&gt;prepare( &quot;UPDATE cnl SET cod_cnl_local = :cod_cnl_local where cod_cnl = :cod_cnl&quot; );<br />
+                $s1-&gt;bindValue(':cod_cnl', $row['cod_cnl']);<br />
+                $s1-&gt;bindValue(':cod_cnl_local', $cod_cnl_local);<br />
+                $s1-&gt;execute();</p>
+<p>            } catch (Exception $ex) {<br />
+                syslog(LOG_SYSLOG, &quot;Erro na linha $line: &quot;. $ex-&gt;getMessage());<br />
+                $debug = var_export($row, true);<br />
+                syslog(LOG_SYSLOG, $debug);<br />
+                die(&quot;Erro na linha $line: &quot;. $ex-&gt;getMessage());<br />
+            }<br />
+        }else{<br />
+            $debug = var_export($row, true);<br />
+            syslog(LOG_SYSLOG, &quot;CNL Local não identificado: $track $debug&quot;);<br />
+        }</p>
+<p>    }</p>
+<p>} catch (Exception $ex) {<br />
+    syslog(LOG_SYSLOG, &quot;Erro processando: &quot;. $ex-&gt;getMessage());<br />
+    die();<br />
+}</p>
+<p>//Exclui os arquivos<br />
+echo &quot;Excluindo arquivos temporários...\n&quot;;<br />
+unlink($filename3);<br />
+unlink($filename2);<br />
+unlink($filename);</p>
+<p>closelog();<br />
+//================ &lt; Fim &gt;====================================</p>
+<p>[/sourcecode]</p>
+<p>Edite as variáveis ($dbhost, $dbname, $dbuser e $dbpass) para representar as informações do seu ambiente. Execute o comando abaixo para liberar execução deste arquivo.</p>
+<p>Obs.: Em caso de utilização no FreePBX, não se faz necessário editar as variáveis ($dbhost, $dbname, $dbuser e $dbpass), pois o script resgata essas informações automaticamente da configuração do seu FreePBX.</p>
+<p>[sourcecode language="shell"] chmod +x /usr/local/bin/importacnl.php<br />
+[/sourcecode]</p>
+<p>Por fim execute o script para realizar a importação. E aproveite para dar uma navegada em outros posts aqui do site, curta, compartilhe, ou quem sabe vá tomar um café, energético, suco, ler um livro, pois este processo deve demorar alguns minutos para executar.</p>
+<p><a href="http://www.helviojunior.com.br/wp-content/uploads/2016/07/asterisk_cnl_003.png"><img class="alignnone size-full wp-image-1555" src="{{ site.baseurl }}/assets/2016/07/asterisk_cnl_003.png" alt="asterisk_cnl_003" width="486" height="131" /></a></p>
+<p>O interessante é colocar este script para executar uma vez por semana (usando crontab), para manter essa base sempre atualizada.</p>
+<p>&nbsp;</p>
+<h2>Configurando o asterisk</h2>
+<p><span style="color: #ff0000;">*** ATENÇÃO!!! Em caso de utilização em FreePBX, recomendo utilizar o script específico para ele que se encontra mais abaixo neste post.</span></p>
+<p>Enfim chegamos ao asterisk, nesta sessão iremos criar o nosso script AGI bem como configurar nosso plano de discagem do asterisk para consultar essa base de dados e decidir se devemos ou não inserir o DDD nas ligações.</p>
+<p>Para nosso script AGI utilizaremos a biblioteca PHPAGI disponível em (<a href="http://phpagi.sourceforge.net/" target="_blank">http://phpagi.sourceforge.net/</a>), mas pode ficar despreocupado colocarei aqui um arquivo zip com todo o conteúdo do AGI + a biblioteca phpagi.</p>
+<p>Crie um arquivo <strong>/var/lib/asterisk/agi-bin/consultacnl.php</strong> com o conteúdo abaixo</p>
+<p>[sourcecode language="shell"]#!/usr/bin/php -q<br />
+&lt;?php<br />
+//-----------------------------------------------------------------+<br />
+// Autor      : Helvio Junior (helvio_junior@hotmail.com)          |<br />
+// Data       : 2016-06-02                                         |<br />
+// Versão     : 1.0                                                |<br />
+// Finalidade : Consulta a base CNL                                |<br />
+//-----------------------------------------------------------------+</p>
+<p>//================ &lt; Includes &gt; ===================================<br />
+require_once __DIR__.'/phpagi-2.20/phpagi.php';</p>
+<p>//================ &lt; Variaveis &gt; ===================================<br />
+$dbhost='127.0.0.1';<br />
+$dbname='cnldb';<br />
+$dbuser='cnluser';<br />
+$dbpass='cnlpwd';</p>
+<p>//================ &lt; Inicio &gt; =====================================<br />
+$agi = new AGI();</p>
+<p>$exten = '';</p>
+<p>$uniqueId = $agi-&gt;request['agi_uniqueid'];</p>
+<p>if ((isset($agi-&gt;request['agi_extension'])) &amp;&amp; ($agi-&gt;request['agi_extension'] != ''))<br />
+	$exten = $agi-&gt;request['agi_extension'];</p>
+<p>if (empty($uniqueId) || empty($exten))<br />
+{<br />
+	$agi-&gt;exec('VERBOSE','&quot;Exten não fornecidos&quot; 3');<br />
+	die();<br />
+}</p>
+<p>try{</p>
+<p>	$ddd=substr($exten,0,2);<br />
+	$prefixo=substr($exten,2,4);<br />
+	$sufixo=substr($exten,6,4);</p>
+<p>	$agi-&gt;exec('VERBOSE','&quot;Consultando CNL para '.$exten.' ('.$ddd.') '.$prefixo.'-'.$sufixo.'&quot; 4');</p>
+<p>	//Cria a conexão com a base de dados<br />
+	$conn = new PDO(&quot;mysql:host=$dbhost;dbname=$dbname;charset=utf8&quot;, $dbuser, $dbpass);<br />
+	$conn-&gt;setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);</p>
+<p>	$stmt = $conn-&gt;prepare('select p.* from cnl c inner join cnl_tarifacao t on c.cod_cnl = t.cod_cnl inner join cnl p on c.cod_cnl_local = p.cod_cnl where t.ddd = :ddd and t.prefixo = :prefixo and :sufixo between t.faixa_inicial and t.faixa_final');<br />
+	$stmt-&gt;bindValue(':ddd', $ddd);<br />
+	$stmt-&gt;bindValue(':prefixo', $prefixo);<br />
+	$stmt-&gt;bindValue(':sufixo', $sufixo);<br />
+	$stmt-&gt;execute();</p>
+<p>	$cnl=&quot;&quot;;<br />
+	if ($row = $stmt-&gt;fetch(PDO::FETCH_ASSOC)){<br />
+		$cnl = $row[&quot;sigla_cnl&quot;];<br />
+		$agi-&gt;exec('VERBOSE','&quot;CNL encontrado para '.$exten.' -&gt; '.$cnl.'&quot; 4');<br />
+	}</p>
+<p>	//Define o cnl<br />
+	$agi-&gt;exec('SET',&quot;cnl=$cnl&quot;);</p>
+<p>    return 0;</p>
+<p>} catch (Exception $e) {<br />
+    $agi-&gt;exec(&quot;NOOP&quot;, '&quot;'.$e-&gt;getMessage().'&quot;');<br />
+}<br />
+[/sourcecode]</p>
+<p>Igualmente ao script anterior edite as variáveis ($dbhost, $dbname, $dbuser e $dbpass) para representar as informações do seu ambiente.</p>
+<p>Ajuste a permissão de execução do seu script</p>
+<p>[sourcecode language="shell"] chmod +x /var/lib/asterisk/agi-bin/consultacnl.php<br />
+[/sourcecode]</p>
+<p>No arquivo <strong>/etc/asterisk/extensions.conf</strong> edite o seu contexto da ligação conforme o exemplo abaixo</p>
+<p>[sourcecode language="shell"][trunk_out]<br />
+; Local<br />
+exten = _XXXXXXXX,1,Goto(041${EXTEN},1)<br />
+; LDN<br />
+exten = _0ZZ[2-6]XXXXXXX,1,Goto(${EXTEN:1},1)<br />
+exten = _0ZZ[2-6]XXXXXXXX,1,Goto(${EXTEN:1},1)</p>
+<p>;Normalizado<br />
+exten = _ZZXXXXXXX.,1,AGI(consultacnl.php)<br />
+exten = _ZZXXXXXXX.,n,ExecIf($[&quot;${cnl}&quot; = &quot;CTA&quot;]?Set(number=${EXTEN:2}))<br />
+exten = _ZZXXXXXXX.,n,Dial(SIP/trunk_sip/${number},90,TtXx)<br />
+[/sourcecode]</p>
+<p>Lembrando que neste exemplo considero como origem da ligação o DDD 41 e CNL CTA.</p>
+<p>&nbsp;</p>
+<h2>Configurando o FreePBX</h2>
+<p><span style="color: #ff0000;">*** ATENÇÃO!!! Este script foi desenvolvido para utilização no padrão do FreePBX, em caso de utilização em outra plataforma, pode ser necessário realização de alterações.</span></p>
+<p>Enfim chegamos ao FreePBX, nesta sessão iremos criar o nosso script AGI bem como configurar nosso plano de discagem do FreePBX para consultar essa base de dados e decidir se devemos ou não inserir/excluir o DDD nas ligações.</p>
+<p>Para nosso script AGI utilizaremos a biblioteca PHPAGI disponível em (<a href="http://phpagi.sourceforge.net/" target="_blank">http://phpagi.sourceforge.net/</a>), mas pode ficar despreocupado colocarei aqui um arquivo zip com todo o conteúdo do AGI + a biblioteca phpagi.</p>
+<p>Crie um arquivo <strong>/var/lib/asterisk/agi-bin/alteracnl.php</strong> com o conteúdo abaixo</p>
+<p>[sourcecode language="shell"]#!/usr/bin/php -q<br />
+&lt;?php<br />
+//--------------------------------------------------------------------+<br />
+// Autor      : Helvio Junior (helvio_junior@hotmail.com)             |<br />
+// Data       : 2016-06-02                                            |<br />
+// Atualizado : 2017-09-30                                            |<br />
+// Versão     : 1.2                                                   |<br />
+// Finalidade : Consulta a base CNL e corrige o numero para FreePBX   |<br />
+//              *** Utilizar este script preferencialmente no FreePBX |<br />
+//--------------------------------------------------------------------+</p>
+<p>//================ &lt; Includes &gt; ===================================<br />
+require_once __DIR__.'/phpagi-2.20/phpagi.php';</p>
+<p>//================ &lt; Variaveis &gt; ===================================<br />
+$configfile='/etc/amportal.conf';</p>
+<p>//================ &lt; Funções &gt; ===================================</p>
+<p>function parse_amportal_conf($filename) {<br />
+	$conf = array();</p>
+<p>	/* defaults<br />
+	* This defines defaults and formatting to assure consistency across the system so that<br />
+	* components don't have to keep being 'gun shy' about these variables.<br />
+	*<br />
+	* we will read these settings out of the db, but only when $filename is writeable<br />
+	* otherwise, we read the $filename<br />
+	*/<br />
+	// If conf file is not writable, then we use it as the master so parse it.<br />
+	$file = file($filename);<br />
+	if (is_array($file)) {<br />
+			$write_back = false;<br />
+			foreach ($file as $line) {<br />
+					if (preg_match(&quot;/^\s*([a-zA-Z0-9_]+)=([a-zA-Z0-9 .&amp;-@=_!&lt;&gt;\&quot;\']+)\s*$/&quot;,$line,$matches)) {<br />
+							// overrite anything that was initialized from the db with the conf file authoritative source<br />
+							// if different from the db value then let's write it back to the db<br />
+							// TODO: massage any data we read from the conf file with _preapre_conf_value since it is<br />
+							//       written back to the DB here if different from the DB.<br />
+							//<br />
+							if (!isset($conf[$matches[1]]) || $conf[$matches[1]] != $matches[2]) {<br />
+								$conf[$matches[1]] = $matches[2];<br />
+							}<br />
+					}<br />
+			 }<br />
+	} else {<br />
+			die_freepbx(sprintf(_(&quot;Missing or unreadable config file [%s]...cannot continue&quot;), $filename));<br />
+	}<br />
+	// Need to handle transitionary period where modules are adding new settings. So once we parsed the file<br />
+	// we still go read from the database and add anything that isn't there from the conf file.<br />
+	//</p>
+<p>	$convert = array(<br />
+			'astetcdir'    =&gt; 'ASTETCDIR',<br />
+			'astmoddir'    =&gt; 'ASTMODDIR',<br />
+			'astvarlibdir' =&gt; 'ASTVARLIBDIR',<br />
+			'astagidir'    =&gt; 'ASTAGIDIR',<br />
+			'astspooldir'  =&gt; 'ASTSPOOLDIR',<br />
+			'astrundir'    =&gt; 'ASTRUNDIR',<br />
+			'astlogdir'    =&gt; 'ASTLOGDIR'<br />
+	);</p>
+<p>	$file = file($conf['ASTETCDIR'].'/asterisk.conf');<br />
+	foreach ($file as $line) {<br />
+			if (preg_match(&quot;/^\s*([a-zA-Z0-9]+)\s* =&gt; \s*(.*)\s*([;#].*)?/&quot;,$line,$matches)) {<br />
+					$this-&gt;asterisk_conf[ $matches[1] ] = rtrim($matches[2],&quot;/ \t&quot;);<br />
+			}<br />
+	}</p>
+<p>	// Now that we parsed asterisk.conf, we need to make sure $amp_conf is consistent<br />
+	// so just set it to what we found, since this is what asterisk will use anyhow.<br />
+	//<br />
+	foreach ($convert as $ast_conf_key =&gt; $amp_conf_key) {<br />
+			if (isset($conf[$ast_conf_key])) {<br />
+					$conf[$amp_conf_key] = $this-&gt;asterisk_conf[$ast_conf_key];<br />
+			}<br />
+	}</p>
+<p>	return $conf;<br />
+}</p>
+<p>//Carrega as informações do DB com base na config do FrePBX<br />
+$amp_conf = parse_amportal_conf($configfile);</p>
+<p>$dbhost=$amp_conf['AMPDBHOST'];<br />
+$dbname=$amp_conf['AMPDBNAME'];<br />
+$dbuser=$amp_conf['AMPDBUSER'];<br />
+$dbpass=$amp_conf['AMPDBPASS'];</p>
+<p>//================ &lt; Inicio &gt; =====================================<br />
+$agi = new AGI();</p>
+<p>$dialnumber = '';</p>
+<p>$uniqueId = $agi-&gt;request['agi_uniqueid'];</p>
+<p>$dialnumber = '';<br />
+$cnllocal = '';</p>
+<p>$tmp = $agi-&gt;get_variable(&quot;OUTNUM&quot;);<br />
+if (isset($tmp['data']) &amp;&amp; !empty($tmp['data'])){<br />
+		$dialnumber = $tmp['data'];<br />
+}</p>
+<p>$tmp = $agi-&gt;get_variable(&quot;agi_arg_1&quot;);<br />
+if (isset($agi-&gt;request['agi_arg_1']) &amp;&amp; !empty($agi-&gt;request['agi_arg_1'])){<br />
+		$cnllocal = $agi-&gt;request['agi_arg_1'];<br />
+}</p>
+<p>if (empty($uniqueId) || empty($dialnumber) || empty($cnllocal))<br />
+{<br />
+    $agi-&gt;exec('VERBOSE','&quot;DialNumber e CNL Local não fornecidos&quot; 3');<br />
+    die();<br />
+}</p>
+<p>try{</p>
+<p>    //Cria a conexão com a base de dados<br />
+    $conn = new PDO(&quot;mysql:host=$dbhost;dbname=$dbname;charset=utf8&quot;, $dbuser, $dbpass);<br />
+    $conn-&gt;setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);</p>
+<p>	//Em caso do numero discado ter 8 digitos<br />
+	//Inclui o DDD da mesma CNL do usuário, para posteriormente checar se os numeros fazem parte da mesma CNL<br />
+	//Pois o usuário intuitivamente não digita o numero com DDD quando é o mesmo DDD que ele faz parte<br />
+	if (strlen($dialnumber) == 8){</p>
+<p>		$stmt = $conn-&gt;prepare('select c.* from cnl c where c.sigla_cnl = :sigla_cnl');<br />
+		$stmt-&gt;bindValue(':sigla_cnl', $cnllocal);<br />
+		$stmt-&gt;execute();<br />
+		if ($row = $stmt-&gt;fetch(PDO::FETCH_ASSOC)){<br />
+			$ddd = $row[&quot;ddd&quot;];</p>
+<p>			$old = $dialnumber;<br />
+			$dialnumber = $ddd . $dialnumber;<br />
+			$agi-&gt;exec('VERBOSE','&quot;Numero com 8 digitos. Incluindo DDD para consulta. Old: '.$old.' New: '.$dialnumber.'&quot; 4');</p>
+<p>			$agi-&gt;exec('SET','OUTNUM=0'.$dialnumber);<br />
+			$agi-&gt;exec('SET','DIAL_NUMBER=0'.$dialnumber);<br />
+		}</p>
+<p>	}</p>
+<p>	//Remove o &quot;zero&quot; como primeiro digito, caso seja<br />
+	if (substr($dialnumber,0,1) == '0')<br />
+		$dialnumber = substr($dialnumber,1);</p>
+<p>    $ddd=substr($dialnumber,0,2);<br />
+    $prefixo=substr($dialnumber,2,4);<br />
+    $sufixo=substr($dialnumber,6,4);</p>
+<p>    $agi-&gt;exec('VERBOSE','&quot;Consultando CNL para '.$dialnumber.' ('.$ddd.') '.$prefixo.'-'.$sufixo.'&quot; 4');</p>
+<p>    $stmt = $conn-&gt;prepare('select p.* from cnl c inner join cnl_tarifacao t on c.cod_cnl = t.cod_cnl inner join cnl p on c.cod_cnl_local = p.cod_cnl where t.ddd = :ddd and t.prefixo = :prefixo and :sufixo between t.faixa_inicial and t.faixa_final');<br />
+    $stmt-&gt;bindValue(':ddd', $ddd);<br />
+    $stmt-&gt;bindValue(':prefixo', $prefixo);<br />
+    $stmt-&gt;bindValue(':sufixo', $sufixo);<br />
+    $stmt-&gt;execute();</p>
+<p>    $cnl=&quot;&quot;;<br />
+    if ($row = $stmt-&gt;fetch(PDO::FETCH_ASSOC)){<br />
+        $cnl = $row[&quot;sigla_cnl&quot;];<br />
+        $agi-&gt;exec('VERBOSE','&quot;CNL encontrado para '.$dialnumber.' -&gt; '.$cnl.'&quot; 4');<br />
+    }</p>
+<p>    //Caso seja o mesmo CNL, remove o DDD do número a ser discado<br />
+	if ($cnllocal == $cnl){<br />
+		$agi-&gt;exec('SET','OUTNUM='.$prefixo.$sufixo);<br />
+		$agi-&gt;exec('SET','DIAL_NUMBER='.$prefixo.$sufixo);<br />
+	}</p>
+<p>    return 0;</p>
+<p>} catch (Exception $e) {<br />
+    $agi-&gt;exec(&quot;NOOP&quot;, '&quot;'.$e-&gt;getMessage().'&quot;');<br />
+}</p>
+<p>[/sourcecode]</p>
+<p>Neste script não se faz necessário alterar as variáveis ($dbhost, $dbname, $dbuser e $dbpass) pois o script pega as informações da configuração do seu FreePBX.</p>
+<p>Ajuste a permissão de execução do seu script</p>
+<p>[sourcecode language="shell"] chmod +x /var/lib/asterisk/agi-bin/alteracnl.php<br />
+[/sourcecode]</p>
+<p>No arquivo <strong>/etc/asterisk/extensions_custom.conf</strong> edite o seu contexto da ligação conforme o exemplo abaixo</p>
+<p>[sourcecode language="shell"][macro-dialout-trunk-predial-hook]<br />
+exten =&gt; s,1,Agi(alteracnl.php,CTA)<br />
+[/sourcecode]</p>
+<p>Lembrando que neste exemplo considero como origem da ligação o DDD 41 e CNL CTA.</p>
+<p>&nbsp;</p>
+<h2>Considerações finais</h2>
+<p>Segue o link (<a href="http://www.helviojunior.com.br/wp-content/uploads/2016/07/CNL1.zip">CNL</a>) para download do zip com todos os arquivos deste ambiente.</p>
+<p>Espero ter ajudado. Caso tenha dúvidas, sugestões fique a vontade para comentar, mandar e-mail e etc...</p>

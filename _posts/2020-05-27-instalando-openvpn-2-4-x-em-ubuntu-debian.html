@@ -1,0 +1,43 @@
+---
+layout: post
+title: Instalando OpenVPN 2.4.x em Ubuntu/Debian
+date: 2020-05-27 16:17:48.000000000 -03:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- IT
+tags: []
+meta:
+  sidebar: ''
+  layout: ''
+  _aviaLayoutBuilderCleanData: ''
+  _aviaLayoutBuilder_active: ''
+  _syntaxhighlighter_encoded: '1'
+  _yoast_wpseo_content_score: '30'
+  _edit_last: '1'
+  footer: ''
+  header_title_bar: ''
+  header_transparency: ''
+  _avia_hide_featured_image: '0'
+  _av_alb_posts_elements_state: a:0:{}
+  _av_el_mgr_version: '1.0'
+  _av_alb_element_mgr_version: 1.0.1
+  _av_css_styles: a:6:{s:7:"post_id";i:2147;s:8:"css_file";s:13:"post-2147.css";s:9:"timestamp";s:0:"";s:6:"status";s:6:"no_css";s:13:"processed_ids";a:0:{}s:13:"include_posts";a:0:{}}
+author:
+  login: helvio
+  email: helvio_junior@hotmail.com
+  display_name: Helvio Junior - M4v3r1ck - OSCE3 (OSEP + OSED + OSWE), OSCE, OSCP,
+    eCXD, eMAPT, CEH
+  first_name: Helvio
+  last_name: Junior - M4v3r1ck - OSCE3 (OSEP + OSED + OSWE), OSCE, OSCP, eCXD, eMAPT,
+    CEH
+permalink: "/it/instalando-openvpn-2-4-x-em-ubuntu-debian/"
+---
+<p>[sourcecode language="shell"]root@M4v3r1ck:~# curl -s https://swupdate.openvpn.net/repos/repo-public.gpg | apt-key add -<br />
+root@M4v3r1ck:~# echo &quot;deb http://build.openvpn.net/debian/openvpn/stable `lsb_release --codename --short` main&quot; &gt; /etc/apt/sources.list.d/openvpn-aptrepo.list<br />
+root@M4v3r1ck:~# apt update<br />
+root@M4v3r1ck:~# apt install -y openvpn<br />
+[/sourcecode]</p>

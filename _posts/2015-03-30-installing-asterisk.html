@@ -1,0 +1,205 @@
+---
+layout: post
+title: Instalando o Asterisk 1.8
+date: 2015-03-30 20:47:13.000000000 -03:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Asterisk
+- VoIP
+tags: []
+meta:
+  _edit_last: '1'
+  _yoast_wpseo_title: Instalando Asterisk
+  _syntaxhighlighter_encoded: '1'
+  _aviaLayoutBuilder_active: ''
+  _aviaLayoutBuilderCleanData: ''
+  layout: ''
+  sidebar: ''
+  footer: ''
+  header_title_bar: ''
+  header_transparency: ''
+  _avia_hide_featured_image: '0'
+  _yoast_wpseo_content_score: '60'
+  _yoast_wpseo_primary_category: ''
+  _av_alb_posts_elements_state: a:0:{}
+  _av_el_mgr_version: '1.0'
+  _av_alb_element_mgr_version: 1.0.1
+  _av_css_styles: a:6:{s:7:"post_id";i:1203;s:8:"css_file";s:13:"post-1203.css";s:9:"timestamp";s:0:"";s:6:"status";s:6:"no_css";s:13:"processed_ids";a:0:{}s:13:"include_posts";a:0:{}}
+author:
+  login: helvio
+  email: helvio_junior@hotmail.com
+  display_name: Helvio Junior - M4v3r1ck - OSCE3 (OSEP + OSED + OSWE), OSCE, OSCP,
+    eCXD, eMAPT, CEH
+  first_name: Helvio
+  last_name: Junior - M4v3r1ck - OSCE3 (OSEP + OSED + OSWE), OSCE, OSCP, eCXD, eMAPT,
+    CEH
+permalink: "/voip/installing-asterisk/"
+---
+<p>O Asterisk é um poderoso software de PBX (central telefônica), free, que possibilita realizar interconexões entre o mundo analógico, digital e possibilita aplicações e recursos que quando vistos em outras centrais telefônicas, são de grande porte.</p>
+<p><!--more--></p>
+<h2>Instalação de dependências</h2>
+<p>O primeiro passo, em qualquer instalação de servidor ao meu ver, é garantir que todos os pacotes básicos estejam devidamente atualizados.</p>
+<p>[sourcecode language="shell"]apt-get update;<br />
+apt-get upgrade;<br />
+[/sourcecode]</p>
+<p>Na sequência vamos instalar os pacotes básicos para possibilitar a compilação e a gerência do dispositivo. Enquanto o comando abaixo estiver sendo executado aproveite para buscar um café ou ler outros artigos aqui do blog pois o comando abaixo irá gastar alguns minutos.</p>
+<p>[sourcecode language="shell"]apt-get install vim openssh-server openssh-client linux-headers-`uname -r` gcc g++ libgtk2.0-dev libnewt-dev libxml2-dev libncurses5-dev subversion bison libssl-dev openssl libusb-dev libc6-dev zlib-bin zlib1g-dev snmp libsnmp-dev snmpd build-essential mysql-common libmysqlclient18 libmysqlclient-dev libcurl4-openssl-dev uuid-dev libjansson-dev sqlite3 libsqlite3-dev<br />
+[/sourcecode]</p>
+<p>Na sequencia vamos instalar o MySQL, que será utilizado para o armazenamento do log de gravações telefônicas (CDR -Call Detail Records). Neste passo será solicitada a senha de root do MySQL, escolha sua senha e anote para utilizações futuras.</p>
+<p>[sourcecode language="shell"]apt-get -y install mysql-server mysql-client<br />
+[/sourcecode]</p>
+<h2>Download e instalação dos pacotes utilizados no Asterisk</h2>
+<p>[sourcecode language="shell"]wget http://downloads.asterisk.org/pub/telephony/dahdi-linux/releases/dahdi-linux-2.9.2.tar.gz<br />
+wget http://downloads.asterisk.org/pub/telephony/libpri/releases/libpri-1.4.15.tar.gz<br />
+wget http://downloads.asterisk.org/pub/telephony/dahdi-tools/releases/dahdi-tools-2.9.2.tar.gz<br />
+wget http://downloads.asterisk.org/pub/telephony/asterisk/releases/asterisk-1.8.26.1.tar.gz<br />
+tar -xzvf dahdi-linux-2.9.2.tar.gz -C /usr/src/<br />
+tar -xzvf libpri-1.4.15.tar.gz -C /usr/src/<br />
+tar -xzvf dahdi-tools-2.9.2.tar.gz -C /usr/src/<br />
+tar -xzvf asterisk-1.8.26.1.tar.gz -C /usr/src/<br />
+[/sourcecode]</p>
+<p>A compilação do Asterisk deve ser feita em uma ordem específica, pois os módulos são interdependentes, ou seja, a compilação de um módulo interfere diretamente na compilação do outro. Por exemplo, caso seja compilado o módulo Asterisk antes do Libpri, a compilação do asterisk não reconhecerá as funções habilitadas pelo pacote libpri.</p>
+<p>Desta forma para a correta compilação dos módulos do Asterisk, siga os passos abaixo:</p>
+<h3>DAHDI</h3>
+<p>[sourcecode language="shell"]cd /usr/src/dahdi-linux-2.9.2<br />
+make clean<br />
+make<br />
+make install</p>
+<p>cd /usr/src/dahdi-tools-2.9.2<br />
+make clean<br />
+./configure<br />
+make<br />
+make install<br />
+#Não executar o make config<br />
+#Caso execute o make config, remova com os comandos update-rc.d -f dahdi remove e rm -rf /etc/init.d/dahdi<br />
+[/sourcecode]</p>
+<h3>LibPRI</h3>
+<p>[sourcecode language="shell"]cd /usr/src/libpri-1.4.15<br />
+make clean<br />
+make<br />
+make install<br />
+[/sourcecode]</p>
+<h3>Asterisk</h3>
+<p>[sourcecode language="shell"]cd /usr/src/asterisk-1.8.26.1<br />
+make clean<br />
+./configure<br />
+make menuselect<br />
+# Verifique se os módulos cdr_mysql e app_mysql estão selecionado em Add-Ons<br />
+# Verifique se o módulo res_config_mysql estão selecionado em Add-Ons<br />
+# Verifique se o módulo res_snmp esta selecionado em Resource Modules<br />
+# Verifique se o módulo func_curl esta selecionado em Dialplan Functions<br />
+make<br />
+make install<br />
+make config<br />
+[/sourcecode]</p>
+<p>Caso essa seja a primeira instalação neste servidor pode ser executado o comando abaixo para gerar os arquivos exemplos de configuração. Caso ja tenha os arquivos neste servidor ou em um backup, não é recomendado realizar este passo, pois ao executa-lo todos os arquivos de configuração serão substituídos pelo padrão do sistema.</p>
+<p>[sourcecode language="shell"]make samples<br />
+[/sourcecode]</p>
+<h2>Configurando CDR no MySQL</h2>
+<p>Crie um arquivo <strong>/tmp/cdr.sql</strong> com o seguinte conteúdo</p>
+<p>[sourcecode language="shell"]create database asteriskcdrdb;</p>
+<p>/* Define a senha do usuário como 123456 */<br />
+CREATE USER 'asteriskcdr'@'localhost' IDENTIFIED BY '123456';<br />
+GRANT ALL PRIVILEGES ON asteriskcdrdb.* TO 'asteriskcdr'@'%';</p>
+<p>use asteriskcdrdb;<br />
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;<br />
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;<br />
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;<br />
+/*!40101 SET NAMES utf8 */;<br />
+/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;<br />
+/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;<br />
+/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;<br />
+/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;</p>
+<p>--</p>
+<p>-- Table structure for table `cdr`</p>
+<p>--</p>
+<p>DROP TABLE IF EXISTS `cdr`;<br />
+CREATE TABLE `cdr` (<br />
+`calldatestart` datetime NOT NULL default '0000-00-00 00:00:00',<br />
+`calldateend` datetime NOT NULL default '0000-00-00 00:00:00',<br />
+`calldateanswer` datetime NOT NULL default '0000-00-00 00:00:00',<br />
+`clid` varchar(80) NOT NULL default '',<br />
+`src` varchar(80) NOT NULL default '',<br />
+`dst` varchar(80) NOT NULL default '',<br />
+`dcontext` varchar(80) NOT NULL default '',<br />
+`channel` varchar(80) NOT NULL default '',<br />
+`dstchannel` varchar(80) NOT NULL default '',<br />
+`lastapp` varchar(80) NOT NULL default '',<br />
+`lastdata` varchar(80) NOT NULL default '',<br />
+`duration` int(11) NOT NULL default '0',<br />
+`billsec` int(11) NOT NULL default '0',<br />
+`disposition` varchar(45) NOT NULL default '',<br />
+`amaflags` int(11) NOT NULL default '0',<br />
+`accountcode` varchar(20) NOT NULL default '',<br />
+`uniqueid` varchar(32) NOT NULL default '',<br />
+`userfield` varchar(255) NOT NULL default '',<br />
+KEY `calldate` (`calldatestart`),<br />
+KEY `dst` (`dst`),<br />
+KEY `accountcode` (`accountcode`)<br />
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;</p>
+<p>/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;<br />
+/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;<br />
+/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;<br />
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;<br />
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;<br />
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;<br />
+/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;<br />
+[/sourcecode]</p>
+<p>Execute este script no MySQL para criar a base, usuário e tabela necessária com o comando abaixo. Este comando solicitará a senha de root do MySQL, a mesma criada no momento da instalação.</p>
+<p>[sourcecode language="shell"]mysql -u root -p &amp;amp;amp;lt; /tmp/cdr.sql<br />
+[/sourcecode]</p>
+<p>Edite o arquivo <strong>/etc/asterisk/cdr.conf</strong> e o mantenha com o seguinte conteúdo</p>
+<p>[sourcecode language="shell"][general]<br />
+enable=yes<br />
+unanswered=no<br />
+usegmtime=yes<br />
+loguniqueid=yes<br />
+loguserfield=yes<br />
+[/sourcecode]</p>
+<p>Edite o arquivo <strong>/etc/asterisk/cdr_mysql.conf</strong> e o mantenha com o seguinte conteúdo</p>
+<p>[sourcecode language="shell"][global]<br />
+hostname = localhost<br />
+dbname = asteriskcdrdb<br />
+table=cdr<br />
+user = asteriskcdr<br />
+password = 123456<br />
+port = 3306</p>
+<p>[columns]<br />
+alias start =&gt; calldatestart<br />
+alias end =&gt; calldateend<br />
+alias answer =&gt; calldateanswer<br />
+alias callerid =&gt; clid<br />
+alias src =&gt; src<br />
+alias dst =&gt; dst<br />
+alias dcontext =&gt; dcontext<br />
+alias channel =&gt; channel<br />
+alias dstchannel =&gt; dstchannel<br />
+alias lastapp =&gt; lastapp<br />
+alias lastdata =&gt; lastdata<br />
+alias duration =&gt; duration<br />
+alias billsec =&gt; billsec<br />
+alias disposition =&gt; disposition<br />
+alias amaflags =&gt; amaflags<br />
+alias accountcode =&gt; accountcode<br />
+alias userfield =&gt; userfield<br />
+alias uniqueid =&gt; uniqueid<br />
+[/sourcecode]</p>
+<p>Edite o arquivo <strong>/etc/asterisk/modules.conf</strong> e adicione a seguinte linha</p>
+<p>[sourcecode language="shell"]load =&gt; cdr_mysql.so<br />
+[/sourcecode]</p>
+<p>Reinicie o asterisk</p>
+<p>Para verificar o status da gravação do CDR utilize os comando<strong> cdr mysql status</strong></p>
+<pre></pre>
+<p>&nbsp;</p>
+<h2>Alterando a linguagem do Asterisk para pt_BR</h2>
+<p>Realize o download dos prompts de audio e descompacte em /var/lib/asterisk/sounds/</p>
+<p>[sourcecode language="shell"]wget http://www.helviojunior.com.br/wp-content/uploads/2015/03/sounds-pt_BR.tgz<br />
+tar -xzvf sounds-pt_BR.tgz -C /var/lib/asterisk/sounds/<br />
+[/sourcecode]</p>
+<p>Altere o seu arquivo sip.conf, iax.conf entre outros alterando a language para pt_BR conforme demonstrado abaixo</p>
+<p>[sourcecode language="shell"]language=pt_BR<br />
+[/sourcecode]</p>

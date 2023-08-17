@@ -1,0 +1,51 @@
+---
+layout: post
+title: Alterando OU (Unidade organizacional) padrão no Active Directory
+date: 2013-07-03 18:15:36.000000000 -03:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- IT
+tags:
+- active directory
+- ou
+meta:
+  _edit_last: '1'
+  _syntaxhighlighter_encoded: '1'
+  _av_alb_posts_elements_state: a:0:{}
+  _av_el_mgr_version: '1.0'
+  _av_alb_element_mgr_version: 1.0.1
+  _av_css_styles: a:6:{s:7:"post_id";i:718;s:8:"css_file";s:12:"post-718.css";s:9:"timestamp";s:0:"";s:6:"status";s:6:"no_css";s:13:"processed_ids";a:0:{}s:13:"include_posts";a:0:{}}
+author:
+  login: helvio
+  email: helvio_junior@hotmail.com
+  display_name: Helvio Junior - M4v3r1ck - OSCE3 (OSEP + OSED + OSWE), OSCE, OSCP,
+    eCXD, eMAPT, CEH
+  first_name: Helvio
+  last_name: Junior - M4v3r1ck - OSCE3 (OSEP + OSED + OSWE), OSCE, OSCP, eCXD, eMAPT,
+    CEH
+permalink: "/it/alterando-ou-unidade-organizacional-padrao-no-active-directory/"
+---
+<p>Quando você ingressa um computador no domínio por padrão ele é adicionado no container Conputadores (no qual não pode ser utilizado uma GPO neste container), desta forma uma boa pratica é alterar a OU padrão para que todo computador que ingresse no domínio possa receber as diretivas de segurança (GPO) desta OU, como por exemplo, regras de firewall, aplicativos instalados por padrão e etc.</p>
+<p>Desta forma este post demonstra como realizar a alteração da OU padrão para ingresso dos computadores.</p>
+<p><!--more--></p>
+<p>Primeiramente é necessário capturar o DN (Distinguished Name) da OU que se deseja manter como padrão.</p>
+<p>Abra o aplicativo <strong>Active Directory Users and Computers, </strong>clique em<strong> View</strong> e selecione <strong><strong>Advanced Features.</strong></strong></p>
+<p><a href="http://www.helviojunior.com.br/wp-content/uploads/2013/07/0012.png"><img class="alignnone  wp-image-719" alt="001" src="{{ site.baseurl }}/assets/2013/07/0012.png" width="234" height="139" /></a></p>
+<p>Clique com o botão direito na OU que se deseja manter como padrão e selecione <strong>Properties</strong>.</p>
+<p><a href="http://www.helviojunior.com.br/wp-content/uploads/2013/07/0022.png"><img class="alignnone  wp-image-720" alt="002" src="{{ site.baseurl }}/assets/2013/07/0022.png" width="184" height="221" /></a></p>
+<p>Nas propriedades da OU selecione a aba Atribute Editor, selecione a opção <strong>distinguishedName</strong> e clique em <strong>View</strong>.</p>
+<p><a href="http://www.helviojunior.com.br/wp-content/uploads/2013/07/0032.png"><img class="alignnone  wp-image-721" alt="003" src="{{ site.baseurl }}/assets/2013/07/0032.png" width="307" height="269" /></a></p>
+<p>Clique com o botão direito na área selecionada e clique em <strong>Copy</strong>. Posteriormente clique em Cancel  e OK para fechar as janelas.</p>
+<p>Execute o PowerShell com permissões de administrador clicando com o botão direito no ícone do PowerShell na barra de tarefas, e selecionando <strong>Run as Administrator</strong>.</p>
+<p><a href="http://www.helviojunior.com.br/wp-content/uploads/2013/07/0041.png"><img class="alignnone  wp-image-725" alt="004" src="{{ site.baseurl }}/assets/2013/07/0041.png" width="270" height="125" /></a></p>
+<p>No Prompt do PowerShell digite o seguinte comando: <strong>redircmp &lt;Container-DN&gt;</strong> onde Container-DN é o <strong>distinguishedName</strong>  da OU copiado, no passo anterior, contendo o caminho completo da OU.</p>
+<p>[sourcecode language="shell"]redircmp &quot;OU=Tutorial,DC=helviojunior,DC=com,DC=br&quot;[/sourcecode]</p>
+<p>Caso haja algum espano no nome da sua OU garanta que o <strong>distinguishedName</strong>  estará entre duplas aspas.</p>
+<p>Pressione <strong>Enter</strong>.</p>
+<p><a href="http://www.helviojunior.com.br/wp-content/uploads/2013/07/0052.png"><img class="alignnone  wp-image-727" alt="005" src="{{ site.baseurl }}/assets/2013/07/0052.png" width="482" height="83" /></a></p>
+<p>&nbsp;</p>
+<p>Se o retorno do comando for <strong>Redirection was successful</strong>, o procedimento está completo.</p>

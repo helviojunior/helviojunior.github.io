@@ -1,0 +1,477 @@
+---
+layout: post
+title: Estabelecendo VPN Site-to-site IPSEC com OpenSwan
+date: 2014-10-29 23:54:57.000000000 -02:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- IT
+- Linux
+- Segurança da Informação
+tags: []
+meta:
+  _yoast_wpseo_metadesc: Passo a passo de como configurar o OpenSwan para estabelecer
+    VPN Site-to-site através de NAT-T utilizando segredo compartilhado ou certificado
+    digital.
+  _yoast_wpseo_title: Estabelecendo VPN Site-to-site IPSEC com OpenSwan
+  _edit_last: '1'
+  _syntaxhighlighter_encoded: '1'
+  _yoast_wpseo_content_score: '30'
+  _yoast_wpseo_primary_category: ''
+  _aviaLayoutBuilder_active: ''
+  _aviaLayoutBuilderCleanData: ''
+  layout: ''
+  sidebar: ''
+  footer: ''
+  header_title_bar: ''
+  header_transparency: ''
+  _avia_hide_featured_image: '0'
+  _av_alb_posts_elements_state: a:0:{}
+  _av_el_mgr_version: '1.0'
+  _av_alb_element_mgr_version: 1.0.1
+  _av_css_styles: a:6:{s:7:"post_id";i:1062;s:8:"css_file";s:13:"post-1062.css";s:9:"timestamp";s:0:"";s:6:"status";s:6:"no_css";s:13:"processed_ids";a:0:{}s:13:"include_posts";a:0:{}}
+author:
+  login: helvio
+  email: helvio_junior@hotmail.com
+  display_name: Helvio Junior - M4v3r1ck - OSCE3 (OSEP + OSED + OSWE), OSCE, OSCP,
+    eCXD, eMAPT, CEH
+  first_name: Helvio
+  last_name: Junior - M4v3r1ck - OSCE3 (OSEP + OSED + OSWE), OSCE, OSCP, eCXD, eMAPT,
+    CEH
+permalink: "/it/security/estabelecendo-vpn-site-to-site-ipsec-natt-openswan/"
+---
+<p><span style="display: inline-block; width: 0px; overflow: hidden; line-height: 0;" data-mce-type="bookmark" class="mce_SELRES_start">﻿</span>Neste post veremos passo a passo como configurar o OpenSwan para estabelecer uma VPN Site-to-site (entre 2 redes)  utilizando segredo compartilhado ou certificado digital. No decorrer do post explicarei as diferenças quando um dos firewall está atrás de um equipamento realizando NAT-T.</p>
+<p>A motivação da escrita deste post se deu na necessidade de realizar essa VPN em meu ambiente somado ao fato que não encontrei na internet nenhum tutorial que trouxesse de forma simples, completa e bem comentada cada um dos parâmetros para o correto funcionamento do OpenSwan no ambiente proposto. Achei sim, diversos tutoriais, que me ajudaram muito, mas somente informações fragmentadas e muitas vezes confusas, sendo assim resolvi agregar todas em um único post. Espero que ajude.</p>
+<p><!--more--></p>
+<h2>Ambiente</h2>
+<p>Antes de iniciar a configuração propriamente dita do OpenSwan e dos equipamentos é necessário entender bem todo o nosso ambiente.</p>
+<p>Antes de mais nada é importante frisar que os IPs validos e inválidos deste ambiente são fictícios e escolhidos aleatoriamente, não representando qualquer ambiente real meu ou de cliente.</p>
+<p>Para os dois servidores de VPN foi utilizado o Ubuntu 12.0.4, e o OpenSwan do repositório do ubuntu.</p>
+<p>Esta imagem abaixo demonstra detalhadamente todo o nosso ambiente.</p>
+<p><a href="http://www.helviojunior.com.br/wp-content/uploads/2014/10/Lab.png"><img class="alignnone wp-image-1095" src="{{ site.baseurl }}/assets/2014/10/Lab.png" alt="Ambiente VPN site to site" width="581" height="219" /></a></p>
+<p>Nela podemos observar que há 2 servidores de VPN, um na matriz e um na filial, e que o servidor da filial está atrás de um Roteador que está fazendo NAT. Este é um ambiente bem comum quando a filial está utilizando uma internet de baixo custo onde a operadora fornece o modem (como por exemplo ADSL) e este modem é quem recebe o IP válido e distribui uma rede inválida (comumente 192.168.x.x) para as maquinas internas.</p>
+<h2>Configuração de rede dos servidores de VPN</h2>
+<p><span style="line-height: 1.5;">Segue abaixo a configuração de rede de cada um dos servidores VPN</span></p>
+<p>[caption id="attachment_1074" align="alignnone" width="405"]<a href="http://www.helviojunior.com.br/wp-content/uploads/2014/10/metwork-matriz.png"><img class=" wp-image-1074" src="{{ site.baseurl }}/assets/2014/10/metwork-matriz.png" alt="metwork-matriz" width="405" height="255" /></a> Configuração de rede do servidor de VPN da Matriz[/caption]</p>
+<p>[caption id="attachment_1075" align="alignnone" width="405"]<a href="http://www.helviojunior.com.br/wp-content/uploads/2014/10/network-filial.png"><img class=" wp-image-1075" src="{{ site.baseurl }}/assets/2014/10/network-filial.png" alt="network-filial" width="405" height="255" /></a> Configuração de rede do servidor de VPN da Filial[/caption]</p>
+<h2>Instalando OpenSwan</h2>
+<p>O processo de instalação do OpenSwan é o mesmo para os dois equipamentos, desta forma execute os passos abaixo nos 2.</p>
+<p>Instalando o OpenSwan e OpenSSL</p>
+<p>[sourcecode language="shell"]add-apt-repository ppa:openswan/ppa<br />
+apt-get update<br />
+apt-get install openssl openswan<br />
+[/sourcecode]</p>
+<p>Neste processo será questionado se deseja criar um certificado digital para este servidor. Pode selecionar a opção <strong>&lt;NO&gt;</strong><br />
+<a href="http://www.helviojunior.com.br/wp-content/uploads/2014/10/openswan-01.png"><img class="alignnone wp-image-1082" src="{{ site.baseurl }}/assets/2014/10/openswan-01.png" alt="openswan-01" width="405" height="255" /></a></p>
+<p>Edite o arquivo <strong>/etc/ipsec.conf</strong> (em ambos equipamentos) para que ele fique com o seguinte conteúdo:</p>
+<p>[sourcecode language="shell"]version 2.0<br />
+config setup<br />
+        dumpdir=/var/run/pluto/<br />
+        nat_traversal=yes<br />
+        virtual_private=%v4:10.0.0.0/8<br />
+        oe=off<br />
+        protostack=netkey</p>
+<p>conn %default<br />
+        authby=rsasig<br />
+        leftrsasigkey=%cert<br />
+        rightrsasigkey=%cert<br />
+        keyingtries=1<br />
+        keylife=20m<br />
+        ikelifetime=240m</p>
+<p>include /etc/ipsec.d/*.conf<br />
+[/sourcecode]</p>
+<p>Edite o arquivo <strong>/etc/ipsec.secrets</strong> para que ele fique com o seguinte conteúdo:</p>
+<p>[sourcecode language="shell"]include /var/lib/openswan/ipsec.secrets.inc<br />
+include /etc/ipsec.d/*.secret<br />
+[/sourcecode]</p>
+<p>Edite o arquivo <strong>/etc/sysctl.conf</strong> e altere ou insira a seguinte linha. Esta configuração tem por objetivo permitir que o kernel do linux faça roteamento dos pacotes de rede.</p>
+<p>[sourcecode language="shell"]net.ipv4.ip_forward = 1<br />
+[/sourcecode]</p>
+<p>E depois execute o seguinte comando para aplicar essa configuração:</p>
+<p>[sourcecode language="shell"]sysctl -p<br />
+[/sourcecode]</p>
+<p>Pronto as configurações gerais estão prontas, agora vamos para as configurações individuais de cada servidor de VPN.</p>
+<h3>Um pouco sobre segredo compartilhado <em>versus</em> certificado digital</h3>
+<p>Quando estamos configurando uma VPN com IPSEC há diversos fatores que podem influenciar e gerar problema no estabelecimento da conexão, desta forma sempre iniciamos a configuração de forma simples, e depois vamos incrementando opções e segurança. Seguindo esta lógica primeiro iremos configurar e estabelecer o tunnel VPN utilizando segredo compartilhado, para depois que o tunnel tiver OK possamos trocar para certificado digital.</p>
+<p>Mas porque isso? Porque com certificado digital há diversos outros fatores que podem gerar problema como data de validade do certificado, common name, tipo do certificado, autoridade certificadora entre outros, então a forma mais simples de isolar os problemas é primeiro estabelecer o tunnel usando segredo compartilhado.</p>
+<p>Por característica do protocolo IPSEC, para estabelecer um tunnel com segrede compartilhado é necessário saber o IP interno e externo de todos os envolvidos, não podendo ser nenhum dos 2 lados dinâmico, desta forma se em eu ambiente você utiliza uma internet com IP dinâmico, para estes primeiros passos descubra qual é o IP atualmente atribuido, faça a configuração com ele que nos próximos passos (depois de mudar o tunnel para usar certificado digital) iremos alterar para não precisar informar este IP na configuração.</p>
+<h3>VPN Server Matriz</h3>
+<p>Nesta sessão veremos todas as configurações que devem serem realizadas no servidor de VPN da matriz.</p>
+<p><span style="line-height: 1.5;">Crie um arquivo nomeado </span><strong style="line-height: 1.5;">/etc/ipsec.d/vpn1.conf</strong><span style="line-height: 1.5;"> e insira o seguinte conteúdo:</span></p>
+<p>[sourcecode language="shell"]conn vpn1 # Nome da Conexão VPN<br />
+	type= tunnel<br />
+	authby= secret #Tipo de autenticação</p>
+<p>	# Left security, (dados da Matriz)<br />
+	left= 200.165.10.50 # IP real/físico do servidor na matriz<br />
+	leftsubnet= 10.0.0.0/24 # Rede interna na Matriz para qual será estabelecido a VPN<br />
+	leftnexthop= 200.165.10.1 # IP real do Gateway do servidor de VPN da Matriz</p>
+<p>	# Right security, (dados da Filial)<br />
+	right= 201.80.24.7 # IP Externo (após o NAT) que o servidor sairá para conexão com a matriz<br />
+	rightsubnet= 10.0.1.0/24 # Rede interna da filial para qual será estabelecido a VPN<br />
+	rightnexthop= 200.165.10.1 # IP real do Gateway do servidor de VPN da Matriz</p>
+<p>	# Tipo de criptografia usada<br />
+	keyexchange=ike</p>
+<p>	# IPSEC Fase 1<br />
+	# Não é obrigatório o preenchimento, caso preenchido será restrito a estes protocolos preenchidos<br />
+	# Formato de preenchimento 'cipher-hash;modpgroup, cipher-hash;modpgroup, ...'<br />
+	#   -&gt; Não é obrigatório o preenchimento do modpgroup<br />
+	# cipher-hash disponíveis: 3des-sha1, 3des-md5, aes-sha1, aes-md5, aes128-sha1 e aes128-md5<br />
+	# modpgroup disponíveis: modp1024, modp1536 e modp2048<br />
+	ike= 3des-md5, 3des-sha1,aes-sha1,aes-md5,aes128-sha1,aes128-md5</p>
+<p>	# IPSEC Fase 2<br />
+	# cipher-hash disponíveis: 3des, 3des-md5-96, 3des-sha1-96<br />
+	phase2alg = 3des-md5-96 # Antigo parametro 'esp' que está obsoleto</p>
+<p>	# Outras configurações<br />
+	pfs= no<br />
+	auto= start<br />
+[/sourcecode]</p>
+<p>Agora crie o arquivo nomeado <strong>/etc/ipsec.d/vpn1.secret</strong> com o seguinte conteúdo</p>
+<p>[sourcecode language="shell"]201.80.24.7 200.165.10.50: PSK &quot;123456&quot;<br />
+[/sourcecode]</p>
+<p>Agora reinicie o serviço do ipsec com o seguinte comando</p>
+<p>[sourcecode language="shell"]ipsec setup restart<br />
+[/sourcecode]</p>
+<p>Caso deseje reiniciar somente um tunnel utilize os comandos abaixo</p>
+<p>[sourcecode language="shell"]ipsec auto --down vpn1<br />
+ipsec auto --up vpn1<br />
+[/sourcecode]</p>
+<h3>VPN Server Filial</h3>
+<p>Nesta sessão veremos todas as configurações que devem serem realizadas no servidor de VPN da filial.</p>
+<p>Crie um arquivo nomeado <strong>/etc/ipsec.d/vpn1.conf</strong> e insira o seguinte conteúdo:</p>
+<p>[sourcecode language="shell"]conn vpn1 # Nome da Conexão VPN<br />
+	type= tunnel<br />
+	authby= secret #Tipo de autenticação</p>
+<p>	# Left security, (dados da Filial)<br />
+	left= 192.168.0.10 # IP real/físico do servidor na filial<br />
+	leftid= 201.80.24.7 # IP Externo (após o NAT) que o servidor sairá para conexão com a matriz<br />
+	leftsubnet= 10.0.1.0/24 # Rede interna na filial para qual será estabelecido a VPN<br />
+	leftnexthop= 192.168.0.1 # IP real do Gateway do servidor de VPN da filial</p>
+<p>	# Right security, (dados da Matriz)<br />
+	right= 200.165.10.50 # IP externo do servidor na matriz<br />
+	rightsubnet= 10.0.0.0/24 # Rede interna da matriz para qual será estabelecido a VPN<br />
+	rightnexthop= 192.168.0.1 # IP real do Gateway do servidor de VPN da filial</p>
+<p>	# Tipo de criptografia usada<br />
+	keyexchange=ike</p>
+<p>	# IPSEC Fase 1<br />
+	# Não é obrigatório o preenchimento, caso preenchido será restrito a estes protocolos preenchidos<br />
+	# Formato de preenchimento 'cipher-hash;modpgroup, cipher-hash;modpgroup, ...'<br />
+	#   -&gt; Não é obrigatório o preenchimento do modpgroup<br />
+	# cipher-hash disponíveis: 3des-sha1, 3des-md5, aes-sha1, aes-md5, aes128-sha1 e aes128-md5<br />
+	# modpgroup disponíveis: modp1024, modp1536 e modp2048<br />
+	ike= 3des-md5, 3des-sha1,aes-sha1,aes-md5,aes128-sha1,aes128-md5</p>
+<p>	# IPSEC Fase 2<br />
+	# cipher-hash disponíveis: 3des, 3des-md5-96, 3des-sha1-96<br />
+	phase2alg = 3des-md5-96 # Antigo parametro 'esp' que está obsoleto</p>
+<p>	# Outras configurações<br />
+	pfs= no<br />
+	auto= start<br />
+[/sourcecode]</p>
+<p>Agora crie o arquivo nomeado <strong>/etc/ipsec.d/vpn1.secret</strong> com o seguinte conteúdo</p>
+<p>[sourcecode language="shell"]200.165.10.50 201.80.24.7: PSK &quot;123456&quot;<br />
+[/sourcecode]</p>
+<p>Agora reinicie o serviço do ipsec com o seguinte comando</p>
+<p>[sourcecode language="shell"]ipsec setup restart<br />
+[/sourcecode]</p>
+<p>Caso deseje reiniciar somente um tunnel utilize os comandos abaixo</p>
+<p>[sourcecode language="shell"]ipsec auto --down vpn1<br />
+ipsec auto --up vpn1<br />
+[/sourcecode]</p>
+<p>&nbsp;</p>
+<h3>Verificando status e erros de configuração</h3>
+<p>Após iniciar a configuração alguns passos podem ser feito para checar a configuração e correto carregamento da mesma, bem como erros no estabelecimento do tunnel.</p>
+<p>Verifique no arquivo de log <strong>/var/log/auth.log</strong> se estes 2 logs foram gerados, eles indicam que o arquivo de chaves da VPN foi carregado e que a vpn1 foi carregada e será iniciado o processo para estabelecer o tunnel</p>
+<p>[sourcecode language="shell"]loading secrets from &quot;/etc/ipsec.d/vpn1.secret&quot;<br />
+&quot;vpn1&quot; #1: initiating Main Mode<br />
+[/sourcecode]</p>
+<p>E um dos logs mais legal de se ver é o que estabeleceu a SA, ou seja o tunnel está OK</p>
+<p>[sourcecode language="shell"]&quot;vpn1&quot; #4: STATE_QUICK_I2: sent QI2, IPsec SA established tunnel mode {ESP=&gt;0xb71ffca5 [/sourcecode]</p>
+<p>Outro comando bem útil é o comando para verificar o status do ipsec</p>
+<p>[sourcecode language="shell"]/usr/sbin/ipsec auto --status<br />
+[/sourcecode]</p>
+<p>Este comando irá retornar uma saída parecida com essa.</p>
+<p>[sourcecode language="shell"]000 using kernel interface: netkey<br />
+000 interface lo/lo ::1<br />
+000 interface lo/lo 127.0.0.1<br />
+000 interface lo/lo 127.0.0.1<br />
+000 interface eth0/eth0 10.0.0.1<br />
+000 interface eth0/eth0 10.0.0.1<br />
+000 interface eth1/eth1 200.165.10.50<br />
+000 interface eth1/eth1 200.165.10.50<br />
+000 %myid = (none)<br />
+000 debug none<br />
+000<br />
+000 virtual_private (%priv):<br />
+000 - allowed 1 subnet: 10.0.0.0/8<br />
+000 - disallowed 0 subnets:<br />
+000 WARNING: Disallowed subnets in virtual_private= is empty. If you have<br />
+000 private address space in internal use, it should be excluded!<br />
+000<br />
+000 algorithm ESP encrypt: id=2, name=ESP_DES, ivlen=8, keysizemin=64, keysizemax=64<br />
+000 algorithm ESP encrypt: id=3, name=ESP_3DES, ivlen=8, keysizemin=192, keysizemax=192<br />
+000 algorithm ESP encrypt: id=6, name=ESP_CAST, ivlen=8, keysizemin=40, keysizemax=128<br />
+000 algorithm ESP encrypt: id=7, name=ESP_BLOWFISH, ivlen=8, keysizemin=40, keysizemax=448<br />
+000 algorithm ESP encrypt: id=11, name=ESP_NULL, ivlen=0, keysizemin=0, keysizemax=0<br />
+000 algorithm ESP encrypt: id=12, name=ESP_AES, ivlen=8, keysizemin=128, keysizemax=256<br />
+000 algorithm ESP encrypt: id=13, name=ESP_AES_CTR, ivlen=8, keysizemin=160, keysizemax=288<br />
+000 algorithm ESP encrypt: id=14, name=ESP_AES_CCM_A, ivlen=8, keysizemin=128, keysizemax=256<br />
+000 algorithm ESP encrypt: id=15, name=ESP_AES_CCM_B, ivlen=8, keysizemin=128, keysizemax=256<br />
+000 algorithm ESP encrypt: id=16, name=ESP_AES_CCM_C, ivlen=8, keysizemin=128, keysizemax=256<br />
+000 algorithm ESP encrypt: id=18, name=ESP_AES_GCM_A, ivlen=8, keysizemin=128, keysizemax=256<br />
+000 algorithm ESP encrypt: id=19, name=ESP_AES_GCM_B, ivlen=8, keysizemin=128, keysizemax=256<br />
+000 algorithm ESP encrypt: id=20, name=ESP_AES_GCM_C, ivlen=8, keysizemin=128, keysizemax=256<br />
+000 algorithm ESP encrypt: id=22, name=ESP_CAMELLIA, ivlen=8, keysizemin=128, keysizemax=256<br />
+000 algorithm ESP encrypt: id=252, name=ESP_SERPENT, ivlen=8, keysizemin=128, keysizemax=256<br />
+000 algorithm ESP encrypt: id=253, name=ESP_TWOFISH, ivlen=8, keysizemin=128, keysizemax=256<br />
+000 algorithm ESP auth attr: id=1, name=AUTH_ALGORITHM_HMAC_MD5, keysizemin=128, keysizemax=128<br />
+000 algorithm ESP auth attr: id=2, name=AUTH_ALGORITHM_HMAC_SHA1, keysizemin=160, keysizemax=160<br />
+000 algorithm ESP auth attr: id=5, name=AUTH_ALGORITHM_HMAC_SHA2_256, keysizemin=256, keysizemax=256<br />
+000 algorithm ESP auth attr: id=6, name=AUTH_ALGORITHM_HMAC_SHA2_384, keysizemin=384, keysizemax=384<br />
+000 algorithm ESP auth attr: id=7, name=AUTH_ALGORITHM_HMAC_SHA2_512, keysizemin=512, keysizemax=512<br />
+000 algorithm ESP auth attr: id=8, name=AUTH_ALGORITHM_HMAC_RIPEMD, keysizemin=160, keysizemax=160<br />
+000 algorithm ESP auth attr: id=9, name=AUTH_ALGORITHM_AES_CBC, keysizemin=128, keysizemax=128<br />
+000 algorithm ESP auth attr: id=251, name=AUTH_ALGORITHM_NULL_KAME, keysizemin=0, keysizemax=0<br />
+000<br />
+000 algorithm IKE encrypt: id=0, name=(null), blocksize=16, keydeflen=131<br />
+000 algorithm IKE encrypt: id=5, name=OAKLEY_3DES_CBC, blocksize=8, keydeflen=192<br />
+000 algorithm IKE encrypt: id=7, name=OAKLEY_AES_CBC, blocksize=16, keydeflen=128<br />
+000 algorithm IKE hash: id=1, name=OAKLEY_MD5, hashsize=16<br />
+000 algorithm IKE hash: id=2, name=OAKLEY_SHA1, hashsize=20<br />
+000 algorithm IKE hash: id=4, name=OAKLEY_SHA2_256, hashsize=32<br />
+000 algorithm IKE hash: id=6, name=OAKLEY_SHA2_512, hashsize=64<br />
+000 algorithm IKE dh group: id=2, name=OAKLEY_GROUP_MODP1024, bits=1024<br />
+000 algorithm IKE dh group: id=5, name=OAKLEY_GROUP_MODP1536, bits=1536<br />
+000 algorithm IKE dh group: id=14, name=OAKLEY_GROUP_MODP2048, bits=2048<br />
+000 algorithm IKE dh group: id=15, name=OAKLEY_GROUP_MODP3072, bits=3072<br />
+000 algorithm IKE dh group: id=16, name=OAKLEY_GROUP_MODP4096, bits=4096<br />
+000 algorithm IKE dh group: id=17, name=OAKLEY_GROUP_MODP6144, bits=6144<br />
+000 algorithm IKE dh group: id=18, name=OAKLEY_GROUP_MODP8192, bits=8192<br />
+000 algorithm IKE dh group: id=22, name=OAKLEY_GROUP_DH22, bits=1024<br />
+000 algorithm IKE dh group: id=23, name=OAKLEY_GROUP_DH23, bits=2048<br />
+000 algorithm IKE dh group: id=24, name=OAKLEY_GROUP_DH24, bits=2048<br />
+000<br />
+000 stats db_ops: {curr_cnt, total_cnt, maxsz} :context={0,2,64} trans={0,2,3072} attrs={0,2,2048}<br />
+000<br />
+000 &quot;vpn1&quot;: 10.0.0.0/24===200.165.10.50---200.165.10.1...200.165.10.1---201.80.24.7===10.0.1.0/24; erouted; eroute owner: #4<br />
+000 &quot;vpn1&quot;: myip=unset; hisip=unset;<br />
+000 &quot;vpn1&quot;: ike_life: 14400s; ipsec_life: 1200s; rekey_margin: 540s; rekey_fuzz: 100%; keyingtries: 1<br />
+000 &quot;vpn1&quot;: policy: PSK+ENCRYPT+TUNNEL+UP+IKEv2ALLOW+SAREFTRACK; prio: 24,24; interface: eth1;<br />
+000 &quot;vpn1&quot;: newest ISAKMP SA: #1; newest IPsec SA: #4;<br />
+000 &quot;vpn1&quot;: IKE algorithm newest: AES_CBC_128-SHA1-MODP2048<br />
+000 &quot;vpn1&quot;: ESP algorithms wanted: 3DES(3)_000-MD5(1)_096; flags=-strict<br />
+000 &quot;vpn1&quot;: ESP algorithms loaded: 3DES(3)_192-MD5(1)_096<br />
+000 &quot;vpn1&quot;: ESP algorithm newest: 3DES_000-HMAC_MD5; pfsgroup=&lt;N/A&gt;<br />
+000<br />
+000 #3: &quot;vpn1&quot;:4500 STATE_QUICK_R2 (IPsec SA established); EVENT_SA_REPLACE in 727s; isakmp#2; idle; import:not set<br />
+000 #3: &quot;vpn1&quot; esp.a0dfaa1a@201.80.24.7 esp.bf6f0287@200.165.10.50 tun.0@201.80.24.7 tun.0@200.165.10.50 ref=0 refhim=4294901761<br />
+000 #2: &quot;vpn1&quot;:4500 STATE_MAIN_R3 (sent MR3, ISAKMP SA established); EVENT_SA_REPLACE in 13926s; lastdpd=-1s(seq in:0 out:0); idle; import:not set<br />
+000 #4: &quot;vpn1&quot;:4500 STATE_QUICK_I2 (sent QI2, IPsec SA established); EVENT_SA_REPLACE in 453s; newest IPSEC; eroute owner; isakmp#1; idle; import:admin initiate<br />
+000 #4: &quot;vpn1&quot; esp.b71ffca5@201.80.24.7 esp.25fdf05f@200.165.10.50 tun.0@201.80.24.7 tun.0@200.165.10.50 ref=0 refhim=4294901761<br />
+000 #1: &quot;vpn1&quot;:4500 STATE_MAIN_I4 (ISAKMP SA established); EVENT_SA_REPLACE in 13163s; newest ISAKMP; lastdpd=-1s(seq in:0 out:0); idle; import:admin initiate<br />
+000<br />
+[/sourcecode]</p>
+<p>Neste retorno há diversas informações, mas as mais importantes estão no final, onde mostram as SAs estabelecidas, ou seja, os tunneis IPSEC estabelecidos.</p>
+<p>Pronto, a primeira fase da configuração está ok e nosso tunnel VPN estabelecido. Agora iniciaremos o processo para configuração utilizando certificado digital.</p>
+<h2><strong>Gerando certificados digitais</strong></h2>
+<p>Antes de realizarmos a configuração do OpenSwan para utilizar os certificados digitais é necessário ter ou gerar os certificados. Como o objetivo deste post é ser o mais completo possível, realizaremos todo o processo de geração da autoridade certificadora e assinatura/geração dos certificados.</p>
+<p>Se você não entende muito bem como funciona esse negócio de autoridade certificadora, cadeia de certificação segue alguns posts para você dar uma olhada antes de continuar:</p>
+<ul>
+<li><a title="Certificação digital" href="http://www.helviojunior.com.br/it/security/certificacao-digital/" target="_blank" rel="noopener">Certificação digital</a></li>
+<li><a title="Instalando autoridade certificadora raiz (CA Root) com OpenSSL" href="http://www.helviojunior.com.br/it/security/instalando-autoridade-certificadora-raiz-ca-root-com-openssl/" target="_blank" rel="noopener">Instalando CA Root com OpenSSL</a></li>
+<li><a title="Instalando autoridade certificadora raiz (CA Root) com windows" href="http://www.helviojunior.com.br/it/security/instalando-autoridade-certificadora-raiz-ca-root-com-windows/" target="_blank" rel="noopener">Instalando CA Root com Windows</a></li>
+<li><a title="Verificando se um certificado é valido para atuar como uma autoridade certificadora (CA)" href="http://www.helviojunior.com.br/it/security/verificando-se-um-certificado-e-valido-para-atuar-como-uma-ca/" target="_blank" rel="noopener">Verificando de um certificado é válido para atuar como CA</a></li>
+</ul>
+<p>Agora sim podemos continuar com a geração dos certificados. Neste post veremos 2 formas de gerar estes certificados, a primeira e a mais simples utilizando um aplicativo windows que criei para gerar os certificados e a segunda e mais complexa utilizando os comandos OpenSSL (que funcionam em windows e linux)</p>
+<h3>Gerando certificados com o aplicativo BuildCert</h3>
+<p>Conforme ja comentado este aplicativo foi desenvolvido por mim especificamente para geração de certificados digitais para utilização em sistemas de VPN IPSEC, muitos dos aplicativos que realizam VPN IPSEC pedem configurações específicas nos certificados que são bem chatas de fazer através do openssl via linha de comando. Este aplicativo basicamente utiliza as próprias bibliotecas do OpenSSL para gerar os certificados.</p>
+<p>Este aplicativo cria desde a CA até os certificados individuais de cada servidor de VPN. Todos compatíveis com qualquer sistema de autoridade de certificação. Outra funcionalidade interessante deste aplicativo é que pode ser utilizado com a sua autoridade de certificadora atual (caso ja tenha uma instalada).</p>
+<p><strong>Utilizando a CA atual para assinar o certificado</strong></p>
+<p>Para realizar este processo utilizando a sua CA atual será necessário ter o arquivo <strong>.pfx</strong> ou <strong>.p12</strong> da sua CA. Caso sua CA seja windows e você não saiba como realizar este procedimento no post <a title="Instalando autoridade certificadora raiz (CA Root) com windows" href="http://www.helviojunior.com.br/it/security/instalando-autoridade-certificadora-raiz-ca-root-com-windows/"><strong>Instalando CA Root com Windows</strong></a> eu ensino como realiza-lo.</p>
+<p><strong>Gerando certificado</strong></p>
+<p>Realize o download do aplicativo BuildCert (<a href="http://www.helviojunior.com.br/wp-content/uploads/2014/10/BuildCert.zip" target="_blank" rel="noopener">clicando aqui</a>) e descompacte em qualquer lugar em seu PC. O Aplicativo terá a seguinte estrutura de arquivos, por mais que pareça que há duplicados todos são necessários.</p>
+<p><a href="http://www.helviojunior.com.br/wp-content/uploads/2014/10/BuildCertTree.png"><img class="alignnone wp-image-1108" src="{{ site.baseurl }}/assets/2014/10/BuildCertTree.png" alt="BuildCertTree" width="131" height="209" /></a></p>
+<p>Modo de utilização</p>
+<p>[sourcecode language="shell"]BuildCert.exe [common_name_ca] [common_name_cert] [password_ca] [password_cert]<br />
+[/sourcecode]</p>
+<p>Ao ser iniciado o aplicativo irá buscar dentro do diretório certs o arquivo com o common mane da CA + a extensão pfx ex.: ca.meudominio.pfx, caso o arquivo exista o aplicativo irá abri-lo com a senha definida e utiliza-lo para assinar os certificados gerados, caso contrário o aplicativo irá criar este pfx e utiliza-lo para assinar os certificados gerados.</p>
+<p>Vamos para a pratica, execute os comandos abaixo para gerar uma CA com nome <strong>cavpn.tutorial</strong> e os certificados <strong>matriz.tutorial</strong> e <strong>filial.tutorial. </strong>Ambos com a senha 123456</p>
+<p>[sourcecode language="shell"]BuildCert.exe cavpn.tutorial matriz.tutorial 123456 123456<br />
+BuildCert.exe cavpn.tutorial filial.tutorial 123456 123456<br />
+[/sourcecode]</p>
+<p>Após a execução dos comandos 3 arquivos por certificado serão criados:</p>
+<ol>
+<li><strong>.cer:</strong> arquivo do certificado digital X509</li>
+<li><strong>.key:</strong> chave privada do certificado</li>
+<li><strong>.pfx:</strong> arquivo PKCS#12 contendo o certificado X509 + a chave privada</li>
+</ol>
+<p><a style="line-height: 1.5;" href="http://www.helviojunior.com.br/wp-content/uploads/2014/10/certs.png"><img class="alignnone size-full wp-image-1111" src="{{ site.baseurl }}/assets/2014/10/certs.png" alt="certs" width="168" height="193" /></a></p>
+<p>Segue os prints dos certificados</p>
+<p>[caption id="attachment_1112" align="alignnone" width="251"]<a href="http://www.helviojunior.com.br/wp-content/uploads/2014/10/ca1.png"><img class=" wp-image-1112" src="{{ site.baseurl }}/assets/2014/10/ca1.png" alt="ca1" width="251" height="313" /></a> Certificado da CA (Autoassinado)[/caption]</p>
+<p>[caption id="attachment_1113" align="alignnone" width="251"]<a href="http://www.helviojunior.com.br/wp-content/uploads/2014/10/ca2.png"><img class=" wp-image-1113" src="{{ site.baseurl }}/assets/2014/10/ca2.png" alt="ca2" width="251" height="313" /></a> Certificado da matriz assinado pela CA[/caption]</p>
+<p>[caption id="attachment_1114" align="alignnone" width="251"]<a href="http://www.helviojunior.com.br/wp-content/uploads/2014/10/ca3.png"><img class=" wp-image-1114" src="{{ site.baseurl }}/assets/2014/10/ca3.png" alt="ca3" width="251" height="313" /></a> Certificado da filial assinado pela CA[/caption]</p>
+<p>Pronto, os certificados foram gerados e estão prontos para serem utilizados no OpenSwan</p>
+<h3>Gerando certificados com o OpenSSL</h3>
+<p>Outro modo de gerar os certificados é utilizando diretamente o OpenSSL.</p>
+<p>Se você ja gerou os certificados através dos passos anteriores (aplicativo BuildCert) pode pular estes passos e ir direto para configuração dos tunneis.</p>
+<p><strong style="line-height: 1.5;">Gerando certificado</strong></p>
+<p>Antes de tudo vamos preparar o ambiente para o OpenSSL, realize uma cópia do arquivo de configuração padrão do OpenSSL para o seu ambiente</p>
+<p>[sourcecode language="shell"]cp cp /etc/ssl/openssl.cnf /etc/ipsec.d/<br />
+[/sourcecode]</p>
+<p>Edite o arquivo de configuração alterando as seguintes linhas</p>
+<p>[sourcecode language="shell"][ CA_default ]</p>
+<p>dir = /etc/ipsec.d<br />
+certificate = $dir/cacerts/cavpn.tutorial.cer</p>
+<p>private_key = $dir/private/cavpn.tutorial.key<br />
+[/sourcecode]</p>
+<p>E por fim vamos criar arquivos e diretórios necessários para o correto funcionamento do OpenSSL</p>
+<p>[sourcecode language="shell"]mkdir newcerts<br />
+touch index.txt<br />
+echo &quot;00&quot; &gt; serial<br />
+[/sourcecode]</p>
+<p>Agora vamos criar a nossa CA através do comando abaixo</p>
+<p>[sourcecode language="shell"]cd /etc/ipsec.d<br />
+openssl req -x509 -days 3650 -config /etc/ipsec.d/openssl.cnf -newkey rsa:2048 -keyout private/cavpn.tutorial.key -out cacerts/cavpn.tutorial.cer<br />
+[/sourcecode]</p>
+<p>Na execução deste comando diversas informações serão solicitadas, porém 2 delas são importantes, 1 - Senha da CA, essa senha será solicitada para assinar os certificados da matriz e da filial; 2 - CommonName, ou seja o nome da CA. Preencha estes dados conforme desejado ou seguindo o exemplo abaixo</p>
+<p><a href="http://www.helviojunior.com.br/wp-content/uploads/2014/10/cert1.png"><img class="alignnone wp-image-1143" src="{{ site.baseurl }}/assets/2014/10/cert1.png" alt="cert1" width="540" height="391" /></a></p>
+<p>Gere a requisição e assine o certificado da matriz</p>
+<p>[sourcecode language="shell"]openssl req -config /etc/ipsec.d/openssl.cnf -newkey rsa:1024 -keyout private/matriz.tutorial.key -out certs/matriz.tutorial.req<br />
+openssl ca -in certs/matriz.tutorial.req -config /etc/ipsec.d/openssl.cnf -days 730 -out certs/matriz.tutorial.cer -notext<br />
+openssl rsa -in private/matriz.tutorial.key -out private/matriz.tutorial.key<br />
+[/sourcecode]</p>
+<p>Diversas informações serão solicitadas porém a mais importante é o CommonName que precisa ser o <strong>matriz.tutorial</strong> para que os próximos scripts funcionem corretamente<br />
+<a href="http://www.helviojunior.com.br/wp-content/uploads/2014/10/cert-matriz.png"><img class="alignnone wp-image-1140" src="{{ site.baseurl }}/assets/2014/10/cert-matriz.png" alt="cert-matriz" width="540" height="404" /></a></p>
+<p>Gere a requisição e assine o certificado da filial</p>
+<p>[sourcecode language="shell"]openssl req -config /etc/ipsec.d/openssl.cnf -newkey rsa:1024 -keyout private/filial.tutorial.key -out certs/filial.tutorial.req<br />
+openssl ca -in certs/filial.tutorial.req -config /etc/ipsec.d/openssl.cnf -days 730 -out certs/filial.tutorial.cer -notext<br />
+openssl rsa -in private/filial.tutorial.key -out private/filial.tutorial.key<br />
+[/sourcecode]</p>
+<p>Diversas informações serão solicitadas porém a mais importante é o CommonName que precisa ser o <strong>filial.tutorial</strong> para que os próximos scripts funcionem corretamente<br />
+<a href="http://www.helviojunior.com.br/wp-content/uploads/2014/10/cert-filial.png"><img class="alignnone wp-image-1141" src="{{ site.baseurl }}/assets/2014/10/cert-filial.png" alt="cert-filial" width="540" height="391" /></a></p>
+<p>Pronto, os certificados estão gerados e pronto para serem utilizados.</p>
+<h2>Configurando os tunneis ipsec para utilizar os certificados digitais</h2>
+<p>Agora que temos todos os certificados a mão podemos iniciar a configuração do OpenSwan para estabelecer a VPN utilizando os certificados digitais, estes passos são individuais para cada servidor.</p>
+<h3>VPN Server Matriz</h3>
+<p>Copie os arquivos necessários para os seus respectivos locais de utilização conforme indicado na tabela abaixo:</p>
+<ul>
+<li>/etc/ipsec.d/cacerts/cavpn.tutorial.cer</li>
+<li>/etc/ipsec.d/certs/filial.tutorial.cer</li>
+<li>/etc/ipsec.d/certs/matriz.tutorial.cer</li>
+<li>/etc/ipsec.d/private/matriz.tutorial.key</li>
+</ul>
+<p>Edite o arquivo <strong>/etc/ipsec.d/vpn1.conf</strong> para que o mesmo fique com o seguinte conteúdo</p>
+<p>[sourcecode language="shell"]conn vpn1 # Nome da Conexão VPN<br />
+	type= tunnel<br />
+	authby= rsasig #Tipo de autenticação</p>
+<p>	# Left security, (dados da Matriz)<br />
+	left= 200.165.10.50 # IP real/físico do servidor na matriz<br />
+	leftid=@matriz.tutorial # CommonName do certificado<br />
+	leftrsasigkey=%cert<br />
+	leftcert=matriz.tutorial.cer # Nome do arquivo do certificado<br />
+	leftsubnet= 10.0.0.0/24 # Rede interna na Matriz para qual será estabelecido a VPN<br />
+	leftnexthop= 200.165.10.1 # IP real do Gateway do servidor de VPN da Matriz</p>
+<p>	# Right security, (dados da Filial)<br />
+	right= %any # Está tag indica que a conexão pode vir de qualquer IP<br />
+	rightid= @filial.tutorial # CommonName do certificado<br />
+	rightrsasigkey=%cert<br />
+	rightcert=filial.tutorial.cer # Nome do arquivo do certificado<br />
+	rightca=%same<br />
+	rightsubnet= 10.0.1.0/24 # Rede interna da filial para qual será estabelecido a VPN<br />
+	rightnexthop= 200.165.10.1 # IP real do Gateway do servidor de VPN da Matriz</p>
+<p>	# Tipo de criptografia usada<br />
+	keyexchange=ike</p>
+<p>	# IPSEC Fase 1<br />
+	# Não é obrigatório o preenchimento, caso preenchido será restrito a estes protocolos preenchidos<br />
+	# Formato de preenchimento 'cipher-hash;modpgroup, cipher-hash;modpgroup, ...'<br />
+	#   -&gt; Não é obrigatório o preenchimento do modpgroup<br />
+	# cipher-hash disponíveis: 3des-sha1, 3des-md5, aes-sha1, aes-md5, aes128-sha1 e aes128-md5<br />
+	# modpgroup disponíveis: modp1024, modp1536 e modp2048<br />
+	ike= 3des-md5,3des-sha1,aes-sha1,aes-md5,aes128-sha1,aes128-md5<br />
+	ikelifetime=28800s</p>
+<p>	# IPSEC Fase 2<br />
+	# cipher-hash disponíveis: 3des, 3des-md5-96, 3des-sha1-96<br />
+	phase2=esp<br />
+	phase2alg=3des-md5-96 # Antigo parametro 'esp' que está obsoleto<br />
+	keylife=28800s</p>
+<p>	# Outras configurações<br />
+	pfs= no<br />
+	auto= start<br />
+[/sourcecode]</p>
+<p>Além das alterações dos certificados digitais há uma alteração no parâmetro <strong>right</strong> que antes detinha o IP externo do servidor de VPN da filial e agora detém a tag <strong>%any</strong>, que possibilita que o IP externo do servidor de VPN da Filial possa trocar de IP sem a necessidade de alterar a configuração.</p>
+<p>Edite o arquivo <strong>/etc/ipsec.d/vpn1.secret</strong>, remova a linha atual e adicione a seguinte linha</p>
+<p>[sourcecode language="shell"]: RSA matriz.tutorial.key &quot;123456&quot;<br />
+[/sourcecode]</p>
+<p>Reinicie o serviço do ipsec e verifique no arquivo de log <strong>/var/log/auth.log</strong> se as linhas abaixo foram exibidas, elas indicam que a chave foi lida com sucesso.</p>
+<p>[sourcecode language="shell"]loading secrets from &quot;/etc/ipsec.d/vpn1.secret&quot;<br />
+loaded private key file '/etc/ipsec.d/private/matriz.tutorial.key' (1675 bytes)<br />
+loaded private key for keyid: PPK_RSA:AwEAAfL4J<br />
+&quot;vpn1&quot; #1: initiating Main Mode<br />
+[/sourcecode]</p>
+<h3>VPN Server Filial</h3>
+<p>Copie os arquivos necessários para os seus respectivos locais de utilização conforme indicado na tabela abaixo:</p>
+<ul>
+<li>/etc/ipsec.d/cacerts/cavpn.tutorial.cer</li>
+<li>/etc/ipsec.d/certs/filial.tutorial.cer</li>
+<li>/etc/ipsec.d/certs/matriz.tutorial.cer</li>
+<li>/etc/ipsec.d/private/filial.tutorial.key</li>
+</ul>
+<p>Edite o arquivo <strong>/etc/ipsec.d/vpn1.conf</strong> para que o mesmo fique com o seguinte conteúdo</p>
+<p>[sourcecode language="shell"]conn vpn1 # Nome da Conexão VPN<br />
+	type= tunnel<br />
+	authby= rsasig #Tipo de autenticação</p>
+<p>	# Left security, (dados da Filial)<br />
+	left= 192.168.0.10 # IP real/físico do servidor na filial<br />
+	leftid=@filial.tutorial # CommonName do certificado<br />
+	leftrsasigkey=%cert<br />
+	leftcert=filial.tutorial.cer # Nome do arquivo do certificado<br />
+	leftsubnet= 10.0.1.0/24 # Rede interna na filial para qual será estabelecido a VPN<br />
+	leftnexthop= 192.168.0.1 # IP real do Gateway do servidor de VPN da filial</p>
+<p>	# Right security, (dados da Matriz)<br />
+	right= 200.165.10.50 # IP externo do servidor na matriz<br />
+	rightid= @matriz.tutorial # CommonName do certificado<br />
+	rightrsasigkey=%cert<br />
+	rightcert=matriz.tutorial.cer # Nome do arquivo do certificado<br />
+	rightca=%same<br />
+	rightsubnet= 10.0.0.0/24 # Rede interna da matriz para qual será estabelecido a VPN<br />
+	rightnexthop= 192.168.0.1 # IP real do Gateway do servidor de VPN da filial</p>
+<p>	# Tipo de criptografia usada<br />
+	keyexchange=ike</p>
+<p>	# IPSEC Fase 1<br />
+	# Não é obrigatório o preenchimento, caso preenchido será restrito a estes protocolos preenchidos<br />
+	# Formato de preenchimento 'cipher-hash;modpgroup, cipher-hash;modpgroup, ...'<br />
+	#   -&gt; Não é obrigatório o preenchimento do modpgroup<br />
+	# cipher-hash disponíveis: 3des-sha1, 3des-md5, aes-sha1, aes-md5, aes128-sha1 e aes128-md5<br />
+	# modpgroup disponíveis: modp1024, modp1536 e modp2048<br />
+	ike= 3des-md5,3des-sha1,aes-sha1,aes-md5,aes128-sha1,aes128-md5<br />
+	ikelifetime=28800s</p>
+<p>	# IPSEC Fase 2<br />
+	# cipher-hash disponíveis: 3des, 3des-md5-96, 3des-sha1-96<br />
+	phase2=esp<br />
+	phase2alg=3des-md5-96 # Antigo parametro 'esp' que está obsoleto<br />
+	keylife=28800s</p>
+<p>	# Outras configurações<br />
+	pfs= no<br />
+	auto= start<br />
+[/sourcecode]</p>
+<p>Edite o arquivo <strong>/etc/ipsec.d/vpn1.secret</strong>, remova a linha atual e adicione a seguinte linha</p>
+<p>[sourcecode language="shell"]: RSA filial.tutorial.key &quot;123456&quot;<br />
+[/sourcecode]</p>
+<p>Reinicie o serviço do ipsec e verifique no arquivo de log <strong>/var/log/auth.log</strong> se as linhas abaixo foram exibidas, elas indicam que a chave foi lida com sucesso.</p>
+<p>[sourcecode language="shell"]loading secrets from &quot;/etc/ipsec.d/vpn1.secret&quot;<br />
+loaded private key file '/etc/ipsec.d/private/filial.tutorial.key' (1679 bytes)<br />
+loaded private key for keyid: PPK_RSA:AwEAAdWyO<br />
+[/sourcecode]</p>
+<h2>Troubleshooting</h2>
+<p>Caso seja necessário ter um numero maior de informações e log basta adicionar as linhas de log no arquivo <strong>/etc/ipsec.conf</strong> conforme abaixo<br />
+[sourcecode language="shell"]version 2.0<br />
+config setup<br />
+        ...<br />
+        plutodebug=all<br />
+        plutostderrlog=/var/log/openswan.log</p>
+<p>[/sourcecode]</p>
+<h2>Considerações finais</h2>
+<p>Neste post vimos como realizar todo o procedimento utilizando como servidor de VPN dois equipamentos com o OpensSwan, porém o procedimento é exatamente o mesmo para ambientes onde um dos equipamentos não é OpenSwan, como por exemplo, Cisco, Microsoft TMG, Aker, pfSense, Dlink entre outros.</p>
+<p>Como continuidade irei demonstrar como substituir o equipamento da matriz por outros sistemas. Assim que tiver um tempo elaborarei estes outros tutoriais e posto aqui no site.</p>
+<p>Caso você quera compartilhar a sua experiência substituindo uma das pontas por outro equipamento, me envie o passo a passo com prints, comandos e arquivos de configuração que posto no site com os seus créditos.</p>

@@ -1,0 +1,111 @@
+---
+layout: post
+title: Teste de carga e otimização de sites/sistemas web
+date: 2014-06-30 18:53:19.000000000 -03:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- IT
+tags:
+- content type
+- load test
+- site optimization
+- stress teste
+meta:
+  _syntaxhighlighter_encoded: '1'
+  _edit_last: '1'
+  _av_alb_posts_elements_state: a:0:{}
+  _av_el_mgr_version: '1.0'
+  _av_alb_element_mgr_version: 1.0.1
+  _av_css_styles: a:6:{s:7:"post_id";i:908;s:8:"css_file";s:12:"post-908.css";s:9:"timestamp";s:0:"";s:6:"status";s:6:"no_css";s:13:"processed_ids";a:0:{}s:13:"include_posts";a:0:{}}
+author:
+  login: helvio
+  email: helvio_junior@hotmail.com
+  display_name: Helvio Junior - M4v3r1ck - OSCE3 (OSEP + OSED + OSWE), OSCE, OSCP,
+    eCXD, eMAPT, CEH
+  first_name: Helvio
+  last_name: Junior - M4v3r1ck - OSCE3 (OSEP + OSED + OSWE), OSCE, OSCP, eCXD, eMAPT,
+    CEH
+permalink: "/it/teste-de-carga-e-otimizacao-de-sites-sistemas-web/"
+---
+<p>A algum tempo necessitei realizar um teste de carga do site de um cliente, em busca pela web encontrei diversas ferramentas e sites que realizam este trabalho, porém nenhuma das ferramentas nos atendia completamente e algumas muito complexas para realizar testes simples.</p>
+<p>Desta forma decidi criar uma ferramenta que pudesse me ajudar e ajudar a comunidade. Seu licenciamento é para livre utilização.</p>
+<p><!--more--></p>
+<p>Vamos ao que interessa, a ferramenta e suas funcionalidades.</p>
+<p><strong>Funcionalidades:</strong></p>
+<ul>
+<li>Teste de carga (stress test);</li>
+<li><span style="line-height: 1.5;">2 modos de operação (VU - Virtual Users, este simula um número x de conexões simultâneas e SBU - Simulate Browser Users, este modo simula um numero x de navegadores web no qual pode abrir diversas conexões simultâneas por navegador);</span></li>
+<li><span style="line-height: 1.5;">Suporte a 2 tipos de base de dados (SQLite e SQLServer)</span></li>
+<li>Permite utilização através de proxy ativo</li>
+<li>Plataforma windows;</li>
+<li>Realiza análise e sugere otimização de arquivos (CSS, JS e Imagens)</li>
+<li>Realiza análise de utilização de GZIP por parte do servidor web para otimização de banda;</li>
+<li>Configuração de Cookie e User-Agent personalizado;</li>
+<li>Ao final do teste gera um relatório HTML com as seguintes informações:
+<ul>
+<li>VU/SBU ativos</li>
+<li>Número máximo de clientes (VU or SBU) ativos.</li>
+<li>Bandwidth (Throughput máximo)</li>
+<li>Quantidade de dados recebidos</li>
+<li>Total de requisições web</li>
+<li>Quantidade de requisições por segundo</li>
+<li>Tempo de resposta das requisições</li>
+<li>Quantidade de erros</li>
+<li>Distribuição (volume de dados) por conteúdo (html, js, css, imagens e outros)</li>
+<li>Tempo de carga por conteúdo (html, js, css, imagens e outros)</li>
+<li>Volume de dados tráfegados de dados por conteúdo (html, js, css, imagens e outros)</li>
+<li>Top 25 URLs em quantidade de chamadas</li>
+<li>Top 25 URLs com maior tempo de resposta</li>
+<li>Top 25 URLs com maior tráfego de dados</li>
+<li>Tabela com sugestões de otimização e % estimada de ganho</li>
+<li>Tabela com calculo de ganho de banda com Gzip/Deflate;</li>
+<li>E muito mais...</li>
+</ul>
+</li>
+</ul>
+<p><strong>Segue abaixo alguns gráficos do relatório:</strong></p>
+<p><a href="http://www.helviojunior.com.br/wp-content/uploads/2014/06/web-stress-test-001.png"><img class="alignnone  wp-image-911" alt="web-stress-test-001" src="{{ site.baseurl }}/assets/2014/06/web-stress-test-001.png" width="584" height="171" /></a> <a href="http://www.helviojunior.com.br/wp-content/uploads/2014/06/web-stress-test-002.png"><img class="alignnone  wp-image-912" alt="web-stress-test-002" src="{{ site.baseurl }}/assets/2014/06/web-stress-test-002.png" width="583" height="127" /></a> <a href="http://www.helviojunior.com.br/wp-content/uploads/2014/06/web-stress-test-003.png"><img class="alignnone  wp-image-913" alt="web-stress-test-003" src="{{ site.baseurl }}/assets/2014/06/web-stress-test-003.png" width="584" height="215" /></a> <a href="http://www.helviojunior.com.br/wp-content/uploads/2014/06/web-stress-test-004.png"><img class="alignnone  wp-image-914" alt="web-stress-test-004" src="{{ site.baseurl }}/assets/2014/06/web-stress-test-004.png" width="584" height="298" /></a></p>
+<p><a href="http://www.helviojunior.com.br/wp-content/uploads/2014/06/web-stress-test-005.png"><img class="alignnone  wp-image-915" alt="web-stress-test-005" src="{{ site.baseurl }}/assets/2014/06/web-stress-test-005.png" width="353" height="182" /></a></p>
+<p><strong>Pré requisitos:</strong></p>
+<ul>
+<li>Microsoft .NET Framework 4.0;</li>
+<li>Microsoft Visual C++ 2010 (x86 ou x64);</li>
+</ul>
+<p><strong>Download e forma de utilização:</strong></p>
+<p>Para utilização do aplicativo basta realizar o download neste link (<a title="LoadTest.zip" href="http://www.helviojunior.com.br/wp-content/uploads/2014/06/LoadTest.zip">LoadTest</a>) e seguir as instruções abaixo.</p>
+<p>1 - Descompacte o arquivo rar, localize o arquivo LoadTest.exe.config e abra no seu editor de texto preferido, neste arquivo conterá todas as configurações necessárias para o correto funcionamento do aplicativo.</p>
+<p>[sourcecode language="xml"]&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;<br />
+&lt;configuration&gt;<br />
+ &lt;appSettings&gt;<br />
+ &lt;add key=&quot;type&quot; value=&quot;vu&quot;/&gt;<br />
+ &lt;add key=&quot;count&quot; value=&quot;10&quot;/&gt;<br />
+ &lt;add key=&quot;duration&quot; value=&quot;420&quot;/&gt;<br />
+ &lt;add key=&quot;levels&quot; value=&quot;1&quot;/&gt;<br />
+ &lt;add key=&quot;uri&quot; value=&quot;http://www.seusite.com.br/path/completo/&quot;/&gt;<br />
+ &lt;!--add key=&quot;proxy&quot; value=&quot;http://teste:8080/&quot;/--&gt;<br />
+ &lt;add key=&quot;User-Agent&quot; value=&quot;Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/36.0.1985.125 Safari/537.36 LoadTest/1.2&quot; /&gt;<br />
+ &lt;add key=&quot;Cookie&quot; value=&quot;Teste=Teste123&quot; /&gt;<br />
+ &lt;/appSettings&gt;<br />
+ &lt;connectionStrings&gt;<br />
+ &lt;add name=&quot;LoadTest&quot; connectionString=&quot;Data Source=|DataDirectory|SafeTrend.loadtest.db&quot; providerName=&quot;System.Data.SQLite&quot; /&gt;<br />
+ &lt;!--add name=&quot;LoadTest&quot; connectionString=&quot;Data Source=192.168.0.30;Initial Catalog=database_name;User Id=db_user;Password=db_password;&quot; providerName=&quot;System.Data.SqlClient&quot; /--&gt;<br />
+ &lt;/connectionStrings&gt;<br />
+&lt;/configuration&gt;<br />
+[/sourcecode]</p>
+<p>Edite os parâmetros conforme desejado. Segue abaixo a explicação de cada um.</p>
+<ul>
+<li><strong>type</strong>: tipo de teste (vu ou sbu);</li>
+<li><strong>count:</strong> quantidade de usuários ou browsers a ser simulada;</li>
+<li><strong>duration</strong>: tempo (em segundos) de duração do teste;</li>
+<li><strong>levels</strong>: Quantidade de níveis dentro do site que o sistema verificará os links;</li>
+<li><strong>uri</strong>: Url inicial do site;</li>
+<li><strong>proxy</strong>: Caso desejado, qual proxy será utilizado para conexão com o site;</li>
+<li><strong>User-Agent</strong>: Define o texto do User-Agent que será enviado em todas as requisições;</li>
+<li><strong>Cookie</strong>: Texto do cookie passado em todas as requisições;</li>
+</ul>
+<p><span style="line-height: 1.5;">Execute o aplicativo <strong>LoadTest.exe</strong> e bons testes!</span></p>
+<p>Caso tenha alguma sugestão de gráficos, relatório ou funcionalidade basta me enviar.</p>

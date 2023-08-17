@@ -1,0 +1,151 @@
+---
+layout: post
+title: Instalando uma autoridade certificadora (CA) intermediária com OpenSSL
+date: 2012-03-07 13:22:31.000000000 -03:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- IT
+- Segurança da Informação
+tags:
+- autoridade certificadora
+- ca
+- certificate authority
+- openssl
+meta:
+  _edit_last: '1'
+  _syntaxhighlighter_encoded: '1'
+  _topsy_long_url: http://www.helviojunior.com.br/it/security/instalando-uma-ca-intermediaria-com-openssl/
+  topsy_short_url: ''
+  _av_alb_posts_elements_state: a:0:{}
+  _av_el_mgr_version: '1.0'
+  _av_alb_element_mgr_version: 1.0.1
+  _av_css_styles: a:6:{s:7:"post_id";i:149;s:8:"css_file";s:12:"post-149.css";s:9:"timestamp";s:0:"";s:6:"status";s:6:"no_css";s:13:"processed_ids";a:0:{}s:13:"include_posts";a:0:{}}
+author:
+  login: helvio
+  email: helvio_junior@hotmail.com
+  display_name: Helvio Junior - M4v3r1ck - OSCE3 (OSEP + OSED + OSWE), OSCE, OSCP,
+    eCXD, eMAPT, CEH
+  first_name: Helvio
+  last_name: Junior - M4v3r1ck - OSCE3 (OSEP + OSED + OSWE), OSCE, OSCP, eCXD, eMAPT,
+    CEH
+permalink: "/it/security/instalando-uma-ca-intermediaria-com-openssl/"
+---
+<p>Este post demonstra como realizar a criação de uma autoridade certificadora intermediária.</p>
+<p><!--more--></p>
+<h3>1.           Ambiente</h3>
+<p><a href="http://www.helviojunior.com.br/wp-content/uploads/2012/03/image15.jpeg"><img class="aligncenter size-full wp-image-152" title="image15" src="{{ site.baseurl }}/assets/2012/03/image15.jpeg" alt="" width="133" height="227" /></a></p>
+<p>Conforme pode-se observar na imagem acima há uma CA raiz e neste momento iremos criar a CA1 para que esta possa posteriormente assinar os certificados.</p>
+<p>Para a criação de uma CA intermediária é necessário o certificado X.509 da CA raiz.</p>
+<p><!--more--></p>
+<h3>2.           Instalando no windows</h3>
+<p>Para a instalação deste processo no Windows basta efetuar os mesmos passos indicados POST <a title="Instalando Autoridade certificadora raiz (CA Root) com windows" href="http://www.helviojunior.com.br/uncategorized/instalando-autoridade-certificadora-raiz-ca-root-com-windows/">Instalando Autoridade certificadora raiz (CA Root) com windows</a>, porém alterando de <strong>Stand-alone CA</strong> para <strong>Stand-alone subordinate CA</strong>.</p>
+<h3>3.           Instalando com OpenSSL</h3>
+<p>Este ambiente considera que há uma estrutura de diretórios da seguinte forma:</p>
+<p>[sourcecode language="text"]C:\treinamentocas<br />
+C:\treinamentocas\Root<br />
+C:\treinamentocas\IM1[/sourcecode]</p>
+<p>Onde<strong> C:\treinamentocas\Root </strong>objetiva armazenar os arquivo da CA raiz e <strong>C:\treinamentocas\IM1</strong> os arquivos da CA intermediaria.</p>
+<h3>3.1.     Criando o arquivo de configuração do openssl</h3>
+<p>Crie nos diretórios <strong>C:\treinamentocas\Root</strong> e <strong>C:\treinamentocas\IM1</strong> um arquivo nomeado <strong>openssl.conf</strong> com o conteúdo abaixo:</p>
+<p>[sourcecode language="bash"]<br />
+# Início do arquivo openssl.conf<br />
+#</p>
+<p>RANDFILE        = .rnd</p>
+<p>####################################################################<br />
+[ ca ]<br />
+default_ca    = CA_default        # The default ca section</p>
+<p>####################################################################<br />
+[ CA_default ]<br />
+certs        = certs            # Where the issued certs are kept<br />
+crl_dir        = crl            # Where the issued crl are kept<br />
+database    = database.txt        # database index file.<br />
+new_certs_dir    = certs            # default place for new certs.<br />
+certificate    = cacert.pem            # The CA certificate<br />
+serial        = serial.txt         # The current serial number<br />
+crl        = crl.pem         # The current CRL<br />
+private_key    = private\cakey.pem       # The private key<br />
+RANDFILE    = private\private.rnd     # private random number file<br />
+x509_extensions    = x509v3_extensions    # The extentions to add to the cert<br />
+default_days    = 365            # how long to certify for<br />
+default_crl_days= 30            # how long before next CRL<br />
+default_md    = md5            # which md to use.<br />
+preserve    = no            # keep passed DN ordering<br />
+policy        = policy_match</p>
+<p># For the CA policy<br />
+[ policy_match ]<br />
+commonName        = supplied<br />
+emailAddress        = optional<br />
+countryName        = optional<br />
+stateOrProvinceName    = optional<br />
+organizationName    = optional<br />
+organizationalUnitName    = optional</p>
+<p># For the 'anything' policy<br />
+[ policy_anything ]<br />
+commonName        = supplied<br />
+emailAddress        = optional<br />
+countryName        = optional<br />
+stateOrProvinceName    = optional<br />
+localityName        = optional<br />
+organizationName    = optional<br />
+organizationalUnitName    = optional</p>
+<p>####################################################################<br />
+[ req ]<br />
+default_bits        = 1024<br />
+default_keyfile     = privkey.pem<br />
+distinguished_name    = req_distinguished_name<br />
+attributes        = req_attributes</p>
+<p>[ req_distinguished_name ]<br />
+commonName            = Common Name (eg, your website's domain name)<br />
+commonName_max            = 64<br />
+emailAddress            = Email Address<br />
+emailAddress_max        = 40<br />
+countryName            = Country Name (2 letter code)<br />
+countryName_min            = 2<br />
+countryName_max            = 2<br />
+countryName_default        = BR<br />
+stateOrProvinceName        = State or Province Name (full name)<br />
+localityName            = Locality Name (eg, city)<br />
+0.organizationName        = Organization Name (eg, company)<br />
+organizationalUnitName        = Organizational Unit Name (eg, section)</p>
+<p>[ req_attributes ]<br />
+challengePassword        = A challenge password<br />
+challengePassword_min        = 4<br />
+challengePassword_max        = 20</p>
+<p>[ v3_ca ]<br />
+certificatePolicies=2.5.29.32.0<br />
+subjectKeyIdentifier=hash<br />
+authorityKeyIdentifier=keyid:always,issuer<br />
+basicConstraints=critical,CA:TRUE<br />
+keyUsage = critical,cRLSign, keyCertSign, digitalSignature</p>
+<p>[ v3_ca_req ]<br />
+certificatePolicies=2.5.29.32.0<br />
+basicConstraints=critical,CA:TRUE</p>
+<p>#<br />
+# Final do arquivo openssl.conf<br />
+[/sourcecode]</p>
+<h3>3.2.     Extraindo a chave privada e o certificado X.509 do arquivo PKCS#12 da CA raiz</h3>
+<p>Copie o arquivo PKCS#12 da CA raiz para o diretório <strong>C:\treinamentocas\Root</strong><br />
+Extraia do PKCS#12 a chave privada. Neste momento serão solicitadas duas senhas, a primeira para abertura do arquivo PKCS#12 e a segunda para a segurança da chave privada.</p>
+<p>[sourcecode language="text"]openssl pkcs12 -in ca.pfx -out ca.key -nocerts[/sourcecode]</p>
+<p>Extrais do PKCS#12 o certificado X.509. Neste momento será solicitada a senha do arquivo PKCS#12</p>
+<p>[sourcecode language="text"]openssl pkcs12 -in ca.pfx -nokeys -clcerts -out ca.cer[/sourcecode]</p>
+<h3>4.     Criando a CA intermediaria</h3>
+<p>Entre no diretório <strong>C:\treinamentocas\IM1</strong><br />
+Gere a chave privada da CA intermediaria. Neste passo será solicitado uma senha para segurança da chave privada.</p>
+<p>[sourcecode language="text"]openssl genrsa -des3 -out imca.key 1024[/sourcecode]</p>
+<p>Gere a requisição do certificado desta CA. A requisição deste certificado necessita passar alguns parâmetros de forma a possibilitar que o certificado X.509 gerado a partir da assinatura (por parte da CA raiz) desta requisição permita a utilização como uma CA, ou seja, assine novos certificados. Para isso é utilizado a seção <strong>v3_ca_req</strong> do arquivo openssl.conf.</p>
+<p>Neste passo será solicitado a senha de abertura da chave privada.</p>
+<p>[sourcecode language="text"]openssl req -reqexts v3_ca_req -new -sha1 -key imca.key -out imcarequest.csr -config openssl.conf[/sourcecode]</p>
+<p>Copie o arquivo <strong>imcarequest.csr</strong> para o diretorio <strong>C:\treinamentocas\Root</strong></p>
+<p>Entre no diretório <strong>C:\treinamentocas\Root</strong></p>
+<p>Faça a assinatura da requisição do certificado da autoridade certificadora intermediaria. Neste passo será solicitada a senha da chave privada da CA raiz (a mesma cadastrada no item 5.3.2 deste documento).</p>
+<p>[sourcecode language="text"]openssl ca -days 365 -md sha1 -cert ca.cer -keyfile ca.key -out imca.cer -in imcarequest.csr -config openssl.conf[/sourcecode]</p>
+<p>Copie o arquivo imca.cer (arquivo X.509 da CA intermediaria) para o diretório <strong>C:\treinamentocas\IM1</strong></p>
+<p>Entre no diretório <strong>C:\treinamentocas\IM1</strong><br />
+Gere o arquivo PKCS#12 da CA intermediaria</p>
+<p>[sourcecode language="text"]openssl pkcs12 -export -out imca.pfx -in imca.cer -inkey imca.key[/sourcecode]<br />
+<a href="http://www.helviojunior.com.br/wp-content/uploads/2012/03/OpenSSL.zip">Download do OpenSSL Standalone</a></p>

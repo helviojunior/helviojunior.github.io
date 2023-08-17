@@ -1,0 +1,109 @@
+---
+layout: post
+title: Verificando se um certificado é valido para atuar como uma autoridade certificadora
+  (CA)
+date: 2012-03-07 13:29:34.000000000 -03:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- IT
+- Segurança da Informação
+tags:
+- autoridade certificadora
+- ca
+- certificate authority
+- openssl
+meta:
+  _edit_last: '1'
+  _syntaxhighlighter_encoded: '1'
+  _topsy_long_url: http://www.helviojunior.com.br/it/security/verificando-se-um-certificado-e-valido-para-atuar-como-uma-ca/
+  topsy_short_url: ''
+  _av_alb_posts_elements_state: a:0:{}
+  _av_el_mgr_version: '1.0'
+  _av_alb_element_mgr_version: 1.0.1
+  _av_css_styles: a:6:{s:7:"post_id";i:170;s:8:"css_file";s:12:"post-170.css";s:9:"timestamp";s:0:"";s:6:"status";s:6:"no_css";s:13:"processed_ids";a:0:{}s:13:"include_posts";a:0:{}}
+author:
+  login: helvio
+  email: helvio_junior@hotmail.com
+  display_name: Helvio Junior - M4v3r1ck - OSCE3 (OSEP + OSED + OSWE), OSCE, OSCP,
+    eCXD, eMAPT, CEH
+  first_name: Helvio
+  last_name: Junior - M4v3r1ck - OSCE3 (OSEP + OSED + OSWE), OSCE, OSCP, eCXD, eMAPT,
+    CEH
+permalink: "/it/security/verificando-se-um-certificado-e-valido-para-atuar-como-uma-ca/"
+---
+<p>No campo <strong>Basic Constraints (Restições básicas)</strong> dentro do campo <strong>Extensions (Extensões)</strong> do certificado digital é necessário haver algumas informações para que este possa atuar como uma CA, ou seja, assinar novos certificados.</p>
+<p>Para poder visualizar esta informação é necessário ter o certificado X.509, desta forma se o único certificado que temos é o PKCS#12 é preciso extrair dele o certificado X.509.</p>
+<p><!--more--></p>
+<h3>Extraindo o certificado X.509 de um arquivo PKCS#12</h3>
+<p>Utilize o comando abaixo:</p>
+<p>[sourcecode language="text"]openssl pkcs12 -in cert.pfx -nokeys -clcerts -out cert.cer[/sourcecode]</p>
+<p>Onde <strong>cert.pfx</strong> é o arquivo PKCS#12 e <strong>cert.cer </strong>é o certificado X.509.</p>
+<h3></h3>
+<h3>Visualizando as informações do certificado</h3>
+<p>Utilize o comando abaixo:</p>
+<p>[sourcecode language="text"]openssl x509 -noout -text -in cert.cer[/sourcecode]</p>
+<p>Onde <strong>cert.cer</strong> é o certificado X.509 que se deseja verificar as informações. Neste momento as seguintes informações serão mostradas:</p>
+<p>[sourcecode language="text"]Certificate:<br />
+Data:<br />
+Version: 3 (0x2)<br />
+Serial Number: 32 (0x20)<br />
+Signature Algorithm: sha1WithRSAEncryption<br />
+Issuer: CN=teste.meudominio.com.br<br />
+Validity<br />
+Not Before: May 19 19:19:00 2011 GMT<br />
+Not After : May 18 19:19:00 2012 GMT<br />
+Subject: CN=im.meudominio.com.br, C=BR<br />
+Subject Public Key Info:<br />
+Public Key Algorithm: rsaEncryption<br />
+RSA Public Key: (1024 bit)<br />
+Modulus (1024 bit):<br />
+00:b2:29:86:71:48:a5:77:49:f8:6c:6e:6b:46:71:<br />
+08:46:59:2f:fe:c3:ef:d7:69:4c:ea:ec:5a:da:a1:<br />
+e6:45:26:e3:46:ab:85:b9:73:60:e9:4d:a9:72:3e:<br />
+7c:53:7d:80:a5:4b:2e:7a:dc:47:bc:0c:cd:cc:e7:<br />
+7d:82:00:fb:97:4a:c5:c3:ff:1b:57:a3:2a:13:f6:<br />
+41:f7:37:9c:a7:b8:87:31:b5:28:8f:f9:5c:9d:80:<br />
+20:43:dc:88:aa:1b:e0:4b:8b:40:ce:26:ca:d8:f2:<br />
+63:09:74:76:f0:14:6d:e9:dc:2f:76:dc:9d:74:5e:<br />
+9e:91:dc:2c:1f:c1:e5:79:85<br />
+Exponent: 65537 (0x10001)<br />
+X509v3 extensions:<br />
+X509v3 Certificate Policies:<br />
+Policy: X509v3 Any Policy</p>
+<p>X509v3 Subject Key Identifier:<br />
+4B:64:70:6B:5A:71:E2:C5:A0:3D:88:7A:63:1E:C4:59:E4:2E:62:16<br />
+X509v3 Authority Key Identifier:<br />
+keyid:0F:BC:D2:E6:35:1F:7D:35:D2:22:FE:70:9A:EC:BF:7B:FB:F6:32:77</p>
+<p>X509v3 Basic Constraints: critical<br />
+CA:TRUE<br />
+X509v3 Key Usage: critical<br />
+Digital Signature, Certificate Sign, CRL Sign<br />
+Signature Algorithm: sha1WithRSAEncryption<br />
+63:19:87:b0:de:11:d3:7c:58:98:20:a5:fc:cd:4c:b7:7c:5c:<br />
+1a:e6:df:1e:a4:73:bc:71:9e:71:5d:cf:c5:51:41:a1:40:31:<br />
+38:37:dc:7e:48:39:6b:bc:6b:13:88:8b:17:e8:9f:b9:12:7c:<br />
+38:68:03:4c:aa:ad:cf:f5:95:0e:3b:01:93:43:11:8f:91:ca:<br />
+8d:57:8e:cc:99:3f:0d:76:4f:21:a3:34:48:e2:a7:d3:45:3a:<br />
+8c:83:cb:49:e4:4e:e9:67:fa:12:cc:a3:0e:df:36:30:ec:e2:<br />
+6f:bc:6f:4b:9b:91:98:13:be:27:f8:50:50:18:2f:52:47:ee:<br />
+92:35<br />
+[/sourcecode]</p>
+<p>Dentre todas essas informações, neste momento, duas são importantes e ambas estão dentro das extensões do certificado.</p>
+<p>[sourcecode language="text"]<br />
+Certificate:<br />
+Data:<br />
+X509v3 extensions:<br />
+X509v3 Certificate Policies:<br />
+Policy: X509v3 Any Policy<br />
+X509v3 Basic Constraints: critical<br />
+CA:TRUE<br />
+[/sourcecode]</p>
+<p>A extensão <strong>Certificate Policies (poiticas do certificado)</strong> indica o que este certificado pode fazer. Para que o certificado possa atuar como CA neste campo deve estar presente o item <strong>X509v3 Any Policy </strong>indicando que este certificado pode ser utilizado para qualquer finalidade.</p>
+<p>Outra extensão a ser observada é a <strong>Basic Constraints (Restições básicas)</strong>. Para que este certificado possa assinar novos certificados neste campo deve estar presente o item <strong>CA:TRUE</strong> indicando que este certificado é de uma CA.</p>
+<p>Somente quando estes dois itens estiverem presentes no certificado o mesmo pode ser utilizado como certificado de uma CA.</p>
+<p><strong> </strong></p>
+<pre><a href="http://www.helviojunior.com.br/wp-content/uploads/2012/03/OpenSSL.zip">Download do OpenSSL Standalone</a></pre>

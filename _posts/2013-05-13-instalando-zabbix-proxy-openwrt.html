@@ -1,0 +1,239 @@
+---
+layout: post
+title: Instalando Zabbix proxy + OpenWRT
+date: 2013-05-13 13:18:46.000000000 -03:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Zabbix
+tags: []
+meta:
+  _edit_last: '1'
+  _syntaxhighlighter_encoded: '1'
+  _wp_old_slug: instalando-zabbix-proxy-no-opwnwrt
+  _av_alb_posts_elements_state: a:0:{}
+  _av_el_mgr_version: '1.0'
+  _av_alb_element_mgr_version: 1.0.1
+  _av_css_styles: a:6:{s:7:"post_id";i:503;s:8:"css_file";s:12:"post-503.css";s:9:"timestamp";s:0:"";s:6:"status";s:6:"no_css";s:13:"processed_ids";a:0:{}s:13:"include_posts";a:0:{}}
+author:
+  login: helvio
+  email: helvio_junior@hotmail.com
+  display_name: Helvio Junior - M4v3r1ck - OSCE3 (OSEP + OSED + OSWE), OSCE, OSCP,
+    eCXD, eMAPT, CEH
+  first_name: Helvio
+  last_name: Junior - M4v3r1ck - OSCE3 (OSEP + OSED + OSWE), OSCE, OSCP, eCXD, eMAPT,
+    CEH
+permalink: "/it/monitoramento/zabbix/instalando-zabbix-proxy-openwrt/"
+---
+<p>O que é o Zabbix Proxy?</p>
+<p>Zabbix proxy é uma espécie de agente remoto de monitoramento, onde pode-se monitorar ambientes remotos com diversos dispositivos, a vantagem disso é que se os dispositivos forem monitorados diretamente, pode ocasionar perda de dados, alertas falsos, lentidão e etc. Com isso, é comum que o Zabbix apresente gráficos incompletos, triggers acionadas erroneamente, entre outros problemas.</p>
+<p>A partir da versão 1.6 o Zabbix disponibiliza o monitoramento por meio do proxy, onde apenas um Agente-Gerente envia as informações para o servidor Zabbix, conforme ilustração abaixo:</p>
+<p style="text-align: center;"><a href="http://www.helviojunior.com.br/wp-content/uploads/2013/05/Proxy00.png"><img class=" wp-image-518 aligncenter" alt="Proxy00" src="{{ site.baseurl }}/assets/2013/05/Proxy00.png" width="488" height="191" /></a></p>
+<p>Agora que entendemos um pouco mais sobre o Zabbix Proxy, vamos a motivação deste artigo: O proxy pode ser executado em diversas distribuições Linux, mas ter um computador alocado somente para o Zabbix proxy é um recurso caro, desta forma fui atrás de opções mais baratas e descobri que ele pode ser executado no OpenWRT (<a href="https://openwrt.org/">https://openwrt.org/</a>). O OpenWRT é uma distribuição Linux para dispositivos embarcados, ou seja, uma distribuição super enxuta, e suporta diversos dispositivos de baixo custo como roteadores Wifi (Dlink, Linksys, TP-link e etc).</p>
+<p><!--more--></p>
+<p>Neste ponto começaram os meus desafios, como instalar e fazer isso funcionar. Depois de apanhar um monte consegui fazer tudo rodar em um dispositivo com 4Mb de memória flash (onde os dados são armazenados) e 32 Mb de memória RAM. Desta forma resolvi compartilhar o passo a passo.</p>
+<p>Para este post utilizei  o dispositivo Dlink DIR-320, a primeira coisa que fiz foi realizar a instalação padrão do OpenWRT que vem com diversos recursos (wifi, servidor web, dhcp e etc), porém como meu dispositivo dispões de somente 4Mb de memória flash, não houve espaço disponível instalar o Zabbix-Proxy e suas dependências, desta forma tive que personalizar minha própria imagem.</p>
+<p>Agora vamos parar de lero, lero e vamos ao que interessa.</p>
+<p><strong>Criando a imagem personalizada para gravar no dispositivo.</strong></p>
+<p>O Howto original de como realizar este procedimento pode ser encontrado em <a href="http://wiki.openwrt.org/doc/howto/obtain.firmware.generate">http://wiki.openwrt.org/doc/howto/obtain.firmware.generate</a>. Como serei bem específico neste post segue abaixo os passos que realizei.</p>
+<p>A criação da imagem necessita ser realizada em uma outra maquina que não o nosso dispositivo Dlink. No meu caso a maquina está rodando um Ubuntu server.</p>
+<p>Para este ambiente criei um diretório dentro do <strong>/root</strong> nomeado openwrt.</p>
+<p style="text-align: center;"><a href="http://www.helviojunior.com.br/wp-content/uploads/2013/05/001.png"><img class="aligncenter  wp-image-519" alt="001" src="{{ site.baseurl }}/assets/2013/05/001.png" width="540" height="135" /></a></p>
+<p><strong>Download do gerador de imagem OpwnWRT</strong></p>
+<ul>
+<li>Acesse o endereço <a href="http://backfire.openwrt.org/10.03.1/">http://backfire.openwrt.org/10.03.1/</a></li>
+<li>Clique na arquitetura do seu dispositivo. Caso não saiba qual é verifique através deste link <a href="http://wiki.openwrt.org/toh/start">http://wiki.openwrt.org/toh/start</a>. No meu caso brcm47xx</li>
+<li>Realize o download do ImageBuilder (gerador de imagem) para o diretório criado anteriormente. Utilize i686 em sistemas 32 bits ou x86_64 para sistemas 64 bits</li>
+<li>Extraia o conteúdo do arquivo.</li>
+</ul>
+<p>[sourcecode language="shell"]cd /root/openwrt/<br />
+wget http://backfire.openwrt.org/10.03.1/brcm47xx/OpenWrt-ImageBuilder-brcm47xx-for-Linux-i686.tar.bz2<br />
+tar –xvjf OpenWrt-ImageBuilder-brcm47xx-for-Linux-i686.tar.bz2<br />
+cd OpenWrt-ImageBuilder-brcm47xx-for-Linux-i686[/sourcecode]</p>
+<p><strong>Download do pacote do Zabbix-proxy</strong></p>
+<ul>
+<li>Dentro do diretório <b>/root/openwrt/OpenWrt-ImageBuilder-brcm47xx-for-Linux-i686</b> crie um diretório nomeado <b>pkg</b></li>
+<li>Entre no diretório pkg e realize o download do pacote do Zabbix-proxy</li>
+</ul>
+<p>[sourcecode language="shell"]<br />
+cd /root/openwrt/OpenWrt-ImageBuilder-brcm47xx-for-Linux-i686<br />
+mkdir pkg<br />
+wget http://downloads.openwrt.org/snapshots/trunk/brcm47xx/packages/zabbix-proxy_2.0.5-1_brcm47xx.ipk<br />
+[/sourcecode]</p>
+<p style="text-align: center;"><a href="http://www.helviojunior.com.br/wp-content/uploads/2013/05/002.png"><img class="aligncenter  wp-image-520" alt="002" src="{{ site.baseurl }}/assets/2013/05/002.png" width="540" height="135" /></a></p>
+<ul>
+<li>Dentro deste mesmo diretório crie um arquivo nomeado Packages com o seguinte conteúdo. Ou faça o download deste arquivo aqui (<a href="http://www.helviojunior.com.br/wp-content/uploads/2013/05/Packages.zip">Packages</a>)</li>
+</ul>
+<p>[sourcecode language="text"]<br />
+Package: zabbix-proxy<br />
+Version: 2.0.5-1<br />
+Depends: libc, libsqlite3<br />
+Source: feeds/packages/admin/zabbix<br />
+SourceFile: zabbix-2.0.5.tar.gz<br />
+SourceURL: @SF/zabbix<br />
+Section: admin<br />
+Maintainer: Mirko Vogt &lt;mirko@openwrt.org&gt;<br />
+Architecture: brcm47xx<br />
+Installed-Size: 222192<br />
+Filename: zabbix-proxy_2.0.5-1_brcm47xx.ipk<br />
+Size: 222216<br />
+MD5Sum: d6e25fdd0a4924f7038248b4b191f649<br />
+Description:  Zabbix proxy<br />
+[/sourcecode]</p>
+<p style="text-align: center;"><a href="http://www.helviojunior.com.br/wp-content/uploads/2013/05/003.png"><img class="aligncenter  wp-image-521" alt="003" src="{{ site.baseurl }}/assets/2013/05/003.png" width="540" height="302" /></a></p>
+<p>Configurando o gerador de imagem para utilizar este diretório como repositório adicional de pacotes</p>
+<ul>
+<li>Dentro do diretório <b>/root/openwrt/OpenWrt-ImageBuilder-brcm47xx-for-Linux-i686</b> edite o arquivo <strong>repositories.conf</strong></li>
+<li>Adicione a linha <strong>src custom file:///root/opwndrt/OpenWrt-ImageBuilder-brcm47xx-for-Linux-i686/pkg</strong></li>
+</ul>
+<p style="text-align: center;"><a href="http://www.helviojunior.com.br/wp-content/uploads/2013/05/005.png"><img class="aligncenter  wp-image-523" alt="005" src="{{ site.baseurl }}/assets/2013/05/005.png" width="540" height="199" /></a></p>
+<p>Visualizando os perfis de geração de imagem disponível</p>
+<p>Execute o comando</p>
+<p>[sourcecode language="shell"]make info[/sourcecode]</p>
+<p>Os perfis disponíveis serão listados.</p>
+<p>[sourcecode language="text"]<br />
+root@svux-0001:~/openwrt/OpenWrt-ImageBuilder-brcm47xx-for-Linux-i686# make infoCurrent Target: &quot;brcm47xx&quot;<br />
+Default Packages: base-files libc libgcc busybox dropbear mtd uci opkg udevtrigger hotplug2 dnsmasq iptables ppp ppp-mod-pppoe kmod-ipt-nathelper firewall wpad-mini kmod-switch kmod-diag nvram</p>
+<p>Available Profiles:</p>
+<p>Broadcom-b43:<br />
+Broadcom BCM43xx WiFi (default)<br />
+Packages: kmod-b43 kmod-b43legacy</p>
+<p>Atheros:<br />
+Atheros WiFi<br />
+Packages: kmod-madwifi</p>
+<p>Atheros-ath5k:<br />
+Atheros WiFi (atk5k)<br />
+Packages: kmod-ath5k</p>
+<p>None:<br />
+No WiFi<br />
+Packages: -wpad-mini</p>
+<p>WGT634U:<br />
+Netgear WGT634U<br />
+Packages: kmod-madwifi kmod-usb-core kmod-usb-ohci kmod-usb2 kmod-ocf kmod-crypto-ocf-ubsec-ssb</p>
+<p>WL500GPv1:<br />
+ASUS WL-500g Premium v1 (Atheros WiFi)<br />
+Packages: kmod-madwifi kmod-usb-core kmod-usb-uhci kmod-usb2</p>
+<p>WRT350Nv1:<br />
+Linksys WRT350Nv1<br />
+Packages: kmod-usb-core kmod-usb-ohci kmod-usb2 kmod-ssb-gige kmod-ocf-ubsec-ssb</p>
+<p>WRTSL54GS:<br />
+Linksys WRTSL54GS<br />
+Packages: kmod-usb-core kmod-usb-ohci kmod-usb2 kmod-usb-storage kmod-scsi-core kmod-fs-ext3 e2fsprogs kmod-b43<br />
+[/sourcecode]</p>
+<p>Para a nossa utilização escolhi o perfil <strong>None</strong> por ser o mais enxuto deixando espaço para o que interessa, o Zabbix-proxy.</p>
+<p>Gerando a imagem</p>
+<ul>
+<li>Dentro do diretório <b>/root/openwrt/OpenWrt-ImageBuilder-brcm47xx-for-Linux-i686</b> execute o comando <b>make image PROFILE=None PACKAGES="libc libsqlite3 zabbix-proxy fping"</b></li>
+</ul>
+<p style="text-align: center;"><a href="http://www.helviojunior.com.br/wp-content/uploads/2013/05/006.png"><img class="aligncenter  wp-image-524" alt="006" src="{{ site.baseurl }}/assets/2013/05/006.png" width="540" height="97" /></a></p>
+<ul>
+<li>Este processo demora alguns</li>
+</ul>
+<p>Se tudo ocorreu como esperado será criado um diretório nomeado <b>bin/brcm47xx/</b> e haverá dentro dele as imagens.</p>
+<p style="text-align: center;"><a href="http://www.helviojunior.com.br/wp-content/uploads/2013/05/007.png"><img class="aligncenter  wp-image-525" alt="007" src="{{ site.baseurl }}/assets/2013/05/007.png" width="540" height="250" /></a></p>
+<p>No meu caso utilizei a imagem <b>openwrt-brcm47xx-squashfs.trx</b>  gerada para gravar em meu Dlink DIR-320.</p>
+<p>Caso seu dispositivo já esteja com o OpenWRT, copie via SCP a imagem para o /tmp, acesse este diretório e execute o comando abaixo para gravar a imagem</p>
+<p>[sourcecode language="shell"]<br />
+mtd -r write openwrt-brcm47xx-squashfs.trx Linux[/sourcecode]</p>
+<p>Caso seu dispositivo não esteja com o OpenWRT, o procedimento de gravação de imagem no dispositivo não será abordado neste post pois depende do seu dispositivo. No meu caso o próprio menu web do dlink permite essa gravação. A gravação da imagem segue o mesmo padrão de gravação das imagens OpenWRT e DD-WRT e pode ser localizado em diversos fórum pela internet inclusive nos sites oficiais da OpenWrt e DD-DRT.</p>
+<p>Basta realizar a gravação e pronto, o dispositivo já está com o <strong>OpenWRT</strong> + <strong>Zabbix-proxy</strong>.</p>
+<p>Como a imagem que gravamos é bem enxuta não há configuração web do dispositivo mostrarei como realizar o acesso ao dispositivo, troca de senha padrão do ssh e configuração da interface de rede.</p>
+<p>Após a gravação desta imagem e reboot do dispositivo, o mesmo terá configurado em sua interface de rede o ip <strong>192.168.1.1</strong>, e não estará entregando IP via DHCP, desta forma configure um ip desta faixa na sua interface de rede, conforme imagem abaixo:</p>
+<p style="text-align: center;"><a href="http://www.helviojunior.com.br/wp-content/uploads/2013/05/008.png"><img class="aligncenter  wp-image-526" alt="008" src="{{ site.baseurl }}/assets/2013/05/008.png" width="331" height="370" /></a></p>
+<p>Acesse o dispositivo através de telnet, no meu caso utilizei o aplicativo Putty para isso.</p>
+<p style="text-align: center;"><a href="http://www.helviojunior.com.br/wp-content/uploads/2013/05/009.png"><img class="aligncenter  wp-image-527" alt="009" src="{{ site.baseurl }}/assets/2013/05/009.png" width="373" height="359" /></a></p>
+<p>Se tudo estiver correto a imagem abaixo será apresentada, caso não acesse verifique sua configuração de rede e conectividade até o dispositivo com o OpenWRT.</p>
+<p style="text-align: center;"><a href="http://www.helviojunior.com.br/wp-content/uploads/2013/05/010.png"><img class="aligncenter  wp-image-528" alt="010" src="{{ site.baseurl }}/assets/2013/05/010.png" width="540" height="340" /></a></p>
+<p>Digite o comando passwd para alterar a senha de root</p>
+<p>Agora o dispositivo já pode ser acessado via SSH com o usuário root e a senha definida no passo anterior.</p>
+<p style="text-align: center;"><a href="http://www.helviojunior.com.br/wp-content/uploads/2013/05/011.png"><img class="aligncenter  wp-image-529" alt="011" src="{{ site.baseurl }}/assets/2013/05/011.png" width="373" height="141" /></a></p>
+<p><strong>Alterando a configuração de rede</strong></p>
+<ul>
+<li>Edite o arquivo <strong>/etc/config/network</strong></li>
+<li>Localize a sessão LAN conforme a imagem abaixo:</li>
+</ul>
+<p style="text-align: center;"><a href="http://www.helviojunior.com.br/wp-content/uploads/2013/05/012.png"><img class="aligncenter  wp-image-530" alt="012" src="{{ site.baseurl }}/assets/2013/05/012.png" width="540" height="340" /></a></p>
+<ul>
+<li>Edite a configuração com as informações da sua rede</li>
+<li>No meu caso ficou assim</li>
+</ul>
+<p style="text-align: center;"><a href="http://www.helviojunior.com.br/wp-content/uploads/2013/05/013.png"><img class="aligncenter  wp-image-531" alt="013" src="{{ site.baseurl }}/assets/2013/05/013.png" width="540" height="340" /></a></p>
+<ul>
+<li>Onde meu IP é <strong>192.168.0.30</strong>, roteador padrão <strong>192.168.0.1</strong> e dns <strong>192.168.0.1</strong></li>
+<li>Reinicie as configurações de rede com o comando <b>/etc/init.d/network restart</b> ou reinicie seu dispositivo com o comando <b>reboot</b></li>
+</ul>
+<p><strong>Configuração do Zabbix proxy</strong></p>
+<p>Neste post faremos a configuração básica para funcionamento do Zabbix proxy em modo ativo. Modo este onde o Proxy efetua a comunicação com o Zabbix server, bem como com os hosts a serem verificados. Para outras opções de configuração consulte o manual do Zabbix.</p>
+<p>Edite o arquivo de configuração do proxy em<strong> /etc/zabbix_proxy.conf</strong> e altere os seguintes parâmetros:</p>
+<ul>
+<li><span style="line-height: 13px;"><strong>Hostname</strong>: Nome do proxy (este nome deve ser único que o identificará no Zabbiz server e deve ser igual ao configurado no server)</span></li>
+</ul>
+<p>[sourcecode language="shell"]Hostname=proxy_1[/sourcecode]</p>
+<ul>
+<li><strong>Server</strong>: IP ou hostname do servidor zabbix</li>
+</ul>
+<p>[sourcecode language="shell"]Server=monitoring.helviojunior.com.br[/sourcecode]</p>
+<ul>
+<li><strong>LogFile</strong>: Caminho completo do arquivo de log</li>
+</ul>
+<p>[sourcecode language="shell"]LogFile=/tmp/zabbix_proxy.log[/sourcecode]</p>
+<ul>
+<li><strong>PidFile</strong>: Caminho completo do arquivo de controle</li>
+</ul>
+<p>[sourcecode language="shell"]PidFile=/tmp/zabbix_proxy.pid[/sourcecode]</p>
+<ul>
+<li><strong>DBName</strong>: Caminho completo do arquivo de base de dados</li>
+</ul>
+<p>[sourcecode language="shell"]DBName=/tmp/zabbix_proxy.db[/sourcecode]</p>
+<p><strong>Correções gerais</strong></p>
+<ul>
+<li>Copie os executáveis do fping para o diretório que o Zabbix utiliza</li>
+</ul>
+<p>[sourcecode language="shell"]cp /usr/bin/fping* /usr/sbin/[/sourcecode]</p>
+<ul>
+<li>Altere as permissões de execução do fping</li>
+</ul>
+<p>[sourcecode language="shell"]<br />
+chown root:zabbix /usr/sbin/fping<br />
+chmod 710 /usr/sbin/fping<br />
+chmod ug+s /usr/sbin/fping<br />
+[/sourcecode]</p>
+<p><strong>Finalizando configurações de permissão e inicialização</strong></p>
+<ul>
+<li><span style="line-height: 13px;">Crie o usuário para o zabbix, inserindo a seguinte linha no <strong>/etc/passwd</strong></span></li>
+</ul>
+<p>[sourcecode language="shell"]zabbix:*:42223:42223:zabbix:/var:/bin/false[/sourcecode]</p>
+<ul>
+<li>Crie o grupo para o zabbix, inserindo a seguinte linha no <strong>/etc/group</strong></li>
+</ul>
+<p>[sourcecode language="shell"]zabbix:x:42223:[/sourcecode]</p>
+<ul>
+<li>Crie um arquivo nomeado <strong>/etc/init.d/zabbix_proxy</strong> com o seguinte conteúdo</li>
+</ul>
+<p>[sourcecode language="shell"]<br />
+#!/bin/sh /etc/rc.common<br />
+# Copyright (C) 2013 helviojunior.com.br</p>
+<p>START=50</p>
+<p>BIN=/usr/sbin/zabbix_proxy<br />
+PID=/tmp/zabbix_proxy.pid</p>
+<p>start() {<br />
+ [ -x $BIN ] || exit 0</p>
+<p>[ -x $PID ] || rm -rf $PID</p>
+<p>$BIN<br />
+}</p>
+<p>stop() {<br />
+ killall zabbix_proxy<br />
+ rm -f $PID<br />
+}<br />
+[/sourcecode]</p>
+<ul>
+<li>Habilite o Zabbix para iniciar no boot com o comando</li>
+</ul>
+<p>[sourcecode language="shell"]/etc/init.d/zabbix_proxy enable[/sourcecode]</p>
+<ul>
+<li>Inicie o Zabbix proxy</li>
+</ul>
+<p>[sourcecode language="shell"]/etc/init.d/zabbix_proxy start[/sourcecode]</p>

@@ -1,0 +1,107 @@
+---
+layout: post
+title: Configurando o raspberry para iniciar através do HD externo
+date: 2015-10-02 15:43:52.000000000 -03:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- IT
+tags: []
+meta:
+  _edit_last: '1'
+  _syntaxhighlighter_encoded: '1'
+  _yoast_wpseo_title: Configurando o raspberry para iniciar através do HD externo
+  _yoast_wpseo_metadesc: Aprenda passo-a-passo como configurar um Raspberry PI para
+    rodar o sistema operacional utilizando um HD externo USB.
+  _aviaLayoutBuilder_active: ''
+  _aviaLayoutBuilderCleanData: ''
+  layout: ''
+  sidebar: ''
+  footer: ''
+  header_title_bar: ''
+  header_transparency: ''
+  _avia_hide_featured_image: '0'
+  _av_alb_posts_elements_state: a:0:{}
+  _av_el_mgr_version: '1.0'
+  _av_alb_element_mgr_version: 1.0.1
+  _av_css_styles: a:6:{s:7:"post_id";i:1420;s:8:"css_file";s:13:"post-1420.css";s:9:"timestamp";s:0:"";s:6:"status";s:6:"no_css";s:13:"processed_ids";a:0:{}s:13:"include_posts";a:0:{}}
+author:
+  login: helvio
+  email: helvio_junior@hotmail.com
+  display_name: Helvio Junior - M4v3r1ck - OSCE3 (OSEP + OSED + OSWE), OSCE, OSCP,
+    eCXD, eMAPT, CEH
+  first_name: Helvio
+  last_name: Junior - M4v3r1ck - OSCE3 (OSEP + OSED + OSWE), OSCE, OSCP, eCXD, eMAPT,
+    CEH
+permalink: "/it/configurando-o-raspberry-para-iniciar-atraves-do-hd-externo/"
+---
+<p>O Objetivo deste post é demonstrar passo a passo como configurar um Raspberry Pi para utilizar um HD externo como base do seu sistema operacional. Isso é interessante pois dependendo da aplicação que você for realizar no Raspberry terá problema com o SDCard que tem uma limitação de gravação e escrita e consequentemente crash do sistema.</p>
+<p><!--more--></p>
+<p><strong>O que é o Raspberry Pi?</strong></p>
+<p>O Raspberry Pi é um computador do tamanho de um cartão de crédito que se conecta à sua TV e um teclado. É um PC que pode ser usado para muitas das coisas que o seu PC faz, como planilhas cálculo, processamento de texto, jogos e servidores diversos. Ele também reproduz vídeo de alta definição.</p>
+<p><span style="line-height: 1.5;">O Raspberry suporta por padrão algumas distribuições linux como Debian, Arch Linus e Risc OS. Para este post a distribuição de linux escolhida foi o Debian disponível na página oficial do fornecedor do hardware (</span><a style="line-height: 1.5;" href="http://www.raspberrypi.org/">clique aqui</a><span style="line-height: 1.5;">).</span></p>
+<p>Este tutorial começa após a instalação normal dele, então se precisas de informações sobre como instalar o sistema operacional do raspberry consulte a na página de download existem informações a respeito de como criar a imagem, pois não iremos repetir tais informações para não fugir ao tema.</p>
+<p>O primeiro passo, no raspberry ou em qualquer instalação de servidor ao meu ver, é garantir que todos os pacotes básicos estejam devidamente atualizados.</p>
+<p>[sourcecode language="shell"]apt-get update;<br />
+apt-get upgrade;<br />
+reboot<br />
+[/sourcecode]</p>
+<p>Como o raspberry utiliza como base do seu sistema uma cartão de memória SD há um problema conhecido que é a limitação de quantidade escritas em um mesmo bloco, o que ocasiona uma falha do cartão SD após este número de gravações. Há diversas formas de contornar este problema, a primeira dela é desativar swap do SO, colocar o /var em memória entre outros, porém como para este post teremos um HD externo anexado utilizaremos este HD como base para o sistema operacional.</p>
+<h2>Configurando o raspberry para iniciar através do HD</h2>
+<p>No raspberry não há como realizar o boot diretamente no HD, desta forma sempre precisaremos do SDcard para realizar o boot, e direcionamos o restante do processo para o HD, vamos ao procedimento.</p>
+<p>Primeiramente vamos copiar todo o conteúdo do SDCard para o hs externo. Este processo irá excluir todo o conteúdo do hd, desta forma caso tenha algo importante nele realize o backup antes.</p>
+<p>Supondo que o sdcard está montado em /dev/sdb e o hd externo em /dev/sdc utilizaremos o seguinte comando</p>
+<p>[sourcecode language="shell"]dd if=/dev/sdb of=/dev/sdc bs=512[/sourcecode]</p>
+<p>Sabendo que o raspberry sempre precisará da do SDcard com a partição de boot, será  nessário alterar as as configurações objetivando mudar a localização da raiz para a partição do HD externo ao invés da partição do SDcard. Para isso basta localizar a partição de boot do SDCard e alterar o arquivo /boot/cmdline.txt. substituindo o texto <strong>root=/dev/mmcblk0p2</strong> por <strong>root=/dev/sda2. </strong>Outra alteração necessária é a adição dos comandos <strong>bootdelay rootdelay</strong> ao final da linha para que o boot aguarde a carregamento do HD externo antes de iniciar.</p>
+<p>Agora podemos colocar o sdcard e o hd no raspberry e inicia-lo.</p>
+<p>Depois de inicia-lo iremos criar uma partição para utilizar como swap através dos comandos abaixo</p>
+<p>[sourcecode language="shell"]fdisk /dev/sda<br />
+Command (m for help): p<br />
+[/sourcecode]</p>
+<p>Com este comando será exibido a listagem de partições</p>
+<p><a href="http://www.helviojunior.com.br/wp-content/uploads/2014/07/001.png"><img class="alignnone wp-image-951" src="{{ site.baseurl }}/assets/2015/10/001.png" alt="001" width="405" height="255" /></a></p>
+<p>Vamos anotar a último bloco utilizado pela última partição, no nosso caso 6266879. Agora vamos criar uma nova partição com 1 Gb para swap.</p>
+<p>[sourcecode language="shell"]Command (m for help): n<br />
+Partition type:<br />
+ p primary (2 primary, 0 extended, 2 free)<br />
+ e extended<br />
+ Select (default p): p<br />
+ Partition number (1-4, default 3): 3<br />
+ First sector (2048-976773167, default 2048): 6266880<br />
+ Last sector, +sectors or +size{K,M,G} (6266880-976773167, default 976773167): +1024M<br />
+ [/sourcecode]</p>
+<p>Logo após podemos exibir novamente a listagem das partições</p>
+<p>[sourcecode language="shell"]Command (m for help): p<br />
+[/sourcecode]</p>
+<p><a href="http://www.helviojunior.com.br/wp-content/uploads/2014/07/002.png"><img class="alignnone wp-image-953" src="{{ site.baseurl }}/assets/2015/10/002.png" alt="002" width="355" height="160" /></a></p>
+<p><span style="line-height: 1.5;">Por fim grave as alterações realizadas com o comando abaixo</span></p>
+<p>[sourcecode language="shell"]<br />
+Command (m for help): w<br />
+[/sourcecode]</p>
+<p>Agora reinicie o sistema para que o mesmo identifique as partições e logo após crie a estrutura de swap na partição /dev/sda3</p>
+<p>[sourcecode language="shell"]mkswap /dev/sda3[/sourcecode]</p>
+<p>Ao executar este comando uma mensagem similar a esta será exibida:</p>
+<p>[sourcecode language="shell"]<br />
+Setting up swapspace version 1, size = 10485756 KiB<br />
+no label, UUID=1d82ec7d-cd70-4e1b-b02c-fca25a41faf0<br />
+[/sourcecode]</p>
+<p>Altere o arquivo <strong>/etc/fstab</strong> e adicione a seguinte linha:</p>
+<p>[sourcecode language="shell"]/dev/sda3    none      swap    sw           0       0[/sourcecode]</p>
+<p>E por fim removeremos o arquivo de swap utilizado pelo sistema originalmente para que o mesmo não tenha a brilhante idéia de usa-lo.</p>
+<p>[sourcecode language="shell"]rm -rf /etc/rc2.d/S02dphys-swapfile[/sourcecode]</p>
+<p>Assim ficamos com 3 partições:</p>
+<ul>
+<li>/dev/sda1: Cópia da partição de boot</li>
+<li>/dev/sda2: Partição de sistema (contém o SO)</li>
+<li>/dev/sda3: Partição usada para swap</li>
+</ul>
+<p>Pronto, agora poderemos iniciar o processo de configuração do nosso NAS.</p>
+<p><span style="font-size: 14px; line-height: 1.5;">Grave as informações no disco e reinicie o equipamento</span></p>
+<p>[sourcecode language="shell"]<br />
+Command (m for help): w<br />
+reboot<br />
+[/sourcecode]</p>
+<h2></h2>

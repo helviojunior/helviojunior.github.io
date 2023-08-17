@@ -1,0 +1,86 @@
+---
+layout: post
+title: Imagem com fundo transparente
+date: 2012-03-09 16:57:43.000000000 -03:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Desenvolvimento
+- Fotografia
+tags:
+- alfa
+- background transparent
+- definir cor transparente
+- fundo transparente
+- image opacity
+- replace color
+- transparency
+meta:
+  _edit_last: '1'
+  _syntaxhighlighter_encoded: '1'
+  _topsy_long_url: http://www.helviojunior.com.br/fotografia/imagem-com-fundo-transparente/
+  topsy_short_url: http://bit.ly/xUBjSA
+  _av_alb_posts_elements_state: a:0:{}
+  _av_el_mgr_version: '1.0'
+  _av_alb_element_mgr_version: 1.0.1
+  _av_css_styles: a:6:{s:7:"post_id";i:257;s:8:"css_file";s:12:"post-257.css";s:9:"timestamp";s:0:"";s:6:"status";s:6:"no_css";s:13:"processed_ids";a:0:{}s:13:"include_posts";a:0:{}}
+author:
+  login: helvio
+  email: helvio_junior@hotmail.com
+  display_name: Helvio Junior - M4v3r1ck - OSCE3 (OSEP + OSED + OSWE), OSCE, OSCP,
+    eCXD, eMAPT, CEH
+  first_name: Helvio
+  last_name: Junior - M4v3r1ck - OSCE3 (OSEP + OSED + OSWE), OSCE, OSCP, eCXD, eMAPT,
+    CEH
+permalink: "/fotografia/imagem-com-fundo-transparente/"
+---
+<p>Este artigo mostra de forma simples como converter uma cor sólida em transparência com C#.</p>
+<p>O código do exemplo converte todos os pixels da cor branca para transparência e salva a imagem em PNG com fundo transparente.</p>
+<p><!--more--></p>
+<p>[sourcecode language="csharp"]</p>
+<p>using System;<br />
+using System.Drawing;<br />
+using System.Drawing.Imaging;<br />
+using System.IO;</p>
+<p>namespace WhiteToTransparent<br />
+{<br />
+ class Program<br />
+ {<br />
+ public static void Main(string[] args)<br />
+ {</p>
+<p> Color replaceColor = Color.White;</p>
+<p> foreach(String f in args)<br />
+ {<br />
+ FileInfo file = new FileInfo(f);<br />
+ if (file.Exists)<br />
+ Convert(file, replaceColor);<br />
+ }</p>
+<p> Console.Write(&quot;Press any key to continue . . . &quot;);<br />
+ Console.ReadKey(true);<br />
+ }</p>
+<p> public static void Convert(FileInfo file, Color replaceColor){<br />
+ Bitmap originalBmp = (Bitmap)Bitmap.FromFile(file.FullName);</p>
+<p> Int32 colunas = originalBmp.Width;<br />
+ Int32 linhas = originalBmp.Height;</p>
+<p> Bitmap bmp = new Bitmap(colunas, linhas);</p>
+<p> for(Int32 y = 0; y &lt; linhas; y++){<br />
+ for(Int32 x = 0; x &lt; colunas; x++){<br />
+ Color pixel = originalBmp.GetPixel(x, y);<br />
+ if ((pixel.R != replaceColor.R) &amp;&amp; (pixel.G != replaceColor.G) &amp;&amp; (pixel.B != replaceColor.B))<br />
+ bmp.SetPixel(x, y, pixel);<br />
+ }<br />
+ }</p>
+<p> bmp.Save(file.FullName.Replace(file.Extension, &quot;_t&quot; + file.Extension), System.Drawing.Imaging.ImageFormat.Png);</p>
+<p> }<br />
+ }<br />
+}<br />
+[/sourcecode]</p>
+<p>Forma de execução:</p>
+<p>[sourcecode language="csharp"]<br />
+WhiteToTransparent.exe [nome_do_arquivo]<br />
+[/sourcecode]</p>
+<p>Fica como promessa realizar um algoritmo mais elaborado que substitui a cor principal e seus tons para graduações de transparência e publicá-lo aqui.</p>
+<p>Para quem deseja apenas trocar a cor branca para fundo transparente segue o programa para download já compilado juntamente com  o código fonte <a href="http://www.helviojunior.com.br/wp-content/uploads/2012/03/WriteToTransparent.zip">WriteToTransparent</a>.</p>

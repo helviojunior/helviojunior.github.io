@@ -1,0 +1,54 @@
+---
+layout: post
+title: Filtrando logs de uma chamada no Asterisk
+date: 2017-09-26 16:18:03.000000000 -03:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Asterisk
+tags: []
+meta:
+  _edit_last: '1'
+  _yoast_wpseo_content_score: '60'
+  _yoast_wpseo_primary_category: '60'
+  _aviaLayoutBuilder_active: ''
+  _aviaLayoutBuilderCleanData: ''
+  layout: ''
+  sidebar: ''
+  footer: ''
+  header_title_bar: ''
+  header_transparency: ''
+  _avia_hide_featured_image: '0'
+  _syntaxhighlighter_encoded: '1'
+  _av_alb_posts_elements_state: a:0:{}
+  _av_el_mgr_version: '1.0'
+  _av_alb_element_mgr_version: 1.0.1
+  _av_css_styles: a:6:{s:7:"post_id";i:1686;s:8:"css_file";s:13:"post-1686.css";s:9:"timestamp";s:0:"";s:6:"status";s:6:"no_css";s:13:"processed_ids";a:0:{}s:13:"include_posts";a:0:{}}
+author:
+  login: helvio
+  email: helvio_junior@hotmail.com
+  display_name: Helvio Junior - M4v3r1ck - OSCE3 (OSEP + OSED + OSWE), OSCE, OSCP,
+    eCXD, eMAPT, CEH
+  first_name: Helvio
+  last_name: Junior - M4v3r1ck - OSCE3 (OSEP + OSED + OSWE), OSCE, OSCP, eCXD, eMAPT,
+    CEH
+permalink: "/voip/asterisk/filtrando-logs-de-uma-chamada-no-asterisk/"
+---
+<p>Uma das coisas mais interessantes do Asterisk é a capacidade de você tratar e identificar erros olhando somente o arquivo de log do mesmo.</p>
+<p>Porém por ser bem detalhado e completo, dependendo da quantidade de chamadas simultâneas que há em seu ambiente é uma tarefa quase impossível ler este arquivo de log de uma forma que você possa isolar as informações de uma única ligação.</p>
+<p>Buscando na internet encontrei um post bem interessante que mostra um comando linux para realizar essa atividade (<a href="http://hackrr.com/2013/asterisk/get-all-logs-of-a-number-that-was-dialed/" target="_blank">http://hackrr.com/2013/asterisk/get-all-logs-of-a-number-that-was-dialed/</a>), desta forma o meu intuito aqui é apenas incrementar este script para pegar dinamicamente o local  e nome do arquivo de log do asterisk e depois filtrar os logs necessários.</p>
+<p>Segue abaixo o script completo. Basta salva-lo no local de sua preferência Ex.: <strong>/root/busca.sh</strong></p>
+<p>[sourcecode language="shell"]#/bin/bash<br />
+#</p>
+<p>LOGPATH=$(cat /etc/asterisk/asterisk.conf | grep -v &quot;^\s*[#\;]\|^\s*$&quot; | grep --only-matching -i --perl-regex &quot;(\bastlogdir\b).*&quot; | cut -d'=' -f 2 | sed 's/&gt;//g')<br />
+FILE=$(cat /etc/asterisk/logger.conf | grep -v &quot;^\s*[#\;]\|^\s*$&quot; | grep --only-matching -i --perl-regex &quot;(\bfull\b).*&quot; | cut -d'=' -f 1)<br />
+LOGFILE=&quot;$LOGPATH/$FILE&quot;</p>
+<p>grep $1 $LOGFILE | grep -o &quot;C-[0-9a-f]\+&quot; | uniq | xargs -I{} grep &quot;\[{}\]&quot; $LOGFILE<br />
+[/sourcecode]</p>
+<p>Agora depois de salvo basta executa-lo passando como parâmetro qualquer informação que você ache que possa localizar a chamada, lógico que quanto mais específico melhor. Ex.: Canal, contexto, peer e etc..</p>
+<p>[sourcecode language="shell"]/root/busca.sh 'SIP/6619-00001121'<br />
+[/sourcecode]</p>
+<p>&nbsp;</p>

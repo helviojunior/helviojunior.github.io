@@ -1,0 +1,128 @@
+---
+layout: post
+title: Transport Layer Security (TLS) e Secure Sockets Layer (SSL)
+date: 2012-03-07 12:07:51.000000000 -03:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- IT
+- Segurança da Informação
+tags:
+- autoridade certificadora
+- ca
+- certificate authority
+- openssl
+- ssl
+- tls
+meta:
+  _edit_last: '1'
+  _topsy_long_url: http://www.helviojunior.com.br/it/security/transport-layer-security-tls-e-secure-sockets-layer-ssl/
+  topsy_short_url: ''
+  _av_alb_posts_elements_state: a:0:{}
+  _av_el_mgr_version: '1.0'
+  _av_alb_element_mgr_version: 1.0.1
+  _av_css_styles: a:6:{s:7:"post_id";i:100;s:8:"css_file";s:12:"post-100.css";s:9:"timestamp";s:0:"";s:6:"status";s:6:"no_css";s:13:"processed_ids";a:0:{}s:13:"include_posts";a:0:{}}
+author:
+  login: helvio
+  email: helvio_junior@hotmail.com
+  display_name: Helvio Junior - M4v3r1ck - OSCE3 (OSEP + OSED + OSWE), OSCE, OSCP,
+    eCXD, eMAPT, CEH
+  first_name: Helvio
+  last_name: Junior - M4v3r1ck - OSCE3 (OSEP + OSED + OSWE), OSCE, OSCP, eCXD, eMAPT,
+    CEH
+permalink: "/it/security/transport-layer-security-tls-e-secure-sockets-layer-ssl/"
+---
+<p>O TLS/SSL é utilizado para garantir a confidencialidade e autenticidade de servidores e clientes na internet, o seu uso é mais comum em protocolos como HTTP e SMTP comumente chamados de HTTPS e SMTPS.</p>
+<p><!--more--></p>
+<h2>O que é TLS/SSL?</h2>
+<p>O Transport Layer Security - TLS (Segurança da Camada de Transporte) e o seu predecessor, Secure Sockets Layer - SSL (Protocolo de Camada de Sockets Segura), são protocolos criptográficos que conferem segurança de comunicação na Internet para serviços como email (SMTP), navegação por páginas (HTTP) e outros tipos de transferência de dados. Há algumas pequenas diferenças entre o SSL 3.0 e o TLS 1.0, mas o protocolo permanece substancialmente o mesmo. O termo "SSL" usado aqui aplica-se a ambos os protocolos.</p>
+<p>O SSL é um protocolo que se utiliza de dois tipos de criptografia (Assimétrica e Simétrica). Onde inicialmente estabelece a conexão com uma criptografia assimétrica e através desta conexão segura realiza a troca de chave da criptografia simétrica e por fim continua a comunicação dos dados com uma criptografia simétrica.</p>
+<p>Este fluxo resolve diversos problemas que se tem utilizando os modelos de criptografia simétrica/assimétrica separadamente:</p>
+<ul>
+<li>Criptografia simétrica
+<ul>
+<li>Rápido;</li>
+<li>Uma só chave para cifrar e decifrar;</li>
+<li>Problema para a troca de chaves (pois o cliente e servidor precisam conhecer a chave).</li>
+</ul>
+</li>
+<li>Criptografia assimétrica
+<ul>
+<li>Lento;</li>
+<li>Usa um par de chaves. Onde uma chave cifra e outra decifra;</li>
+<li>O cliente precisa apenas conhecer a chave pública para cifrar e enviar os dados ao servidor, que por sua vez consegue decifrar a informação com a chave privada.</li>
+</ul>
+</li>
+</ul>
+<p>Para maiores detalhes sobre criptografia verifique o post <a title="Certificação digital" href="http://www.helviojunior.com.br/security/certificacao-digital/">Certificação digital</a></p>
+<p>O SSL foi criado como um protocolo separado para segurança, sendo considerado como uma nova camada na arquitetura TCP/IP conforme demonstrado na figura abaixo:</p>
+<p style="text-align: center;"> <a href="http://www.helviojunior.com.br/wp-content/uploads/2012/03/image1.jpg"><img class="aligncenter  wp-image-101" title="TLS" src="{{ site.baseurl }}/assets/2012/03/image1.jpg" alt="" width="337" height="223" /></a></p>
+<p>Esta metodologia permite que o SSL seja utilizado para outras aplicações que não sejam o HTTP, como por exemplo, o FTP, POP3 e SMTP.</p>
+<p style="text-align: center;"> <a href="http://www.helviojunior.com.br/wp-content/uploads/2012/03/image2.jpg"><img class="aligncenter  wp-image-102" title="Protocolo + TLS" src="{{ site.baseurl }}/assets/2012/03/image2.jpg" alt="" width="147" height="173" /></a></p>
+<p>Sem a utilização do SLL uma conexão é estabelecida com o seguinte fluxo:</p>
+<ol>
+<li>Handshake TCP</li>
+<li>O cliente e o servidor iniciam o processo normal definido pelo protocolo de camada de aplicação (HTTP, SMTP, FTP, POP3 e outros)</li>
+</ol>
+<p>Com a utilização do SSL a conexão é estabelecida com o seguinte fluxo:</p>
+<ol>
+<li>Handshake TCP</li>
+<li>Processo de <strong>autenticação</strong> e <strong>encriptação</strong> (descritos detalhadamente no próximo item)</li>
+<li>O cliente e o servidor iniciam o processo normal definido pelo protocolo de camada de aplicação (HTTP, SMTP, FTP, POP3 e outros)</li>
+</ol>
+<p>Observe que a conexão com o SSL adicionou um passo antes que o protocolo de aplicação fosse iniciado.</p>
+<h2>Estabelecimento de uma conexão segura</h2>
+<p>A figura abaixo demonstra de forma sintetizada os passos do processo de negociação para que se estabeleça uma conexão segura.</p>
+<p style="text-align: center;"> <a href="http://www.helviojunior.com.br/wp-content/uploads/2012/03/image3.jpg"><img class="aligncenter  wp-image-103" title="TLS Steps" src="{{ site.baseurl }}/assets/2012/03/image3.jpg" alt="" width="351" height="338" /></a></p>
+<table border="1" cellspacing="0" cellpadding="0">
+<tbody>
+<tr>
+<td valign="top" width="64"><strong>Passo</strong></td>
+<td valign="top" width="569">
+<p align="left"><strong>Ação</strong></p>
+</td>
+</tr>
+<tr>
+<td valign="top" width="64"><strong>1</strong></td>
+<td valign="top" width="569">O Cliente envia a mensagem <em>ClientHello </em>propondo uma conexão segura com as opções SSL</td>
+</tr>
+<tr>
+<td valign="top" width="64"><strong>2</strong></td>
+<td valign="top" width="569">O servidor responde com uma mensagem <em>ServerHello </em> selecionando a opção SSL</td>
+</tr>
+<tr>
+<td valign="top" width="64"><strong>3</strong></td>
+<td valign="top" width="569">O servidor envia seu certificado de chave pública (certificado X.509) na mensagem <em>Certificate.</em></td>
+</tr>
+<tr>
+<td valign="top" width="64"><strong>4</strong></td>
+<td valign="top" width="569">O servidor conclui essa parte da negociação com a mensagem <em>ServerHelloDone</em></td>
+</tr>
+<tr>
+<td valign="top" width="64"><strong>5</strong></td>
+<td valign="top" width="569">O cliente envia a chave de sessão (encriptado com a chave pública do servidor) na mensagem <em>ClientKeyExchange</em></td>
+</tr>
+<tr>
+<td valign="top" width="64"><strong>6</strong></td>
+<td valign="top" width="569">O Cliente envia a mensagem <em>ChangeCipherSpec </em>para ativar as opções previamente negociadas para as próximas mensagens enviadas</td>
+</tr>
+<tr>
+<td valign="top" width="64"><strong>7</strong></td>
+<td valign="top" width="569">O Cliente envia a mensagem <em>Finished</em> para que o servidor verifique as opções recentemente ativadas</td>
+</tr>
+<tr>
+<td valign="top" width="64"><strong>8</strong></td>
+<td valign="top" width="569">O servidor envia a mensagem <em>ChangeCipherSpec</em> para ativar as opções previamente negociadas para as próximas mensagens enviadas<em></em></td>
+</tr>
+<tr>
+<td valign="top" width="64"><strong>9</strong></td>
+<td valign="top" width="569">O Servidor envia a mensagem <em>Finished</em> para que o cliente as opções recentemente ativadas</td>
+</tr>
+</tbody>
+</table>
+<h2></h2>
+<h2>Referencias bibliográficas</h2>
+<p>THOMAS, Stephen A, <strong>SLL &amp; TLS Essential: Securing the Web</strong>. Ed. New York: Elsevier, 2000.</p>

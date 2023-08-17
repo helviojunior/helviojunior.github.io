@@ -1,0 +1,100 @@
+---
+layout: post
+title: Carregando e utilizando plug-ins em C#
+date: 2013-08-14 13:04:25.000000000 -03:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Desenvolvimento
+- IT
+tags: []
+meta:
+  _edit_last: '1'
+  _syntaxhighlighter_encoded: '1'
+  _av_alb_posts_elements_state: a:0:{}
+  _av_el_mgr_version: '1.0'
+  _av_alb_element_mgr_version: 1.0.1
+  _av_css_styles: a:6:{s:7:"post_id";i:760;s:8:"css_file";s:12:"post-760.css";s:9:"timestamp";s:0:"";s:6:"status";s:6:"no_css";s:13:"processed_ids";a:0:{}s:13:"include_posts";a:0:{}}
+author:
+  login: helvio
+  email: helvio_junior@hotmail.com
+  display_name: Helvio Junior - M4v3r1ck - OSCE3 (OSEP + OSED + OSWE), OSCE, OSCP,
+    eCXD, eMAPT, CEH
+  first_name: Helvio
+  last_name: Junior - M4v3r1ck - OSCE3 (OSEP + OSED + OSWE), OSCE, OSCP, eCXD, eMAPT,
+    CEH
+permalink: "/it/devel/carregando-e-utilizando-plug-ins-em-c/"
+---
+<p>Este post demonstra como criar uma aplicação em C# que possibilite a interação com plug-ins. O método demonstrado é bastante simples e poderoso.</p>
+<p>Este método realiza os seguintes passos:</p>
+<ul>
+<li>Lista todas as Dlls em um diretório (plugins)</li>
+<li>Carrega todos os assemblies deste diretório</li>
+<li>Verifica se o tipo do assembly é o desejado</li>
+<li>Cria a instancia do tipo que implementa e armazena em uma lista</li>
+</ul>
+<p><!--more--></p>
+<p>Para realizar todos os itens acima o seguinte método genérico lista qualquer interface existente no diretório plugins, veritica o tipo desejado e cria uma lista de casos de todos os tipos que implementam a interface plugin.</p>
+<p>[sourcecode language="csharp"]using System;<br />
+using System.Reflection;<br />
+using System.Collections.Generic;<br />
+using System.IO;</p>
+<p>public static List&lt;T&gt; GetPlugins&lt;T&gt;(string folder)<br />
+{<br />
+	string[] files = Directory.GetFiles(folder, &quot;*.dll&quot;);<br />
+	List&lt;T&gt; tList = new List&lt;T&gt;();</p>
+<p>	foreach (string file in files)<br />
+	{<br />
+		try<br />
+		{<br />
+			Assembly assembly = Assembly.LoadFile(file);<br />
+			foreach (Type type in assembly.GetTypes())<br />
+			{<br />
+				if (!type.IsClass || type.IsNotPublic) continue;<br />
+				Type[] interfaces = type.GetInterfaces();<br />
+				if (((IList&lt;Type&gt;)interfaces).Contains(typeof(T)))<br />
+				{<br />
+					object obj = Activator.CreateInstance(type);<br />
+					T t = (T)obj;<br />
+					tList.Add(t);<br />
+				}<br />
+			}<br />
+		}<br />
+		catch (Exception ex)<br />
+		{<br />
+			Console.WriteLine(&quot;Erro: &quot; + ex.Message);<br />
+		}<br />
+	}</p>
+<p>	return tList;<br />
+}[/sourcecode]</p>
+<p>Com este método, podemos escrever um código para mostrar a lista de plugins com sua descrição da seguinte forma</p>
+<p>[sourcecode language="csharp"]string folder = Path.Combine(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location), &quot;Plugins&quot;);<br />
+List list = GetPlugins(folder);</p>
+<p>foreach (ITestInterface ti in list)<br />
+{<br />
+	string name = ti.GetPluginName();<br />
+	string desc = ti.GetPluginDescription();<br />
+	string str = string.Format(&quot;{0}, {1}, {2}&quot;,<br />
+	ti.GetType().FullName, name, desc);<br />
+	Console.WriteLine(str);<br />
+}[/sourcecode]</p>
+<p>A interface utilizada foi</p>
+<p>[sourcecode language="csharp"]using System;</p>
+<p>namespace PluginTest<br />
+{<br />
+    public delegate void TestEvent(object sender, EventArgs args);<br />
+    public interface ITestInterface<br />
+    {<br />
+        // Informacoes do plugin<br />
+        string GetPluginName();<br />
+        string GetPluginDescription();</p>
+<p>        void PrintText(String text);<br />
+        void Reset();</p>
+<p>        event TestEvent Motion;<br />
+    }<br />
+}<br />
+[/sourcecode]</p>
+<p>Fonte: http://blogs.msdn.com/b/abhinaba/archive/2005/11/14/492458.aspx</p>

@@ -1,0 +1,42 @@
+---
+layout: post
+title: Entendendo a estrutura básica do SafeID
+date: 2014-04-14 18:35:48.000000000 -03:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- SafeID
+- SafeTrend
+tags: []
+meta:
+  _edit_last: '1'
+  _av_alb_posts_elements_state: a:0:{}
+  _av_el_mgr_version: '1.0'
+  _av_alb_element_mgr_version: 1.0.1
+  _av_css_styles: a:6:{s:7:"post_id";i:878;s:8:"css_file";s:12:"post-878.css";s:9:"timestamp";s:0:"";s:6:"status";s:6:"no_css";s:13:"processed_ids";a:0:{}s:13:"include_posts";a:0:{}}
+author:
+  login: helvio
+  email: helvio_junior@hotmail.com
+  display_name: Helvio Junior - M4v3r1ck - OSCE3 (OSEP + OSED + OSWE), OSCE, OSCP,
+    eCXD, eMAPT, CEH
+  first_name: Helvio
+  last_name: Junior - M4v3r1ck - OSCE3 (OSEP + OSED + OSWE), OSCE, OSCP, eCXD, eMAPT,
+    CEH
+permalink: "/safetrend/safeid/entendendo-o-safeid/"
+---
+<h2>O que é o SafeID</h2>
+<p>O SafeID é um software de gestão de identidades e acessos da empresa SafeTrend (<a href="www.safetrend.com.br" target="_blank">www.safetrend.com.br</a>). Este post tem por objetivo explicar de forma rápida e simples sua estrutura básica.</p>
+<p><!--more--></p>
+<h2>Entendendo o SafeID</h2>
+<p><span style="line-height: 1.5;">Antes da configuração propriamente dita vamos entender um pouco do ambiente e da estrutura de dados do SafeID.</span></p>
+<p>[caption id="attachment_821" align="alignnone" width="431"]<a href="http://www.helviojunior.com.br/wp-content/uploads/2014/04/Implantação.png"><img class=" wp-image-821 " alt="Modelo de implantação do SafeID" src="{{ site.baseurl }}/assets/2014/04/Implanta&#231;&#227;o.png" width="431" height="329" /></a> Modelo de implantação do SafeID[/caption]</p>
+<p>Na imagem acima podemos observar o modelo básico de implantação do SafeID onde os dados são importados de um sistema de ERP/Gestão de pessoal, processados e posteriormente integrados com outros sistemas (Microsoft Active Directory, Google Apps, Banco de dados e outros)</p>
+<p>Neste post iremos configurar o SafeID para realizar essa importação de dados, e o sistema de origem do qual realizaremos este processo é um arquivo TXT separado por vírgula (CSV), mas poderia ser qualquer outro sistema (Microsoft Active Directory, Google Apps, Banco de dados e outros).</p>
+<p>Seguindo em nosso ambiente a imagem abaixo demonstra as integrações do módulo de proxy do SafeID.</p>
+<p>[caption id="attachment_822" align="alignnone" width="574"]<a href="http://www.helviojunior.com.br/wp-content/uploads/2014/04/Proxy.png"><img class=" wp-image-822   " alt="Ambiente de proxy" src="{{ site.baseurl }}/assets/2014/04/Proxy.png" width="574" height="370" /></a> Ambiente de proxy[/caption]</p>
+<p>Como o SafeID pode atuar com o servidor na nuvem ou em loco no ambiente do cliente a integração entre o servidor do SafeID e os sistemas integrados se dá através de um módulo que chamamos de proxy, toda a comunicação entre o SafeID e este proxy sempre é originada pelo proxy através de HTTP ou HTTPS, em ambos os casos os dados são criptografados para garantir a segurança.</p>
+<p>Último item que precisamos antes de realizar as configurações é entender a estrutura de dados do SafeID.</p>
+<p>[caption id="attachment_824" align="alignnone" width="471"]<a href="http://www.helviojunior.com.br/wp-content/uploads/2014/04/Estutura-de-dados.png"><img class=" wp-image-824 " alt="Estrutura de dados do SafeID" src="{{ site.baseurl }}/assets/2014/04/Estutura-de-dados.png" width="471" height="657" /></a> Estrutura de dados do SafeID[/caption]</p>

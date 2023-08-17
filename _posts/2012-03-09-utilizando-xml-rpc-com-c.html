@@ -1,0 +1,394 @@
+---
+layout: post
+title: Utilizando XML-RPC com C#
+date: 2012-03-09 12:54:08.000000000 -03:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Desenvolvimento
+- IT
+tags:
+- antispam
+- barracuda
+- c#
+- xml-rpc
+- xmlrpc
+meta:
+  _edit_last: '1'
+  _syntaxhighlighter_encoded: '1'
+  _topsy_long_url: http://www.helviojunior.com.br/it/devel/utilizando-xml-rpc-com-c/
+  topsy_short_url: ''
+  _av_alb_posts_elements_state: a:0:{}
+  _av_el_mgr_version: '1.0'
+  _av_alb_element_mgr_version: 1.0.1
+  _av_css_styles: a:6:{s:7:"post_id";i:190;s:8:"css_file";s:12:"post-190.css";s:9:"timestamp";s:0:"";s:6:"status";s:6:"no_css";s:13:"processed_ids";a:0:{}s:13:"include_posts";a:0:{}}
+author:
+  login: helvio
+  email: helvio_junior@hotmail.com
+  display_name: Helvio Junior - M4v3r1ck - OSCE3 (OSEP + OSED + OSWE), OSCE, OSCP,
+    eCXD, eMAPT, CEH
+  first_name: Helvio
+  last_name: Junior - M4v3r1ck - OSCE3 (OSEP + OSED + OSWE), OSCE, OSCP, eCXD, eMAPT,
+    CEH
+permalink: "/it/devel/utilizando-xml-rpc-com-c/"
+---
+<h2>Introdução</h2>
+<p>O XML-RPC é um protocolo de chamada de procedimento remoto (RPC) que utiliza XML para codificar suas chamadas e HTTP como um mecanismo de transporte.</p>
+<p>É um protocolo simples, definido com poucas linhas de códigos em oposição com a maioria dos sistemas de RPC, onde os documentos padrões são freqüentemente com milhares de páginas e exige apoio de softwares para serem usados. Fonte: http://pt.wikipedia.org/wiki/XML-RPC</p>
+<p>O XML-RPC é um protocolo criado em 1989 por Dave Winer na UserLand Software. Ele é o protocolo de WebService utilizado por diversos sistemas. Atualmente ele não é o padrão recomendado para implementações de  soluções WebService, sendo o SOAP 1.2 o padrão.</p>
+<p>Para maiores informações sobre o SOAP 1.2 recomendo a leitura da sua especificação no W3C disponível em <a href="http://www.w3.org/TR/soap/">http://www.w3.org/TR/soap/</a> e do livro <em>Programming Web Services with SOAP</em> de Doug Tidwell, James Snell e Pavel Kulchenko (O'Reilly).</p>
+<p>Buscando um pouco na internet encontrei uma biblioteca de XML-RPC para C#, porém achei pouca informação sobre como utilizá-la e explorar todas suas possibilidades. Desta forma resolvi criar este post para quem está iniciando neste mundo de WebService.</p>
+<p>Para quem deseja se aprofundar  no protocolo XML-RPC recomento a leitura do livro <em>Programming Web Services with XMLRPC</em> de Simon St. Laurent, Joe Johnston e Edd Dumbill (O'Reilly).</p>
+<p><!--more--></p>
+<h2>Biblioteca</h2>
+<p>Como base deste aplicativo foi utilizada a biblioteca XML-RPC.NET criada por Charles Cook.</p>
+<h2>Recursos</h2>
+<ul>
+<li>Listagem dos métodos disponíveis no WebService;</li>
+<li>Listagem das estruturas do WebService;</li>
+<li>Chamada de um método do WebService.</li>
+</ul>
+<h2>Métodos básicos do XML-RPC</h2>
+<p>O método <strong>system.listMethods</strong> geralmente está presente nas implementações de servidor WebService. Este método é utilizado pata listar todos os métodos presentes no WebService.</p>
+<h3>system.listMethods</h3>
+<p>Na execução deste método há como retorno uma lista contendo o nome de todos os métodos disponíveis no servidor.</p>
+<p><strong>Nome:</strong></p>
+<p><tt>system.listMethods</tt>.</p>
+<p><strong> </strong><strong>Parametros:</strong></p>
+<p>Não há parâmetros</p>
+<p><strong> </strong><strong>Resultado:</strong></p>
+<p>Retorna uma XML-RPC array de Strings que representa o nome dos métodos implementados pelo servidor.</p>
+<p>Cada elemento da lista é único, ou seja, não poderá haver duplicidade de nomes.</p>
+<p>Não é obrigatório que o servidor retorne todos os métodos implementados pelo servidor. Um exemplo disso é quando deseja-se que um determinado método seja privado.</p>
+<p><strong>Exemplo:</strong></p>
+<p>Chamada:</p>
+<p>[sourcecode language="xml"]&lt;methodCall&gt;<br />
+&lt;methodName&gt;system.listMethods&lt;/methodName&gt;<br />
+&lt;params&gt;&lt;/params&gt;<br />
+&lt;/methodCall&gt;[/sourcecode]</p>
+<p>Resposta:</p>
+<p>[sourcecode language="xml"]&lt;methodResponse&gt;<br />
+&lt;params&gt;<br />
+&lt;param&gt;<br />
+&lt;value&gt;&lt;array&gt;&lt;data&gt;<br />
+&lt;value&gt;<br />
+&lt;string&gt;system.listMethods&lt;/string&gt;<br />
+&lt;/value&gt;<br />
+&lt;value&gt;<br />
+&lt;string&gt;system.methodSignature&lt;/string&gt;<br />
+&lt;/value&gt;<br />
+&lt;/data&gt;&lt;/array&gt;&lt;/value&gt;<br />
+&lt;/param&gt;<br />
+&lt;/params&gt;<br />
+&lt;/methodResponse&gt;[/sourcecode]</p>
+<h2></h2>
+<h2>Implementação</h2>
+<p>Vamos a implementação da API de consulta.</p>
+<p>A Primeira coisa a ser criada é a interface se conexão com o Server.</p>
+<p>[sourcecode language="csharp"]<br />
+using System;<br />
+using CookComputing.XmlRpc;<br />
+namespace WebServiceAPI<br />
+{<br />
+   public interface IStateName : IXmlRpcProxy<br />
+   {<br />
+      [XmlRpcMethod(&quot;system.listMethods&quot;)]<br />
+      String[] ListMethods();<br />
+   }<br />
+}<br />
+[/sourcecode]</p>
+<p>Com a interface criada agora podemos realizar a consulta, em meu projeto criarei uma classe chamada <strong>APIBase</strong> com o seguinte código:</p>
+<p>[sourcecode language="csharp"]<br />
+using System;<br />
+using System.Collections.Generic;<br />
+using CookComputing.XmlRpc;<br />
+using System.Text;<br />
+namespace WebServiceAPI<br />
+{<br />
+   public class APIBase<br />
+   {<br />
+      internal IStateName proxy;<br />
+      public APIBase(Uri uri) : this(uri, false){}<br />
+      public APIBase(Uri uri, Boolean ignoreCertificateErrors)<br />
+      {<br />
+          if (ignoreCertificateErrors)<br />
+               System.Net.ServicePointManager.ServerCertificateValidationCallback = ((sender, certificate, chain, sslPolicyErrors) =&gt; true);</p>
+<p>           proxy = (IStateName)XmlRpcProxyGen.Create(typeof(IStateName));<br />
+           proxy.Url = uri.AbsoluteUri;<br />
+       }</p>
+<p>       public String[] ListMethods()<br />
+       {<br />
+           return proxy.ListMethods();<br />
+       }</p>
+<p>   }<br />
+}<br />
+[/sourcecode]</p>
+<p>Como métodos de instanciamento da classe temos 2 formas, a primeira somente com a URL do WebService (aceitando HTTP e HTTPS), e a segunda com a URL e se serão ignorados os erros de certificado HTTPS inválido.</p>
+<p>Nesta classe também há o método <strong>ListMethods</strong> que por sua vez chama o ListMethods da interface com o WebService.</p>
+<p>Vamos ao teste. Instancie a classe de API e execute o método ListMethods conforme demonstrado no código abaixo:</p>
+<p>[sourcecode language="csharp"]APIBase xmlRpcApi = new APIBase(new Uri(&quot;http://servidor_wordpress/xmlrpc.php&quot;), true);<br />
+String[] WSMethods = xmlRpcApi.ListMethods();<br />
+foreach(String methodName in WSMethods)<br />
+    Console.WriteLine(methodName);[/sourcecode]</p>
+<p>Ao executar este código deve retornar o nome de todos os métodos.</p>
+<p>Agora vamos implementar na classe<strong> APIBase</strong> umas funções para facilitar o trabalho no conhecimento das propriedades e métodos do WebService.  Ficando o código dessa classe conforme abaixo:</p>
+<p>[sourcecode language="csharp"]<br />
+using System;<br />
+using System.Collections.Generic;<br />
+using CookComputing.XmlRpc;<br />
+using System.Text;</p>
+<p>namespace WebServiceAPI<br />
+{<br />
+   public class APIBase<br />
+   {<br />
+      internal IStateName proxy;<br />
+      public APIBase(Uri uri) : this(uri, false){}<br />
+      public APIBase(Uri uri, Boolean ignoreCertificateErrors)<br />
+      {<br />
+         if (ignoreCertificateErrors)<br />
+            System.Net.ServicePointManager.ServerCertificateValidationCallback = ((sender, certificate, chain, sslPolicyErrors) =&gt; true);<br />
+         proxy = (IStateName)XmlRpcProxyGen.Create(typeof(IStateName));<br />
+         proxy.Url = uri.AbsoluteUri;<br />
+      }</p>
+<p>      public String[] ListMethods()<br />
+      {<br />
+         return proxy.ListMethods();<br />
+      }</p>
+<p>      public static String DumpVariable(Object obj){<br />
+         return DumpVariable(obj, &quot;&quot;);<br />
+      }</p>
+<p>      public static String DumpVariable(Object obj, String printPrefix)<br />
+      {<br />
+         StringBuilder dumpText = new StringBuilder();<br />
+         try {<br />
+            dumpText.AppendLine(printPrefix + &quot;type ==&gt; &quot; + obj.GetType());<br />
+         } catch (Exception) { }<br />
+         if (obj is XmlRpcStruct)<br />
+         {<br />
+             foreach(String key in ((XmlRpcStruct)obj).Keys){<br />
+                 dumpText.AppendLine(printPrefix + key);<br />
+                 dumpText.AppendLine(DumpVariable(((XmlRpcStruct)obj)[key], printPrefix + &quot;\t&quot;));<br />
+             }<br />
+         }<br />
+         else if (obj is XmlRpcStruct[])<br />
+         {<br />
+             foreach(XmlRpcStruct r1 in ((XmlRpcStruct[])obj)){<br />
+                 dumpText.AppendLine(DumpVariable(r1, printPrefix + &quot;\t&quot;));<br />
+             }<br />
+         }<br />
+         else if (obj is Object[])<br />
+         {<br />
+             foreach(Object t in ((Object[])obj)){<br />
+                 dumpText.AppendLine(DumpVariable(t, printPrefix + &quot;\t   &quot;));<br />
+             }<br />
+         }<br />
+         else if (obj is String)<br />
+         {<br />
+             if (obj != null)<br />
+                dumpText.AppendLine(printPrefix + &quot;\t   &quot; +obj.ToString());<br />
+         }<br />
+         else if (obj is String[])<br />
+         {<br />
+             foreach(Object t in ((String[])obj)){<br />
+                 if (t != null)<br />
+                    dumpText.AppendLine(printPrefix + &quot;\t   &quot; +t.ToString());<br />
+             }<br />
+         }<br />
+         else<br />
+         {<br />
+             if (obj != null)<br />
+                dumpText.AppendLine(printPrefix + &quot;\t   &quot; + obj.ToString());<br />
+         }<br />
+         return dumpText.ToString();<br />
+      }<br />
+   }<br />
+}<br />
+[/sourcecode]</p>
+<p>Basicamente foram criados 2 métodos nomeados <strong>DumpVariable</strong> que realizam o parse dos dados retornados pelo WebService.</p>
+<p>Para dar os próximos passos é necessário a documentação do WebService, no tocante a parâmetros de entrada e saída dos métodos. Alguns aplicativos servidores de WebService implementam métodos de consulta da estrutura como é o caso do Webservice da Barracuda (colocarei um código de exemplo para download).</p>
+<p>Para o webservice escolhido (Wordpress) há uma página de referência dos métodos em :</p>
+<p><a href="http://codex.wordpress.org/XML-RPC_wp">http://codex.wordpress.org/XML-RPC_wp</a></p>
+<p>Para que se possa utilizar o WebService do wordpress é preciso habilitar em Configurações &gt; Escrita &gt; <em>Ativar os protocolos de publicação XML-RPC do WordPress, Movable Type, MetaWeblog e Blogger.</em></p>
+<p>Para exemplificação escolheremos dois métodos o <strong>wp.getUsersBlogs</strong> e <strong>wp.getPageList. </strong>Segue a descrição destes:</p>
+<h3>wp.getUsersBlogs</h3>
+<p>Retorna os blogs dos usuários.</p>
+<p><strong>Parâmetros:</strong></p>
+<p>[sourcecode language="text"]<br />
+String username<br />
+String password<br />
+[/sourcecode]</p>
+<p><strong>Retorno:</strong></p>
+<p>[sourcecode language="text"]<br />
+Array<br />
+   Struct<br />
+     Boolean isAdmin<br />
+     String url<br />
+     String blogid<br />
+     String blogName<br />
+     String xmlrpc<br />
+[/sourcecode]</p>
+<h3>wp.getPageList</h3>
+<p>Retorna uma array com todas as páginas de um blog. Somente informações mínimas são retornadas, para maiores informações pode ser usado o método <strong>wp.getPages.</strong></p>
+<p><strong>Parâmetros:</strong></p>
+<p>[sourcecode language="text"]<br />
+Int32 blog_id<br />
+String username<br />
+String password<br />
+[/sourcecode]</p>
+<p><strong>Retorno:</strong></p>
+<p>[sourcecode language="text"]<br />
+Array<br />
+   Struct<br />
+      Int32 page_id<br />
+      String page_title<br />
+      Int32 page_parent_id<br />
+      DateTime dateCreated<br />
+[/sourcecode]</p>
+<p>Agora que conhecemos a estrutura dos nossos métodos necessitamos cria-las em nosso projeto. Até o momento criaremos somente a estrutura de retorno do método <strong>wp. getUsersBlogs</strong>, pois nos próximos passos mostrarei como utilizar as funções <strong>DumpVariables</strong> para descobrir a estrutura de retorno dos dados.</p>
+<p>[sourcecode language="csharp"]<br />
+public struct getUsersBlogsResponse<br />
+{<br />
+   public Boolean isAdmin;<br />
+   public String url;<br />
+   public String blogid;<br />
+   public String blogName;<br />
+   public String xmlrpc;<br />
+}<br />
+[/sourcecode]</p>
+<p>Caso deseje não receber algum parâmetro basta incluir a instrução para ignorar conforme código abaixo. Apenas para exemplificação foi removido o parâmetro xmlrcp. Em nosso exemplo não utilizaremos essa instrução.</p>
+<p>[sourcecode language="csharp"]<br />
+[XmlRpcMissingMapping(MappingAction.Ignore)]<br />
+public struct getUsersBlogsResponse<br />
+{<br />
+   public Boolean isAdmin;<br />
+   public String url;<br />
+   public String blogid;<br />
+   public String blogName;<br />
+}<br />
+[/sourcecode]</p>
+<p>Após a criação das inclua os métodos na interface XML-RPC.</p>
+<p>[sourcecode language="csharp"]<br />
+[XmlRpcMethod(&quot;wp.getUsersBlogs&quot;)]<br />
+getUsersBlogsResponse[] getUsersBlogs(String username, String password);</p>
+<p>[XmlRpcMethod(&quot;wp.getPageList&quot;)]<br />
+Object getPageList(Int32 blog_id, String username, String password);<br />
+[/sourcecode]</p>
+<p>Depois inclua as chamadas na classe APIBase</p>
+<p>[sourcecode language="csharp"]<br />
+public getUsersBlogsResponse[] UsersBlogs(String username, String password)<br />
+{<br />
+   return proxy.getUsersBlogs(username, password);<br />
+}</p>
+<p>public Object PageList(Int32 blog_id, String username, String password)<br />
+{<br />
+   return proxy.getPageList(blog_id, username, password);<br />
+}<br />
+[/sourcecode]</p>
+<p>Note que o retorno do método <strong>PageList</strong> foi definido como <strong>Object</strong>, pois como desejamos conhecer a estrutura o Object é uma forma genérica de retorno para que possamos utilizar a função <strong>DumpVariables</strong>.<strong></strong></p>
+<p>Agora no código principal basta realizar as consultas.</p>
+<p>[sourcecode language="csharp"]<br />
+using System;<br />
+using WebServiceAPI;</p>
+<p>namespace Test<br />
+{<br />
+   class Program<br />
+   {<br />
+      public static void Main(string[] args)<br />
+      {<br />
+          APIBase xmlRpcApi = new APIBase(new Uri(&quot;http:// servidor_wordpress /xmlrpc.php&quot;), true);<br />
+          String[] WSMethods = xmlRpcApi.ListMethods();<br />
+          //foreach(String methodName in WSMethods)<br />
+          //            Console.WriteLine(methodName);</p>
+<p>          String username = &quot;WordPressAdminUser&quot;;<br />
+          String password = &quot;Senha&quot;;<br />
+          getUsersBlogsResponse[] Blogs = xmlRpcApi.UsersBlogs(username,password);<br />
+          foreach(getUsersBlogsResponse b in Blogs)<br />
+          {<br />
+              Object PList = xmlRpcApi.PageList(Int32.Parse(b.blogid), username,password);<br />
+              Console.WriteLine(b.blogid + &quot; = &quot; + b.blogName);<br />
+              Console.WriteLine(APIBase.DumpVariable(PList));<br />
+              Console.WriteLine(&quot;&quot;);<br />
+         }<br />
+         Console.Write(&quot;Press any key to continue . . . &quot;);<br />
+         Console.ReadKey(true);<br />
+      }<br />
+   }<br />
+}<br />
+[/sourcecode]</p>
+<p>Executando este código tem-se a seguinte saída:</p>
+<p style="text-align: center;"><a href="http://www.helviojunior.com.br/wp-content/uploads/2012/03/image11.png"><img class="aligncenter  wp-image-205" title="image1" src="{{ site.baseurl }}/assets/2012/03/image11.png" alt="" width="406" height="198" /></a></p>
+<p>Pode-se observar pela imagem que o retorno da chamada PageList é um array do tipo XmlRpcStruct e que contem as seguintes variáveis:</p>
+<p>[sourcecode language="text"]<br />
+String page_id<br />
+String page_title<br />
+DateTime dateCreated<br />
+Datetime date_created_gmt<br />
+[/sourcecode]</p>
+<p><span style="text-align: center;"><br />
+</span><br />
+<span style="text-align: center;">De posse dessa informação podemos criar a struct e retornar os dados no formato desejado.</span></p>
+<p>[sourcecode language="csharp"]<br />
+public struct getPageListResponse<br />
+{<br />
+public String page_id;<br />
+public String page_title;<br />
+public DateTime dateCreated;<br />
+public DateTime date_created_gmt;<br />
+}<br />
+[/sourcecode]</p>
+<p>Altere a interface e a API para utilizar essa struct</p>
+<p>[sourcecode language="csharp"]<br />
+//Struct<br />
+[XmlRpcMethod(&quot;wp.getPageList&quot;)]<br />
+getPageListResponse[] getPageList(Int32 blog_id, String username, String password);</p>
+<p>//API<br />
+public getPageListResponse[] PageList(Int32 blog_id, String username, String password)<br />
+{<br />
+   return proxy.getPageList(blog_id, username, password);<br />
+}<br />
+[/sourcecode]</p>
+<p>E por ultimo a aplicação principal:</p>
+<p>[sourcecode language="csharp"]<br />
+using System;<br />
+using WebServiceAPI;<br />
+namespace Test<br />
+{<br />
+     class Program<br />
+     {<br />
+        public static void Main(string[] args)<br />
+        {<br />
+             APIBase xmlRpcApi = new APIBase(new Uri(&quot;http:// servidor_wordpress /xmlrpc.php&quot;), true);<br />
+             String[] WSMethods = xmlRpcApi.ListMethods();<br />
+             //foreach(String methodName in WSMethods)<br />
+             //            Console.WriteLine(methodName);<br />
+             String username = &quot;WordPressAdminUser&quot;;<br />
+             String password = &quot;Senha&quot;;<br />
+             getUsersBlogsResponse[] Blogs = xmlRpcApi.UsersBlogs(username,password);<br />
+             foreach(getUsersBlogsResponse b in Blogs)<br />
+             {<br />
+                  Console.WriteLine(b.blogid + &quot; = &quot; + b.blogName);<br />
+                  getPageListResponse[] PList = xmlRpcApi.PageList(Int32.Parse(b.blogid), username,password);<br />
+                  foreach(getPageListResponse pl in PList)<br />
+                  {<br />
+                      Console.WriteLine(&quot;\t&quot; + pl.page_id + &quot;, &quot; + pl.page_title);<br />
+                  }<br />
+                  Console.WriteLine(&quot;&quot;);<br />
+             }<br />
+             Console.Write(&quot;Press any key to continue . . . &quot;);<br />
+             Console.ReadKey(true);<br />
+         }<br />
+     }<br />
+}<br />
+[/sourcecode]</p>
+<p>Executando este código temos essa saída na tela:</p>
+<h2><a href="http://www.helviojunior.com.br/wp-content/uploads/2012/03/image21.png"><img class="aligncenter  wp-image-206" title="image2" src="{{ site.baseurl }}/assets/2012/03/image21.png" alt="" width="250" height="122" /></a></h2>
+<h2></h2>
+<h2>Licença</h2>
+<p>Este aplicativo pode ser livremente utilizado.</p>
+<h3></h3>
+<h2>Download</h2>
+<p><a href="http://www.helviojunior.com.br/wp-content/uploads/2012/03/XMLRPC_v1.zip">Aplicativo XML-RPC padrão</a></p>
+<p><a href="http://www.helviojunior.com.br/wp-content/uploads/2012/03/XMLRPC-barracuda_v1.zip">Aplicativo XMLRPC-barracuda</a></p>

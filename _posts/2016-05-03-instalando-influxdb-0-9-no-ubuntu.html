@@ -1,0 +1,114 @@
+---
+layout: post
+title: Instalando InfluxDB 0.9 no ubuntu
+date: 2016-05-03 17:10:11.000000000 -03:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- InfluxDB
+tags: []
+meta:
+  _edit_last: '1'
+  _aviaLayoutBuilder_active: ''
+  _aviaLayoutBuilderCleanData: ''
+  layout: ''
+  sidebar: ''
+  footer: ''
+  header_title_bar: ''
+  header_transparency: ''
+  _avia_hide_featured_image: '0'
+  _syntaxhighlighter_encoded: '1'
+  _yoast_wpseo_title: Instalando InfluxDB 0.9 no ubuntu
+  _yoast_wpseo_metadesc: Aprenda passo a passo como realizar a instalação do InfluxDB
+    0.9, em um disco de dados separado, utilizando a distribuição Linux Ubuntu
+  _av_alb_posts_elements_state: a:0:{}
+  _av_el_mgr_version: '1.0'
+  _av_alb_element_mgr_version: 1.0.1
+  _av_css_styles: a:6:{s:7:"post_id";i:1490;s:8:"css_file";s:13:"post-1490.css";s:9:"timestamp";s:0:"";s:6:"status";s:6:"no_css";s:13:"processed_ids";a:0:{}s:13:"include_posts";a:0:{}}
+author:
+  login: helvio
+  email: helvio_junior@hotmail.com
+  display_name: Helvio Junior - M4v3r1ck - OSCE3 (OSEP + OSED + OSWE), OSCE, OSCP,
+    eCXD, eMAPT, CEH
+  first_name: Helvio
+  last_name: Junior - M4v3r1ck - OSCE3 (OSEP + OSED + OSWE), OSCE, OSCP, eCXD, eMAPT,
+    CEH
+permalink: "/it/influxdb/instalando-influxdb-0-9-no-ubuntu/"
+---
+<p>InfluxDB (<a href="https://influxdata.com/" target="_blank">https://influxdata.com/</a>) é uma base de dados serial, muito utilizada para sistemas de sensores e monitoramamento.</p>
+<p>Neste artigo mostraremos como instalar o InfluxDB e configura-lo para salvar as base de dados e informações em um segundo disco. Esta metodologia é comumente utilizada em servidores de produção onde tem-se os dados em um disco separado do sistema operacional.</p>
+<p><!--more--></p>
+<p>Antes de mais nada vamos garantir que o nosso sistema esteja atualizado com os comandos abaixo</p>
+<p>[sourcecode language="shell"]apt-get update;<br />
+apt-get upgrade;<br />
+[/sourcecode]</p>
+<p>Instale as dependências necessárias</p>
+<p>[sourcecode language="shell"]apt-get install libaio1 libaio-dev xfsprogs<br />
+[/sourcecode]</p>
+<p>&nbsp;</p>
+<p>Utilizando o seu aplicativo de preferência, crie uma partição no disco secundário</p>
+<p>Formate o disco com o comando abaixo, apenas trocando <strong>/dev/xpto1</strong> para o nome real do seu disco</p>
+<p>[sourcecode language="shell"]mkfs.xfs -f -d agcount=256 -l size=128m,lazy-count=1,version=2 -L influx_bases /dev/xpto1<br />
+[/sourcecode]</p>
+<p>Localize o UUID da sua partição</p>
+<p>[sourcecode language="shell"]ls -l /dev/disk/by-uuid<br />
+[/sourcecode]</p>
+<p><a href="http://www.helviojunior.com.br/wp-content/uploads/2016/05/001.png"><img class="alignnone size-full wp-image-1495" src="{{ site.baseurl }}/assets/2016/05/001.png" alt="001" width="746" height="100" /></a></p>
+<p>Edite o arquivo <strong>/etc/fstab</strong> e adicione a linha abaixo, utilizando o UUID do seu disco, para que o seu disco seja montado na inicialização</p>
+<p>[sourcecode language="shell"]UUID=d7d8c63c-7d10-42e0-958c-fdd5c11181ef /databases/influxdb/ xfs allocsize=256m,logbufs=8,noatime,nobarrier,nodiratime,attr2,logbsize=256k 0 0<br />
+[/sourcecode]</p>
+<p>Crie os diretórios necessários</p>
+<p>[sourcecode language="shell"]mkdir -p /databases/influxdb/<br />
+[/sourcecode]</p>
+<p>Monte o sistema de arquivos</p>
+<p>[sourcecode language="shell"]mount -a<br />
+[/sourcecode]</p>
+<p>Faça download do instalador e realize instalação do InfluxDB</p>
+<p>[sourcecode language="shell"]wget https://dl.influxdata.com/influxdb/releases/influxdb_0.9.6_amd64.deb<br />
+dpkg -i influxdb_0.9.6_amd64.deb<br />
+[/sourcecode]</p>
+<p>Inicie o serviço</p>
+<p>[sourcecode language="shell"]service influxdb start<br />
+[/sourcecode]</p>
+<p>Crie uma base de dados para se certificar que toda a estrutura de diretório do influx seja criada</p>
+<p>[sourcecode language="shell"]influx<br />
+CREATE DATABASE teste<br />
+exit<br />
+[/sourcecode]</p>
+<p>Defina as permissões do diretório</p>
+<p>[sourcecode language="shell"]chown -R influxdb:influxdb /databases/influxdb/<br />
+[/sourcecode]</p>
+<p>Pare o serviço do InfluxDB e copie os arquivos/diretórios</p>
+<p>[sourcecode language="shell"]service influxdb stop<br />
+rsync -av /var/lib/influxdb/* /databases/influxdb/<br />
+mv /var/lib/influxdb /var/lib/influxdb_old<br />
+[/sourcecode]</p>
+<p>Edite o arquivo de configuração <strong>/etc/influxdb/influxdb.conf</strong> para utilizar a nova estrutura de diretórios</p>
+<p>[sourcecode language="shell"]<br />
+[meta]<br />
+ #dir = &quot;/var/lib/influxdb/meta&quot;<br />
+ dir = &quot;/databases/influxdb/meta&quot;</p>
+<p>[data]<br />
+ #dir = &quot;/var/lib/influxdb/data&quot;<br />
+ dir = &quot;/databases/influxdb/data&quot;</p>
+<p> #wal-dir = &quot;/var/lib/influxdb/wal&quot;<br />
+ wal-dir = &quot;/databases/influxdb/wal&quot;</p>
+<p>[hinted-handoff]<br />
+ #dir = &quot;/var/lib/influxdb/hh&quot;<br />
+ dir = &quot;/databases/influxdb/hh&quot;<br />
+[/sourcecode]</p>
+<p>Inicie o serviço e verifique se o mesmo está rodando</p>
+<p>[sourcecode language="shell"]service influxdb stop<br />
+service influxdb status<br />
+[/sourcecode]</p>
+<p>Exclua a base de teste criada durante o processo</p>
+<p>[sourcecode language="shell"]influx<br />
+SHOW DATABASES<br />
+DROP DATABASE teste<br />
+SHOW DATABASES<br />
+exit<br />
+[/sourcecode]</p>
+<p>Para maiores informações de como utilizar o InfluxDB favor consultar a referência oficial do fabricante:<a href="https://docs.influxdata.com/influxdb/v0.12/introduction/getting_started/" target="_blank">https://docs.influxdata.com/influxdb/v0.12/introduction/getting_started/</a></p>

@@ -1,0 +1,154 @@
+---
+layout: post
+title: Asterisk FastAGI com PHP e Nginx
+date: 2016-12-21 09:21:28.000000000 -02:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Asterisk
+tags: []
+meta:
+  _edit_last: '1'
+  _yoast_wpseo_content_score: '90'
+  _yoast_wpseo_primary_category: '60'
+  _aviaLayoutBuilder_active: ''
+  _aviaLayoutBuilderCleanData: ''
+  layout: ''
+  sidebar: ''
+  footer: ''
+  header_title_bar: ''
+  header_transparency: ''
+  _avia_hide_featured_image: '0'
+  _syntaxhighlighter_encoded: '1'
+  _oembed_017bfe311abff3d098e5cd967e05d17a: "{{unknown}}"
+  _oembed_77fb5507a24f608d3c577c480c27c4b6: "{{unknown}}"
+  _av_alb_posts_elements_state: a:0:{}
+  _av_el_mgr_version: '1.0'
+  _av_alb_element_mgr_version: 1.0.1
+  _av_css_styles: a:6:{s:7:"post_id";i:1616;s:8:"css_file";s:13:"post-1616.css";s:9:"timestamp";s:0:"";s:6:"status";s:6:"no_css";s:13:"processed_ids";a:0:{}s:13:"include_posts";a:0:{}}
+author:
+  login: helvio
+  email: helvio_junior@hotmail.com
+  display_name: Helvio Junior - M4v3r1ck - OSCE3 (OSEP + OSED + OSWE), OSCE, OSCP,
+    eCXD, eMAPT, CEH
+  first_name: Helvio
+  last_name: Junior - M4v3r1ck - OSCE3 (OSEP + OSED + OSWE), OSCE, OSCP, eCXD, eMAPT,
+    CEH
+permalink: "/voip/asterisk/asterisk-fastagi-com-php-e-nginx/"
+---
+<p>Antes de mais nada é importante lembrarmos o que é o Asterisk AGI, segundo o site Voip-Info (<a href="http://www.voip-info.org/wiki/view/Asterisk+AGI" target="_blank">http://www.voip-info.org/wiki/view/Asterisk+AGI</a>) AGI é o acrônimo de Asterisk Gateway Interface, em outras palavras, é uma interface de comunicação para adicionar novas funcionalidades ao Asterisk, basicamente o Asterisk chama um script externo que pode ser escrito em qualquer linguagem (Perl, PHP, C, Pascal, Shell e etc...).</p>
+<p>Uma característica do AGI é que o script deve estar fisicamente na mesma maquina do Asterisk, o que pode acabar sobrecarregado essa maquina, sendo assim existe uma variante do AGI que é o FastAGI, que basicamente é a mesma coisa do AGI mas podendo ser utilizado via rede, pois o Asterisk conecta via socket TCP a um servidor externo para chamar o script. Para maiores informações consulte o link <a href="http://www.voip-info.org/wiki/view/Asterisk+FastAGI" target="_blank">http://www.voip-info.org/wiki/view/Asterisk+FastAGI</a>.</p>
+<p>Dito isso, o que veremos neste post é como montar toda a estrutura de um servidor FastAGI. Neste utilizaremos como linguagem de programação o PHP e como servidor o Ubuntu 14.04 com os aplicativos Xinet + Nginx, a utilização do Nginx se da pelo fato de facilitar a criação de balanceamento de carga, segurança entre outros.</p>
+<p><!--more--></p>
+<p>Chega de lero lero e vamos colocar  a mão na massa!</p>
+<p>Antes de mais nada vamos atualizar os pacotes do nosso servidor com os comandos abaixo</p>
+<p>[sourcecode language="shell"]apt-get update;<br />
+apt-get upgrade;<br />
+[/sourcecode]</p>
+<h2>Instalando pacotes</h2>
+<p>Agora, vamos adicionar o source list do Nginx para garantir que estamos pegando a ultima versão. No momento da escrita deste post é a 1.11.7</p>
+<p>[sourcecode language="shell"]echo deb http://nginx.org/packages/mainline/ubuntu/ `lsb_release --codename --short` nginx &gt;&gt; /etc/apt/sources.list<br />
+cd /tmp<br />
+wget http://nginx.org/keys/nginx_signing.key<br />
+sudo apt-key add nginx_signing.key<br />
+[/sourcecode]</p>
+<p>Atualize a lista de pacotes</p>
+<p>[sourcecode language="shell"]apt-get -y update<br />
+[/sourcecode]</p>
+<p>E por fim vamos instalar os pacotes necessários (Nginx, Xinet e php5 cliente)</p>
+<p>[sourcecode language="shell"]apt-get install nginx xinetd php5-cli<br />
+[/sourcecode]</p>
+<h2>Configurando diretórios do FastAGI</h2>
+<p>Agora que temos tudo instalado podemos iniciar o processo de configuração de nosso ambiente, o primeiro passo dessa configuração é criar o diretório e realizar o download dos scripts PHP da biblioteca que da suporte ao FastAGI, essa biblioteca é a PHPAGI disponível em <a href="http://phpagi.sourceforge.net/" target="_blank">http://phpagi.sourceforge.net/</a>.</p>
+<p>[sourcecode language="shell"]mkdir -p /usr/local/fastagi<br />
+cd /tmp/<br />
+wget http://ufpr.dl.sourceforge.net/project/phpagi/phpagi/2.20/phpagi-2.20.tgz<br />
+tar -xzvf phpagi-2.20.tgz -C /usr/local/fastagi/<br />
+[/sourcecode]</p>
+<h2>Melhorias e correções</h2>
+<p>Para melhorar a organização e estruturação do nosso ambiente vamos fazer alguns ajustes de estrutura e correção de um bug na biblioteca do PHPAGI.</p>
+<p>[sourcecode language="shell"]mv /usr/local/fastagi/phpagi-2.20/phpagi-fastagi.php /usr/local/fastagi/<br />
+[/sourcecode]</p>
+<p>Edite o arquivo <strong>/usr/local/fastagi/phpagi-2.20/phpagi.php</strong> e altere a linha <strong>1693</strong> para finar conforme abaixo</p>
+<p>[sourcecode language="shell"]# Linha antiga (original)<br />
+$chpath = is_null($checkpath) ? $_ENV['PATH'] : $checkpath;</p>
+<p>#Linha nova (como deve ficar)<br />
+$chpath = (is_null($checkpath) &amp;&amp; isset($_ENV['PATH'])) ? $_ENV['PATH'] : $checkpath;<br />
+[/sourcecode]</p>
+<p>Verifique o local onde o PHP-CLI está instalado com o comando <strong>which php</strong>, em meu ambiente está instalado em <strong>/usr/bin/php</strong>, sendo assim edite o arquivo <strong>/usr/local/fastagi/phpagi-fastagi.php</strong> alterando a primeira linha para representar o local correto do interpretador de comando, que no nosso caso é o PHP, conforme exemplo abaixo</p>
+<p>[sourcecode language="shell"]#!/usr/bin/php -q<br />
+[/sourcecode]</p>
+<p>Ainda neste arquivo edite a linha que contem o require_once conforme demonstrado abaixo</p>
+<p>[sourcecode language="shell"]# Linha antiga (original)<br />
+require_once(dirname(__FILE__) . DIRECTORY_SEPARATOR . 'phpagi.php');</p>
+<p>#Linha nova (como deve ficar)<br />
+require_once(dirname(__FILE__) . DIRECTORY_SEPARATOR . 'phpagi-2.20' . DIRECTORY_SEPARATOR . 'phpagi.php');<br />
+[/sourcecode]</p>
+<h2>Configurando Xinetd</h2>
+<p>Digite o comando abaixo</p>
+<p>[sourcecode language="shell"]echo 'fastagi   4545/tcp' &gt;&gt; /etc/services<br />
+[/sourcecode]</p>
+<p>Crie o arquivo <strong>/etc/xinetd.d/fastagi</strong> com o seguinte conteúdo</p>
+<p>[sourcecode language="shell"]service fastagi<br />
+{<br />
+ socket_type = stream<br />
+ protocol = tcp<br />
+ user = root<br />
+ group = nogroup<br />
+ server = /usr/local/fastagi/phpagi-fastagi.php<br />
+ wait = no<br />
+ protocol = tcp<br />
+ disable = no</p>
+<p> # Porta de escuta do serviço FastAGI, a mesma adicionada em '/etc/services'<br />
+ port = 4545</p>
+<p> # Restringe acesso somente na propria maquina (vindo do NGINX)<br />
+ only_from = 127.0.0.1 localhost<br />
+}<br />
+[/sourcecode]</p>
+<p>Reinicie o serviço XINETD</p>
+<p>[sourcecode language="shell"]service xinetd restart<br />
+[/sourcecode]</p>
+<h2>Configurando NGINX</h2>
+<p>Edite o arquivo /etc/nginx/nginx.conf para que o mesmo fique com o seguinte conteúdo</p>
+<p>[sourcecode language="shell"]user nginx;<br />
+worker_processes 1;</p>
+<p>error_log /var/log/nginx/error.log warn;<br />
+pid /var/run/nginx.pid;</p>
+<p>events {<br />
+ worker_connections 1024;<br />
+}</p>
+<p>stream {</p>
+<p> upstream fastagi {<br />
+ server 127.0.0.1:4545;</p>
+<p> }</p>
+<p> server {<br />
+ listen 4573;<br />
+ proxy_pass fastagi;<br />
+ }<br />
+}<br />
+[/sourcecode]</p>
+<p>Reinicie o serviço NGINX</p>
+<p>[sourcecode language="shell"]service nginx restart<br />
+[/sourcecode]</p>
+<h2>Criando primeiro script FastAGI</h2>
+<p>Agora que temos todo nosso ambiente pronto e funcionando vamos criar nosso primeiro script FastAGI. Para isso crie o arquivo <strong>/usr/local/fastagi/sample.php</strong> com o seguinte conteúdo</p>
+<p>[sourcecode language="shell"]&lt;?php<br />
+$fastagi-&gt;verbose('Parabéns, seu servidor FastAGI está funcionando!!!');<br />
+?&gt;<br />
+[/sourcecode]</p>
+<h2>Utilizando FastAGI no plano de discagem do Asterisk</h2>
+<p>Por fim vamos criar nosso plano de discagem do Asterisk para chamar esse FastAGI. Edite o arquivo /etc/asterisk/extensions.conf e crie uma extensão para chamar o nosso primeiro FastAGI, em meu ambiente utilizei a extensão 2000.</p>
+<p>[sourcecode language="shell"]exten = 2000,1,AGI(agi://127.0.0.1/sample.php)<br />
+[/sourcecode]</p>
+<p>Note que na chamada AGI usamos uma URI <strong>agi://127.0.0.1/sample.php</strong>, onde: <strong>127.0.0.1</strong> é o IP do servidor que responderá a requisição AGI via socket TCP, e o <strong>/sample.php</strong> é o script que queremos executar.</p>
+<p>Agora basta você acessar a console do Asterisk e recarregar as configurações do seu plano de discagem com o comando <strong>dialplan reload</strong> e discar para a extensão 2000.</p>
+<h2>Conclusão</h2>
+<p>Vimos como realizar toda a configuração do servidor para suportar o FastAGI, em nosso ambiente colocamos na mesma maquina do Asterisk, mas este pode certamente ser um servidor remoto, sendo assim com este procedimento você realizar diversas ações como integração com sistemas externos, comunicação com outras APIs, consultas a banco de dados, URA e etc... enfim o céu é o limite!!!</p>
+<h2>Referencias</h2>
+<p><a href="http://enricosimonetti.com/asterisk-fastagi-with-php/" target="_blank">http://enricosimonetti.com/asterisk-fastagi-with-php/</a></p>
+<p><a href="https://www.nginx.com/resources/admin-guide/tcp-load-balancing/" target="_blank">https://www.nginx.com/resources/admin-guide/tcp-load-balancing/</a></p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>

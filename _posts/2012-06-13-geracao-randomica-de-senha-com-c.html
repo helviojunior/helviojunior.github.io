@@ -1,0 +1,241 @@
+---
+layout: post
+title: Geração randômica de senha com C#
+date: 2012-06-13 10:47:07.000000000 -03:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Desenvolvimento
+- IT
+tags:
+- c#
+- csharp
+- geração randômica
+- password
+- random
+- senha
+meta:
+  topsy_short_url: ''
+  _topsy_long_url: http://www.helviojunior.com.br/it/devel/geracao-randomica-de-senha-com-c/
+  _edit_last: '1'
+  _syntaxhighlighter_encoded: '1'
+  _av_alb_posts_elements_state: a:0:{}
+  _av_el_mgr_version: '1.0'
+  _av_alb_element_mgr_version: 1.0.1
+  _av_css_styles: a:6:{s:7:"post_id";i:402;s:8:"css_file";s:12:"post-402.css";s:9:"timestamp";s:0:"";s:6:"status";s:6:"no_css";s:13:"processed_ids";a:0:{}s:13:"include_posts";a:0:{}}
+author:
+  login: helvio
+  email: helvio_junior@hotmail.com
+  display_name: Helvio Junior - M4v3r1ck - OSCE3 (OSEP + OSED + OSWE), OSCE, OSCP,
+    eCXD, eMAPT, CEH
+  first_name: Helvio
+  last_name: Junior - M4v3r1ck - OSCE3 (OSEP + OSED + OSWE), OSCE, OSCP, eCXD, eMAPT,
+    CEH
+permalink: "/it/devel/geracao-randomica-de-senha-com-c/"
+---
+<p>Neste post será criado um código em C# para geração de senha randômica e cumprindo os níveis de complexidade estabelecidos.</p>
+<p><!--more--></p>
+<p>No Windows geralmente o nível de complexidade exigido é:</p>
+<ul>
+<li>Não conter partes significativas do nome da conta do usuário ou o nome todo</li>
+<li>Ter pelo menos seis caracteres de comprimento</li>
+<li>Conter caracteres de três das quatro categorias a seguir:
+<ul>
+<li>Caracteres maiúsculos do inglês (A-Z)</li>
+<li>Caracteres minúsculos do inglês (a-z)</li>
+<li>10 dígitos básicos (0-9)</li>
+<li>Caracteres não-alfabéticos (por exemplo, !, $, #, %)</li>
+</ul>
+</li>
+</ul>
+<p>Desta forma criei um código para cumprir todos estes requisitos.</p>
+<p>A base de geração de alguns dados foi a tabela ASCII (conforma imagem abaixo). Da tabela foram utilizados os caracteres A-Z, a-z, 0-9 e alguns caracteres especiais. Porém no código eles aparecem como os seus decimais.</p>
+<p style="text-align: center;"><a href="http://www.helviojunior.com.br/wp-content/uploads/2012/06/ASCII1.gif"><img class="aligncenter  wp-image-413" title="Tabela ASCII" src="{{ site.baseurl }}/assets/2012/06/ASCII1.gif" alt="Tabela ASCII" width="392" height="420" /></a></p>
+<p>Como referência temos os itens:</p>
+<p>[sourcecode language="csharp"]<br />
+using System;<br />
+using System.Collections.Generic;<br />
+using System.Text;<br />
+[/sourcecode]</p>
+<p>A Classe é:</p>
+<p>[sourcecode language="csharp"]</p>
+<p>public class PasswordGenerator<br />
+{<br />
+    //Caracteres especiais utilizados<br />
+    private String[] Special = new String[] { &quot;@&quot;, &quot;#&quot;, &quot;$&quot;, &quot;!&quot;, &quot;%&quot;, &quot;-&quot;, &quot;_&quot; };</p>
+<p>    //Requisitos mínimos de senha<br />
+    private Boolean useLowerCase;<br />
+    private Boolean useUpperCase;<br />
+    private Boolean useDigits;<br />
+    private Boolean useSpecial;</p>
+<p>    public Boolean UseLowerCase { get { return useLowerCase; } set { useLowerCase = value; } }<br />
+    public Boolean UseUpperCase { get { return useUpperCase; } set { useUpperCase = value; } }<br />
+    public Boolean UseDigits { get { return useDigits; } set { useDigits = value; } }<br />
+    public Boolean UseSpecial { get { return useSpecial; } set { useSpecial = value; } }</p>
+<p>    public PasswordGenerator() : this(true, true, true, true) { }</p>
+<p>    public PasswordGenerator(Boolean UseLowerCase, Boolean UseUpperCase, Boolean UseDigits, Boolean UseSpecial)<br />
+    {<br />
+        this.useLowerCase = UseLowerCase;<br />
+        this.useUpperCase = UseUpperCase;<br />
+        this.useDigits = UseDigits;<br />
+        this.useSpecial = UseSpecial;</p>
+<p>        if ((!this.useLowerCase) &amp;&amp; (!this.useUpperCase) &amp;&amp; (!this.useDigits) &amp;&amp; (!this.useSpecial))<br />
+            this.useLowerCase = true;</p>
+<p>    }</p>
+<p>    public String Generate(Int32 Length)<br />
+    {<br />
+        String passwd = &quot;&quot;;</p>
+<p>        Int32 uppper = 0;<br />
+        Int32 lower = 0;<br />
+        Int32 digits = 0;<br />
+        Int32 special = 0;</p>
+<p>        Random rnd = new Random();</p>
+<p>        while(passwd.Length &lt; Length)<br />
+        {<br />
+            Int32 i = rnd.Next(1, 4);<br />
+            Int32 i2 = 0;</p>
+<p>            //Regras de checagem de requisitos<br />
+            while (i != i2)<br />
+            {<br />
+                switch (i)<br />
+                {<br />
+                    case 1:<br />
+                        if (!useDigits){<br />
+                            i++;<br />
+                            break;<br />
+                        }<br />
+                        else if (digits &gt; 0)<br />
+                        {<br />
+                            if ((useUpperCase) &amp;&amp; (uppper == 0))<br />
+                                i = i2 = 2;<br />
+                            else if ((useLowerCase) &amp;&amp; (lower == 0))<br />
+                                i = i2 = 3;<br />
+                            else if ((useSpecial) &amp;&amp; (special == 0))<br />
+                                i = i2 = 4;<br />
+                            else<br />
+                                i2 = i;<br />
+                        }<br />
+                        else<br />
+                        {<br />
+                            i2 = i;<br />
+                        }<br />
+                        break;</p>
+<p>                    case 2:<br />
+                        if (!useUpperCase)<br />
+                        {<br />
+                            i++;<br />
+                            break;<br />
+                        }<br />
+                        else if (uppper &gt; 0)<br />
+                        {<br />
+                            if ((useDigits) &amp;&amp; (digits == 0))<br />
+                                i = i2 = 1;<br />
+                            else if ((useLowerCase) &amp;&amp; (lower == 0))<br />
+                                i = i2 = 3;<br />
+                            else if ((useSpecial) &amp;&amp; (special == 0))<br />
+                                i = i2 = 4;<br />
+                            else<br />
+                                i2 = i;<br />
+                        }<br />
+                        else<br />
+                        {<br />
+                            i2 = i;<br />
+                        }<br />
+                        break;</p>
+<p>                    case 3:<br />
+                        if (!useLowerCase)<br />
+                        {<br />
+                            i++;<br />
+                            break;<br />
+                        }<br />
+                        else if (lower &gt; 0)<br />
+                        {<br />
+                            if ((useDigits) &amp;&amp; (digits == 0))<br />
+                                i = i2 = 1;<br />
+                            else if ((useUpperCase) &amp;&amp; (uppper == 0))<br />
+                                i = i2 = 2;<br />
+                            else if ((useSpecial) &amp;&amp; (special == 0))<br />
+                                i = i2 = 4;<br />
+                            else<br />
+                                i2 = i;<br />
+                        }<br />
+                        else<br />
+                        {<br />
+                            i2 = i;<br />
+                        }<br />
+                        break;</p>
+<p>                    case 4:<br />
+                        if (!useSpecial)<br />
+                        {<br />
+                            i++;<br />
+                            break;<br />
+                        }<br />
+                        else if (special &gt; 0)<br />
+                        {<br />
+                            if ((useDigits) &amp;&amp; (digits == 0))<br />
+                                i = i2 = 1;<br />
+                            else if ((useUpperCase) &amp;&amp; (uppper == 0))<br />
+                                i = i2 = 2;<br />
+                            else if ((useLowerCase) &amp;&amp; (lower == 0))<br />
+                                i = i2 = 3;<br />
+                            else<br />
+                                i2 = i;<br />
+                        }<br />
+                        else<br />
+                        {<br />
+                            i2 = i;<br />
+                        }<br />
+                        break;<br />
+                }<br />
+            }</p>
+<p>            String newItem = &quot;&quot;;<br />
+            switch (i2)<br />
+            {<br />
+                case 1:<br />
+                    newItem = ((char)(rnd.Next(48, 57))).ToString();<br />
+                    digits++;<br />
+                    break;</p>
+<p>                case 2:<br />
+                    newItem = ((char)(rnd.Next(65, 90))).ToString();<br />
+                    uppper++;<br />
+                    break;</p>
+<p>                case 3:<br />
+                    newItem = ((char)(rnd.Next(97, 122))).ToString();<br />
+                    lower++;<br />
+                    break;</p>
+<p>                case 4:<br />
+                    newItem = Special[rnd.Next(0, Special.Length - 1)];<br />
+                    special++;<br />
+                    break;<br />
+            }</p>
+<p>            //Randomiza a posição dos caracteres<br />
+            if (passwd.Length &gt; 0)<br />
+            {<br />
+                System.Threading.Thread.Sleep(1);<br />
+                Int32 pos = rnd.Next(0, passwd.Length - 1);<br />
+                passwd = passwd.Insert(pos, newItem);<br />
+            }<br />
+            else<br />
+            {<br />
+                passwd = newItem;<br />
+            }</p>
+<p>            //Slep necessário para que o 'rnd.Next' traga valores diferentes<br />
+            System.Threading.Thread.Sleep(5);<br />
+        }</p>
+<p>        return passwd;<br />
+    }<br />
+}<br />
+[/sourcecode]</p>
+<p>Para a utilização da classe temos este exemplo com um loop gerando 10 senhas diferentes com 16 caracteres cada.</p>
+<p>[sourcecode language="csharp"]<br />
+PasswordGenerator gen = new PasswordGenerator();</p>
+<p>for (Int32 i = 0; i &lt; 10; i++)<br />
+{<br />
+    Console.WriteLine(gen.Generate(16));<br />
+}<br />
+[/sourcecode]</p>
+<p>Segue abaixo o aplicativo completo para download</p>
+<p><a href="http://www.helviojunior.com.br/wp-content/uploads/2012/06/Password.zip">Geração de Senha</a></p>

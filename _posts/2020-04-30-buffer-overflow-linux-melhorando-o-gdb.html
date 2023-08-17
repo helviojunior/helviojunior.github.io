@@ -1,0 +1,78 @@
+---
+layout: post
+title: Buffer Overflow Linux - Melhorando o GDB
+date: 2020-04-30 14:18:14.000000000 -03:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Criação de Exploits
+tags: []
+meta:
+  _edit_last: '1'
+  _syntaxhighlighter_encoded: '1'
+  _yoast_wpseo_focuskw: buffer overflow
+  _yoast_wpseo_metadesc: 'Buffer Overflow: Aprenda como instalar o GDB e deixa-lo
+    com uma cara bem mais amigável e com comandos extras expecialmente desenvolvido
+    para criação de exploits.'
+  _yoast_wpseo_linkdex: '50'
+  _yoast_wpseo_content_score: '90'
+  _yoast_wpseo_primary_category: '80'
+  _aviaLayoutBuilder_active: ''
+  _aviaLayoutBuilderCleanData: ''
+  layout: ''
+  sidebar: ''
+  footer: ''
+  header_title_bar: ''
+  header_transparency: ''
+  _avia_hide_featured_image: ''
+  _av_alb_posts_elements_state: a:0:{}
+  _av_el_mgr_version: '1.0'
+  _av_alb_element_mgr_version: 1.0.1
+  _av_css_styles: a:6:{s:7:"post_id";i:2127;s:8:"css_file";s:13:"post-2127.css";s:9:"timestamp";s:0:"";s:6:"status";s:6:"no_css";s:13:"processed_ids";a:0:{}s:13:"include_posts";a:0:{}}
+  _avia_builder_shortcode_tree: a:0:{}
+  footer_behavior: ''
+  _avia_sc_parser_state: check_only
+  _pingme: '1'
+  _encloseme: '1'
+  _yoast_wpseo_estimated-reading-time-minutes: ''
+author:
+  login: helvio
+  email: helvio_junior@hotmail.com
+  display_name: Helvio Junior - M4v3r1ck - OSCE3 (OSEP + OSED + OSWE), OSCE, OSCP,
+    eCXD, eMAPT, CEH
+  first_name: Helvio
+  last_name: Junior - M4v3r1ck - OSCE3 (OSEP + OSED + OSWE), OSCE, OSCP, eCXD, eMAPT,
+    CEH
+permalink: "/it/security/criacao-de-exploits/buffer-overflow-linux-melhorando-o-gdb/"
+---
+<p>O GDB (<a href="https://www.gnu.org/software/gdb/">The GNU Project Debugger</a>) é hoje sem dúvida o melhor debugger para ambientes Linux e Unix. Porém sua interface padrão causa um pouco de rejeição para quem está começando a se aventurar no processo de criação de exploits ou engenharia reversa.</p>
+<p>Por este motivo trago para vocês algumas dicas que vão lhe ajudar bastante neste processo.</p>
+<p><!--more--></p>
+<h4>Parte 1: Configurando o locale</h4>
+<p>Se certifique que o locale da máquina está configurado como UTF-8</p>
+<p>[sourcecode language="shell"]root@M4v3r1ck:~# sudo locale-gen &quot;en_US.UTF-8&quot;<br />
+root@M4v3r1ck:~# echo 'LANG=&quot;en_US.UTF-8&quot;' &gt; /etc/default/locale<br />
+root@M4v3r1ck:~# echo 'LANGUAGE=&quot;en_US:en&quot;' &gt;&gt; /etc/default/locale<br />
+root@M4v3r1ck:~# echo 'LC_ALL=&quot;en_US.UTF-8&quot;' &gt;&gt; /etc/default/locale<br />
+[/sourcecode]</p>
+<h4>Parte 2: Instalando o GDB + Python3</h4>
+<p>[sourcecode language="shell"]root@M4v3r1ck:~# sudo apt-get install python python3 python-dev gdb python3-gdbm python3-gdbm-dbg<br />
+[/sourcecode]</p>
+<h4>Parte 3: Instalando GEF</h4>
+<p>O GEF (acrônimo para GDB Enhanced Features) é um plugin que deixa o visual do GDB bem mais amigável, bem como implementa novos comandos que auxiliam bastante no processo de criação de exploits e engenharia reversa. O seu manual está disponível em <a href="https://gef.readthedocs.io/en/master/">https://gef.readthedocs.io/en/master/</a></p>
+<p>[sourcecode language="shell"]root@M4v3r1ck:~# wget -O ~/.gdbinit-gef.py -q https://raw.githubusercontent.com/hugsy/gef/dev/gef.py<br />
+root@M4v3r1ck:~# echo source ~/.gdbinit-gef.py &gt;&gt; ~/.gdbinit<br />
+root@M4v3r1ck:~# echo &quot;set follow-fork-mode parent&quot; &gt;&gt; ~/.gdbinit<br />
+[/sourcecode]</p>
+<h4>Parte 4: Instalando scripts adicionais do GEF</h4>
+<p>Dentro destes scripts adicionais há 2 comandos que implementei que é muito útil no processo de criação de exploits, mais especificamente no momento da checagem de Badchars.</p>
+<ul>
+<li><strong>bytearray</strong>: gera o bytearray para copiar e colocar dentro do script python de exploit, bem como o arquivo binário para comparação</li>
+<li><strong>bincompare</strong>: compara o arquivo binário com os dados em memória objetivando encontrar por badchars.</li>
+</ul>
+<p>[sourcecode language="shell"]root@M4v3r1ck:~# wget -q -O- https://github.com/hugsy/gef/raw/master/scripts/gef-extras.sh | sh<br />
+[/sourcecode]</p>
+<p>&nbsp;</p>

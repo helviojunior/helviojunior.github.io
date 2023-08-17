@@ -1,0 +1,196 @@
+---
+layout: post
+title: Script para decodificar arquivos .vbe | Script to decode .vbe files
+date: 2018-05-28 12:27:44.000000000 -03:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories: []
+tags: []
+meta:
+  _edit_last: '1'
+  _yoast_wpseo_content_score: '60'
+  _yoast_wpseo_primary_category: ''
+  _aviaLayoutBuilder_active: ''
+  _aviaLayoutBuilderCleanData: ''
+  layout: ''
+  sidebar: ''
+  footer: ''
+  header_title_bar: ''
+  header_transparency: ''
+  _avia_hide_featured_image: '0'
+  _syntaxhighlighter_encoded: '1'
+  _av_alb_posts_elements_state: a:0:{}
+  _av_el_mgr_version: '1.0'
+  _av_alb_element_mgr_version: 1.0.1
+  _av_css_styles: a:6:{s:7:"post_id";i:1750;s:8:"css_file";s:13:"post-1750.css";s:9:"timestamp";s:0:"";s:6:"status";s:6:"no_css";s:13:"processed_ids";a:0:{}s:13:"include_posts";a:0:{}}
+author:
+  login: helvio
+  email: helvio_junior@hotmail.com
+  display_name: Helvio Junior - M4v3r1ck - OSCE3 (OSEP + OSED + OSWE), OSCE, OSCP,
+    eCXD, eMAPT, CEH
+  first_name: Helvio
+  last_name: Junior - M4v3r1ck - OSCE3 (OSEP + OSED + OSWE), OSCE, OSCP, eCXD, eMAPT,
+    CEH
+permalink: "/uncategorized/script-para-decodificar-arquivos-vbe-script-to-decode-vbe-files/"
+---
+<table>
+<tbody>
+<tr>
+<td width="50%">Analisando um malware recebido por e-mail me deparei com um script VBA codificado, sendo assim busquei um script para decodificar e poder realizar a análise do mesmo, segue abaixo o script criado por Jean-Luc Antoine, podendo ser localizado em http://www.interclasse.com/scripts/decovbe.php</td>
+<td width="50%">During a malware analisis i had to try to decrypt an VBA Script, so looking for on internet i found this script bellow. This script was written by Jean-Luc Antoine</td>
+</tr>
+</tbody>
+</table>
+<p><!--more--></p>
+<p>[sourcecode language="vb"]'===============================================================================<br />
+'===============================================================================<br />
+'  SCRIPT........:  scriptDecode.vbs<br />
+'  VERSION.......:  1.5<br />
+'  DATE..........:  11/22/2003<br />
+'  AUTHOR........:  Jean-Luc Antoine<br />
+'  LINK..........:  http://www.interclasse.com/scripts/decovbe.php<br />
+'  ALTERED BY....:  Joe Glessner<br />
+'  DESCRIPTION...:  Decodes scripts encoded with screnc.exe. Usable with<br />
+'                   Wscript by dragging an encoded script onto this one. If done<br />
+'                   this way, only the first 100 lines (or so) of the script<br />
+'                   will be displayed.<br />
+'                   If run using Cscript.exe the entire output will be<br />
+'                   displayed.<br />
+'                   This script can be used to output the decoded script to a<br />
+'                   file using Cscript.exe by calling it with the following<br />
+'                   syntax:<br />
+'<br />
+'              cscript [Path]\scriptDecoder.vbs [Path]\&lt;filename&gt; &gt;&gt; output.txt<br />
+'<br />
+'===============================================================================<br />
+'===============================================================================<br />
+'**Start Encode**</p>
+<p>'===============================================================================<br />
+'#  START &lt;CODE&gt;<br />
+'===============================================================================<br />
+option explicit</p>
+<p>    '---------------------------------------------------------------------------<br />
+	'#  Declare variables<br />
+	'---------------------------------------------------------------------------<br />
+    Dim oArgs, NomFichier</p>
+<p>	'---------------------------------------------------------------------------<br />
+	'#  Check Arguments<br />
+	'---------------------------------------------------------------------------<br />
+	NomFichier=&quot;&quot;<br />
+	Set oArgs = WScript.Arguments<br />
+	Select Case oArgs.Count<br />
+	Case 0 'No Arg, popup a dialog box to choose the file<br />
+		NomFichier=BrowseForFolder(&quot;Choose an encoded file&quot;, &amp;H4031, &amp;H0011)<br />
+	Case 1<br />
+		If Instr(oArgs(0),&quot;?&quot;)=0 Then '-? ou /? =&gt; aide<br />
+			NomFichier=oArgs(0)<br />
+		End If<br />
+	Case Else<br />
+		WScript.Echo &quot;Too many parameters&quot;<br />
+	End Select<br />
+	Set oArgs = Nothing</p>
+<p>	'---------------------------------------------------------------------------<br />
+	'#  Decode the file and output the results<br />
+	'---------------------------------------------------------------------------<br />
+    If NomFichier&lt;&gt;&quot;&quot; Then<br />
+        Dim fso<br />
+        Set fso=WScript.CreateObject(&quot;Scripting.FileSystemObject&quot;)<br />
+        If fso.FileExists(NomFichier) Then<br />
+            Dim fic,contenu<br />
+            Set fic = fso.OpenTextFile(NomFichier, 1)<br />
+            Contenu=fic.readAll<br />
+            fic.close<br />
+            Set fic=Nothing</p>
+<p>            Const TagInit=&quot;#@~^&quot; '#@~^awQAAA==<br />
+            Const TagFin=&quot;==^#~@&quot; '&amp; chr(0)<br />
+            Dim DebutCode, FinCode<br />
+            Do<br />
+                FinCode=0<br />
+                DebutCode=Instr(Contenu,TagInit)<br />
+                If DebutCode&gt;0 Then<br />
+                    If (Instr(DebutCode,Contenu,&quot;==&quot;)-DebutCode)=10 Then<br />
+                        'If &quot;==&quot; follows the tag<br />
+                        FinCode=Instr(DebutCode,Contenu,TagFin)<br />
+                        If FinCode&gt;0 Then<br />
+                            Contenu=Left(Contenu,DebutCode-1) &amp; _<br />
+                            Decode(Mid(Contenu,DebutCode+12,FinCode-DebutCode-12-6)) &amp; _<br />
+                            Mid(Contenu,FinCode+6)<br />
+                        End If<br />
+                    End If<br />
+                End If<br />
+            Loop Until FinCode=0<br />
+            WScript.Echo Contenu<br />
+        Else<br />
+            WScript.Echo Nomfichier &amp; &quot; not found&quot;<br />
+        End If<br />
+        Set fso=Nothing<br />
+    Else<br />
+        WScript.Echo &quot;Please give a filename&quot;<br />
+        WScript.Echo &quot;Usage : &quot; &amp; wscript.fullname  &amp; &quot; &quot; &amp; WScript.ScriptFullName &amp; _<br />
+         &quot; &lt;filename&gt;&quot;<br />
+    End If</p>
+<p>'===============================================================================<br />
+'#  Functions<br />
+'===============================================================================<br />
+    '---------------------------------------------------------------------------<br />
+	'#  Name................:  Decode()<br />
+	'#  Use.................:  Decode(Chaine)<br />
+	'#  Purpose.............:  Reverse the encoding done by screnc.exe.<br />
+	'---------------------------------------------------------------------------<br />
+    Function Decode(Chaine)<br />
+        Dim se,i,c,j,index,ChaineTemp<br />
+        Dim tDecode(127)<br />
+        Const Combinaison=&quot;1231232332321323132311233213233211323231311231321323112331123132&quot;<br />
+        Set se=WSCript.CreateObject(&quot;Scripting.Encoder&quot;)<br />
+        For i=9 to 127<br />
+            tDecode(i)=&quot;JLA&quot;<br />
+        Next<br />
+        For i=9 to 127<br />
+            ChaineTemp=Mid(se.EncodeScriptFile(&quot;.vbs&quot;,string(3,i),0,&quot;&quot;),13,3)<br />
+            For j=1 to 3<br />
+                c=Asc(Mid(ChaineTemp,j,1))<br />
+                tDecode(c)=Left(tDecode(c),j-1) &amp; chr(i) &amp; Mid(tDecode(c),j+1)<br />
+            Next<br />
+        Next<br />
+        'Next line we correct a bug, otherwise a &quot;)&quot; could be decoded to a &quot;&gt;&quot;<br />
+        tDecode(42)=Left(tDecode(42),1) &amp; &quot;)&quot; &amp; Right(tDecode(42),1)<br />
+        Set se=Nothing<br />
+        Chaine=Replace(Replace(Chaine,&quot;@&amp;&quot;,chr(10)),&quot;@#&quot;,chr(13))<br />
+        Chaine=Replace(Replace(Chaine,&quot;@*&quot;,&quot;&gt;&quot;),&quot;@!&quot;,&quot;&lt;&quot;)<br />
+        Chaine=Replace(Chaine,&quot;@$&quot;,&quot;@&quot;)<br />
+        index=-1<br />
+        For i=1 to Len(Chaine)<br />
+            c=asc(Mid(Chaine,i,1))<br />
+            If c&lt;128 Then index=index+1<br />
+            If (c=9) or ((c&gt;31) and (c&lt;128)) Then<br />
+                If (c&lt;&gt;60) and (c&lt;&gt;62) and (c&lt;&gt;64) Then<br />
+                    Chaine=Left(Chaine,i-1) &amp; Mid(tDecode(c),Mid(Combinaison, _<br />
+                     (index mod 64)+1,1),1) &amp; Mid(Chaine,i+1)<br />
+                End If<br />
+            End If<br />
+        Next<br />
+        Decode=Chaine<br />
+    End Function</p>
+<p>    '---------------------------------------------------------------------------<br />
+    '#  Name................:  BrowseForFolder()<br />
+	'#  Use.................:  BrowseForFolder(ByVal pstrPrompt, ByVal<br />
+    '#                             pintBrowseType, ByVal pintLocation)<br />
+    '#  Purpose.............:  Locate the encoded script using Shell.Application<br />
+	'---------------------------------------------------------------------------<br />
+    Function BrowseForFolder(ByVal pstrPrompt, ByVal pintBrowseType, ByVal pintLocation)<br />
+        Dim ShellObject, pstrTempFolder, x<br />
+        Set ShellObject=WScript.CreateObject(&quot;Shell.Application&quot;)<br />
+        On Error Resume Next<br />
+        Set pstrTempFolder=ShellObject.BrowseForFolder(&amp;H0,pstrPrompt,pintBrowseType,pintLocation)<br />
+        BrowseForFolder=pstrTempFolder.ParentFolder.ParseName(pstrTempFolder.Title).Path<br />
+        If Err.Number&lt;&gt;0 Then BrowseForFolder=&quot;&quot;<br />
+        Set pstrTempFolder=Nothing<br />
+        Set ShellObject=Nothing<br />
+    End Function</p>
+<p>'===============================================================================<br />
+'#  END &lt;/CODE&gt;<br />
+'===============================================================================<br />
+[/sourcecode]</p>

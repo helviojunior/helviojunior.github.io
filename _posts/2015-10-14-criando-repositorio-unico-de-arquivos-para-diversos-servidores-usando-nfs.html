@@ -1,0 +1,104 @@
+---
+layout: post
+title: Criando repositório único de arquivos para diversos servidores usando NFS
+date: 2015-10-14 12:18:47.000000000 -03:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- IT
+- Linux
+tags: []
+meta:
+  _edit_last: '1'
+  _yoast_wpseo_title: Criando repositório único de arquivos usando NFS
+  _yoast_wpseo_metadesc: Aprenda passo-a-passo a criar um repositório único de arquivos
+    para compartilhamento em diversos servidores.
+  _aviaLayoutBuilder_active: ''
+  _aviaLayoutBuilderCleanData: ''
+  layout: ''
+  sidebar: ''
+  footer: ''
+  header_title_bar: ''
+  header_transparency: ''
+  _avia_hide_featured_image: '0'
+  _syntaxhighlighter_encoded: '1'
+  _yoast_wpseo_content_score: '90'
+  _yoast_wpseo_primary_category: ''
+  _av_alb_posts_elements_state: a:0:{}
+  _av_el_mgr_version: '1.0'
+  _av_alb_element_mgr_version: 1.0.1
+  _av_css_styles: a:6:{s:7:"post_id";i:1423;s:8:"css_file";s:13:"post-1423.css";s:9:"timestamp";s:0:"";s:6:"status";s:6:"no_css";s:13:"processed_ids";a:0:{}s:13:"include_posts";a:0:{}}
+author:
+  login: helvio
+  email: helvio_junior@hotmail.com
+  display_name: Helvio Junior - M4v3r1ck - OSCE3 (OSEP + OSED + OSWE), OSCE, OSCP,
+    eCXD, eMAPT, CEH
+  first_name: Helvio
+  last_name: Junior - M4v3r1ck - OSCE3 (OSEP + OSED + OSWE), OSCE, OSCP, eCXD, eMAPT,
+    CEH
+permalink: "/it/criando-repositorio-unico-de-arquivos-para-diversos-servidores-usando-nfs/"
+---
+<p>O objetivo deste post é demonstrar como criar um único repositório de arquivos para acesso através de diversos servidores. Você pode estar se perguntando onde e como devo utilizar isso? Bom, há muitas utilizações mas uma delas, e a motivadora deste estudo e post, e a possibilidade de você armazenar em um único lugar todo o conteúdo do seu site web (/var/www) e poder utilizar por diversos servidores balanceados, ou seja, você poderá ter 10 servidores Web acessando um único /var/www sem ter que se preocupar toda vez que atualizar um arquivo em um servidor ter que replicar para os outros.</p>
+<p><!--more--></p>
+<h2>O que é NFS?</h2>
+<p>Antes de iniciar o processo técnico é importante entender o que é e como funciona o NFS. NFS é um acronimo de Network File System, ou seja, Sistema de arquivos em rede. Basicamente o NFS permite que você monte partições ou diretórios fisicamente armazenados em outra maquina como se fosse local, ou seja, via rede, podendo definir permissões específicas de acesso com base no cliente que está acessando.</p>
+<h2>Instalando e configurando o servidor NFS</h2>
+<p>Para este post utilizei o Linux Ubuntu Server 14.04 LTS, mas este procedimento poderá ser replicado para diversas outras distribuições Linux sem nenhum problema. Chega de conversa e vamos ao que interessa, a instalação do servidor NFS.</p>
+<p>Primeiro vamos configurar o servidor, ou seja, o local onde os arquivos estarão fisicamente.</p>
+<p>&nbsp;</p>
+<p>Utilize o comando abaixo para instalar os pacotes necessários</p>
+<p>[sourcecode language="shell"]apt-get install nfs-common nfs-kernel-server<br />
+[/sourcecode]</p>
+<p>Crie o diretório que utilizaremos para o compartilhamento com o comando abaixo</p>
+<p>[sourcecode language="shell"]mkdir /media/share<br />
+[/sourcecode]</p>
+<p>Edite o arquivo <strong>/etc/exports</strong> deixando o mesmo com o conteúdo abaixo</p>
+<p>[sourcecode language="shell"]# Caminho do diretório  IP do cliente  Permissões de acesso<br />
+/media/share/      192.168.0.0/24(rw,async,no_subtree_check)<br />
+[/sourcecode]</p>
+<p>O padrão deste arquivo é: <i>Diretório host1(opção11, opção12) host2(opção21, opção22)</i></p>
+<p>Onde:</p>
+<ul>
+<li>Diretório: Local (diretório) onde os arquivos estão armazenados;</li>
+<li>HostN: IP do cliente que irá acessar os arquivos</li>
+<li>Opções: Permissões de acesso ao compartilhamento</li>
+</ul>
+<p>Segue as principais permissões:</p>
+<ul>
+<li>ro: somente leitura.</li>
+<li>rw: leitura e escrita.</li>
+<li>no_root_squash: por default, o nível de acesso dos clientes ao servidor é mesmo que o root. Porém, se quiser que os níveis de acesso sejam os mesmos que os locais, basta definir esta opção no compartilhamento.</li>
+</ul>
+<p>Agora vamos fazer uma otimização para alto desempenho no NFS. Edite o arquivo /etc/default/nfs-kernel-server e altere as linhas correspondentes conforme exemplo abaixo:</p>
+<p>[sourcecode language="shell"]RPCNFSDCOUNT=20<br />
+RPCMOUNTDOPTS=&quot;--manage-gids --no-nfs-version 4&quot;<br />
+[/sourcecode]</p>
+<p>Como último passo do servidor iniciar o serviço NFS com o comando abaixo</p>
+<p>[sourcecode language="shell"]service nfs-kernel-server start<br />
+[/sourcecode]</p>
+<p>Caso você adicione um novo ponto de montagem (compartilhamento) no arquivo <strong>/etc/exports</strong>, para ativa-lo sem reiniciar o serviço do NFS basta executar o comando <b>exportfs.</b></p>
+<h2>Configurando o cliente NFS</h2>
+<p>Utilize o comando abaixo para instalar os pacotes necessários</p>
+<p>[sourcecode language="shell"]apt-get install nfs-common<br />
+[/sourcecode]</p>
+<p>Crie o ponto de montagem, ou seja, o diretório virtual onde posteriormente montaremos o diretório remoto com o comando abaixo</p>
+<p>[sourcecode language="shell"]mkdir /mnt/remoto<br />
+[/sourcecode]</p>
+<p>Caso deseje realizar um teste de montagem do NFS basta utilizar o comando abaixo</p>
+<p>[sourcecode language="shell"]<br />
+mount -t nfs 192.168.0.1:/media/share  /mnt/remoto<br />
+[/sourcecode]</p>
+<p>Posteriormente basta adicionar no arquivo <strong>/etc/fstab</strong> as configurações do NFS e ponto de montagem conforme o exemplo abaixo</p>
+<p>[sourcecode language="shell"]# Caminho do servidor        Ponto de montagem  Tipo-FS Opções<br />
+192.168.0.1:/media/share  /mnt/remoto   nfs  rw   0 0<br />
+[/sourcecode]</p>
+<p>Adicionalmente vamos realizar algumas otimizações para melhor desempenho no NFS, para isso basta alterar as opções de montagem conforme exemplo abaixo</p>
+<p>[sourcecode language="shell"]# Caminho do servidor        Ponto de montagem  Tipo-FS Opções<br />
+192.168.0.1:/media/share  /mnt/remoto   nfs  auto,rw,noatime,bg,soft,intr,rsize=32768,wsize=32768,nfsvers=3,nolock,nocto,tcp   0 0<br />
+[/sourcecode]</p>
+<p>Agora basta montar o diretório remoto com o seguinte comando</p>
+<p>[sourcecode language="shell"]mount /mnt/remoto<br />
+[/sourcecode]</p>

@@ -1,0 +1,164 @@
+---
+layout: post
+title: Instalando Zabbix em Raspberry Pi
+date: 2013-05-14 17:49:27.000000000 -03:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Zabbix
+tags: []
+meta:
+  _edit_last: '1'
+  _syntaxhighlighter_encoded: '1'
+  _av_alb_posts_elements_state: a:0:{}
+  _av_el_mgr_version: '1.0'
+  _av_alb_element_mgr_version: 1.0.1
+  _av_css_styles: a:6:{s:7:"post_id";i:566;s:8:"css_file";s:12:"post-566.css";s:9:"timestamp";s:0:"";s:6:"status";s:6:"no_css";s:13:"processed_ids";a:0:{}s:13:"include_posts";a:0:{}}
+author:
+  login: helvio
+  email: helvio_junior@hotmail.com
+  display_name: Helvio Junior - M4v3r1ck - OSCE3 (OSEP + OSED + OSWE), OSCE, OSCP,
+    eCXD, eMAPT, CEH
+  first_name: Helvio
+  last_name: Junior - M4v3r1ck - OSCE3 (OSEP + OSED + OSWE), OSCE, OSCP, eCXD, eMAPT,
+    CEH
+permalink: "/it/monitoramento/zabbix/instalando-zabbix-em-raspberry-pi/"
+---
+<p><strong>O que é o Raspberry Pi?</strong></p>
+<p>O Raspberry Pi é um computador do tamanho de um cartão de crédito que se conecta à sua TV e um teclado. É um PC que pode ser usado para muitas das coisas que o seu PC faz, como planilhas cálculo, processamento de texto, jogos e servidores diversos. Ele também reproduz vídeo de alta definição.</p>
+<p>Com essa diversidade de opções, uma está sendo útil para mim. Atuando como Proxy do Zabbix server (maiores informações do que é o Zabbix proxy <a href="http://www.zabbix.com">aqui</a>), quando fui realizar a instalação achei um artigo bem interessante do Adail Spinola com um passo a passo da instalação do Zabbix em um dispositivo Raspberry Pi e resolvi replica-lo aqui.</p>
+<p><!--more--></p>
+<p>Link para o artigo original: <a href="http://spinola.net.br/blog/?p=405">http://spinola.net.br/blog/?p=405</a></p>
+<p>O Raspberry suporta por padrão algumas distribuições linux como Debian, Arch Linus e Risc OS. Para este post a distribuição de linux escolhida foi o Debian disponível na página oficial do fornecedor do hardware (<a href="http://www.raspberrypi.org/">clique aqui</a>).</p>
+<p>Este tutorial começa após a instalação normal dele, então se precisas de informações sobre como instalar o sistema operacional do raspberry consulte a na página de download existem informações a respeito de como criar a imagem, pois não iremos repetir tais informações para não fugir ao tema.</p>
+<p>O primeiro passo, no raspberry ou em qualquer instalação de servidor ao meu ver, é garantir que todos os pacotes básicos estejam devidamente atualizados.</p>
+<p>[sourcecode language="shell"]apt-get update;<br />
+apt-get upgrade;<br />
+[/sourcecode]</p>
+<p>Na sequência vamos instalar os pacotes básicos para possibilitar a compilação e a gerência do dispositivo. Enquanto o comando abaixo estiver sendo executado aproveite para buscar um café ou ler outros artigos aqui do blog pois devido às características do hardware o comando abaixo irá gastar facilmente uns 10 minutos.</p>
+<p>[sourcecode language="shell"]apt-get -y install build-essential snmp libiksemel-dev libcurl4-gnutls-dev vim libssh2-1-dev libssh2-1 libopenipmi-dev libsnmp-dev wget curl fping snmp-mibs-downloader libldap2-dev libldap2-dev iotop ntp libsqlite3-dev sqlite3 fping<br />
+[/sourcecode]</p>
+<p>Crie o usuário do Zabbix.</p>
+<p>[sourcecode language="shell"]useradd zabbix -s /bin/false[/sourcecode]</p>
+<p>Agora vamos efetuar o download do source do Zabbix (sim… sempre gosto de instalar a partir dos sources, existem repositórios mas prefiro os sources… velha guarda… ) e descompactar os arquivos.</p>
+<p>[sourcecode language="shell"]<br />
+mkdir /install<br />
+cd /install<br />
+VERSAO=&quot;2.0.6&quot;<br />
+rm *.tgz<br />
+wget http://downloads.sourceforge.net/project/zabbix/ZABBIX%20Latest%20Stable/$VERSAO/zabbix-$VERSAO.tar.gz?r=http%3A%2F%2Fwww.zabbix.com%2Fdownload.php&amp;ts=1346344892&amp;use_mirror=ufpr -O zabbix.tgz;<br />
+mv *.php zabbix.tgz<br />
+tar -xzvf zabbix.tgz<br />
+cd zabbix-$VERSAO[/sourcecode]</p>
+<p>Dependendo de quando você estiver vendo este artigo poderá já existir nova versão do Zabbix disponível então altere o conteúdo da variável VERSAO para refletir a versão que você desejar.</p>
+<p>Compile e instale o Zabbix.</p>
+<p>[sourcecode language="shell"]./configure --enable-proxy --enable-agent --with-sqlite3 --with-net-snmp --with-libcurl --with-openipmi<br />
+make install[/sourcecode]</p>
+<p>O Zabbix-Proxy irá rodar com SQLite, por qual motivo ? Ele é leve e tem baixíssimo custo de IO e o seu raspberry tem um cartão SD que irá rapidamente falhar se você usar algum outro banco com mais recursos e maior consumo de IO. Crie agora o banco de dados e altere o permissionamento para que o usuário Zabbix tenha controle dos arquivos:</p>
+<p>[sourcecode language="shell"]cd database/sqlite3<br />
+mkdir /var/lib/sqlite/<br />
+sqlite3 /var/lib/sqlite/zabbix.db &lt; schema.sql;<br />
+sqlite3 /var/lib/sqlite/zabbix.db &lt; images.sql;<br />
+sqlite3 /var/lib/sqlite/zabbix.db &lt; data.sql;<br />
+chown -R zabbix:zabbix /var/lib/sqlite/[/sourcecode]</p>
+<p>Neste momento temos os binários do Zabbix e a base de dados criados. Vamos configurar o proxy.</p>
+<p>Copie o arquivo <strong>conf/zabbix_proxy.conf</strong> localizado dentro do diretório do código fonte do Zabbix para <strong>/usr/local/etc/zabbix_proxy.conf</strong></p>
+<p>[sourcecode language="shell"]cp conf/zabbix_proxy.conf /usr/local/etc/zabbix_proxy.conf[/sourcecode]</p>
+<p>Crie os diretórios para log e execução do zabbix</p>
+<p>[sourcecode language="shell"]mkdir /opt/zabbix<br />
+mkdir /opt/zabbix/log<br />
+mkdir /opt/zabbix/run<br />
+chown zabbix. /opt/zabbix/log -R<br />
+chown zabbix. /opt/zabbix/run -R<br />
+ln -s /opt/zabbix/log /var/log/zabbix<br />
+chown -R zabbix:zabbix /var/lib/sqlite/[/sourcecode]</p>
+<p>Altere as configurações do proxy no arquivo <strong>/usr/local/etc/zabbix_proxy.conf</strong> conforme exemplo abaixo. Trocando apenas &lt;IP_SERVIDOR_ZABBIX&gt; pelo respectivo IP.</p>
+<p>[sourcecode language="shell"]ProxyMode=0<br />
+Server=&lt;IP_SERVIDOR_ZABBIX&gt;<br />
+Hostname=&lt;Nome_do_proxy&gt;<br />
+DBName=/var/lib/sqlite/zabbix.db<br />
+DBUser=zabbix<br />
+LogFile=/opt/zabbix/log/zabbix_proxy.log<br />
+PidFile=/opt/zabbix/run/zabbix_proxy.pid<br />
+ConfigFrequency=120[/sourcecode]</p>
+<p>Verifique o local de instalação do fping, este local de instalação deverá ser colocado no arquivo de configuração, no meu ambiente o local é <strong>/usr/bin/fping</strong></p>
+<p>[sourcecode language="shell"]whereis fping[/sourcecode]</p>
+<p>Altere o arquivo  <strong>/usr/local/etc/zabbix_proxy.conf</strong> com este caminho conforme exemplo abaixo</p>
+<p>[sourcecode language="shell"]FpingLocation=/usr/sbin/fping[/sourcecode]</p>
+<p>Altere as configurações do agente no arquivo <strong>/usr/local/etc/zabbix_agentd.conf</strong> conforme exemplo abaixo.</p>
+<p>[sourcecode language="shell"]PidFile=/opt/zabbix/run/zabbix_agentd.pid<br />
+LogFile=/opt/zabbix/log/zabbix_agentd.log<br />
+LogFileSize=10<br />
+Server=127.0.0.1<br />
+DebugLevel=3<br />
+StartAgents=4<br />
+Hostname=nomedamaquina[/sourcecode]</p>
+<p>Agora precisamos copiar e configurar os arquivos de inicialização do Zabbix. Algumas linhas especiais deverão ser adicionadas no início dos scripts de inicialização para adequa-los ao padrão do raspberry.</p>
+<p>[sourcecode language="shell"]cp -v misc/init.d/debian/zabbix-* /etc/init.d/<br />
+mv /etc/init.d/zabbix-server /etc/init.d/zabbix-proxy[/sourcecode]</p>
+<p>Edite o arquivo <strong>/etc/init.d/zabbix-proxy</strong> e adicione as linhas abaixo a partir na linha de número 6.</p>
+<p>[sourcecode language="shell"]### BEGIN INIT INFO<br />
+# Provides: zabbix_proxy<br />
+# Required-Start: $all<br />
+# Required-Stop:<br />
+# Default-Start: 2 3 4 5<br />
+# Default-Stop: 0 1 6<br />
+# Short-Description: Zabbix proxy<br />
+# Description: Zabbix proxy daemon<br />
+### END INIT INFO[/sourcecode]</p>
+<p>Altere as linhas seguintes conforme o exemplo</p>
+<p>[sourcecode language="shell"]<br />
+NAME=zabbix_proxy<br />
+DAEMON=/usr/local/sbin/${NAME}<br />
+DESC=&quot;Zabbix proxy daemon&quot;<br />
+PID=/tmp/$NAME.pid<br />
+[/sourcecode]</p>
+<p>O mesmo procedimento deverá ser executado contra o arquivo <strong>/etc/init.d/zabbix-agent</strong>.</p>
+<p>[sourcecode language="shell"]### BEGIN INIT INFO<br />
+# Provides: zabbix_agent<br />
+# Required-Start: $all<br />
+# Required-Stop:<br />
+# Default-Start: 2 3 4 5<br />
+# Default-Stop: 0 1 6<br />
+# Short-Description: Zabbix agent<br />
+# Description: Zabbix agent daemon<br />
+### END INIT INFO[/sourcecode]</p>
+<p>Configure o sistema operacional para possibilitar a carga automática do Proxy e do agente.</p>
+<p>[sourcecode language="shell"]update-rc.d -f zabbix-proxy defaults<br />
+update-rc.d -f zabbix-agent defaults[/sourcecode]</p>
+<p>Pronto, seu raspberypi está apto a funcionar como um proxy do Zabbix.</p>
+<p><strong>Aumentando a vida útil do cartão de memória</strong></p>
+<p>Como os cartões de memória tem uma quantidade máxima de gravações por setor, para aumentar sua vida útil é necessário reduzir ao máximo a quantidade de gravações realizadas. Por padrão há uma série de operações que o linux realiza de gravação no disco como journal do ext3 e ext4, memória swap e para o objetivo deste post os arquivos de log e banco de dados do sqlite.</p>
+<p>Desta forma os passos a seguir não são obrigatórios porém objetivam aumentar a vida útil do cartão de memória. Sem eles os meus cartões duraram em média 2 semanas de utilização, após estas alterações não tive mais problemas (até o momento 14/08/2013 já se passaram 2 meses dessas configurações).</p>
+<p>Com as configurações abaixo será desabilitado a memória swap do sistema, bem como montado alguns diretórios como o /var/log, /var/tmp e os diretórios de log e da base de dados do zabbix (/opt/zabbix e /var/lib/sqlite).</p>
+<p>Desabilite e desinstale o sistema de memória swap.</p>
+<p>[sourcecode language="shell"]swapoff --all<br />
+apt-get remove dphys-swapfile[/sourcecode]</p>
+<p>Edite o arquivo <strong>/etc/rc.local </strong>e adicione as linhas abaixo antes da linha com o conteúdo "exit 0"</p>
+<p>[sourcecode language="shell"]swapoff --all<br />
+mkdir /opt/zabbix/log<br />
+mkdir /opt/zabbix/run<br />
+chown zabbix. /opt/zabbix/log -R<br />
+chown zabbix. /opt/zabbix/run -R<br />
+ln -s /opt/zabbix/log /var/log/zabbix<br />
+chown -R zabbix:zabbix /var/lib/sqlite/[/sourcecode]</p>
+<p>Edite o arquivo <strong>/etc/fstab</strong> e adicione as seguintes linhas</p>
+<p>[sourcecode language="shell"]<br />
+tmpfs /var/tmp tmpfs nodev,nosuid,size=50M 0 0<br />
+tmpfs /var/log tmpfs nodev,nosuid,size=50M 0 0<br />
+tmpfs /opt/zabbix tmpfs nodev,nosuid,size=5M 0 0<br />
+tmpfs /var/lib/sqlite/ tmpfs nodev,nosuid,size=50M 0 0<br />
+[/sourcecode]</p>
+<p>Faça o reboot de seu equipamento e verifique as as partições foram montadas conforme esperado com o comando  <strong>df -h</strong>. Se tudo estiver correto sua tabela de partições estará similar a esta abaixo<br />
+<a href="http://www.helviojunior.com.br/wp-content/uploads/2013/05/ssh.png"><img class="wp-image-643 alignnone" alt="ssh" src="{{ site.baseurl }}/assets/2013/05/ssh.png" width="344" height="208" /></a></p>
+<p>Para aumentar mais ainda a vida útil do sdcard e recomendável  desabilitar o journal do ext4, para isso se faz necessário montar o sdcard em uma maquina linux e realizar os procedimentos abaixo.</p>
+<p>Primeiramente identifique o device que esta o seu sdcard com o comando <strong>dmesg | grep sd</strong>, no meu caso montou em /dev/sdb.</p>
+<p>Agora execute os comandos abaixo</p>
+<p>[sourcecode language="shell"]<br />
+tune2fs -O ^has_journal /dev/sdb2<br />
+e2fsck -f /dev/sdb2<br />
+[/sourcecode]</p>
+<p><code>Para verificar se o journal foi desabilitado, após iniciar o raspberry, execute o comando <strong>tune2fs -l /dev/mmcblk0p2 | grep features</strong>, e não deve aparecer o <strong>has_journal</strong></code></p>

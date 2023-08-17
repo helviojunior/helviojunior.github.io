@@ -1,0 +1,236 @@
+---
+layout: post
+title: Assinando digitalmente aplicativo JAVA com CA Windows
+date: 2012-04-30 14:29:53.000000000 -03:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Desenvolvimento
+- IT
+- Segurança da Informação
+tags: []
+meta:
+  _edit_last: '1'
+  _syntaxhighlighter_encoded: '1'
+  _topsy_long_url: http://www.helviojunior.com.br/it/devel/assinando-digitalmente-aplicativo-java-com-ca-windows/
+  topsy_short_url: http://bit.ly/IEBsAV
+  _av_alb_posts_elements_state: a:0:{}
+  _av_el_mgr_version: '1.0'
+  _av_alb_element_mgr_version: 1.0.1
+  _av_css_styles: a:6:{s:7:"post_id";i:310;s:8:"css_file";s:12:"post-310.css";s:9:"timestamp";s:0:"";s:6:"status";s:6:"no_css";s:13:"processed_ids";a:0:{}s:13:"include_posts";a:0:{}}
+author:
+  login: helvio
+  email: helvio_junior@hotmail.com
+  display_name: Helvio Junior - M4v3r1ck - OSCE3 (OSEP + OSED + OSWE), OSCE, OSCP,
+    eCXD, eMAPT, CEH
+  first_name: Helvio
+  last_name: Junior - M4v3r1ck - OSCE3 (OSEP + OSED + OSWE), OSCE, OSCP, eCXD, eMAPT,
+    CEH
+permalink: "/it/devel/assinando-digitalmente-aplicativo-java-com-ca-windows/"
+---
+<p>O Objetivo deste post é demonstrar como realizar a assinatura de um aplicativo JAVA utilizando uma Autoridade Certificadora (CA) Windows.</p>
+<h3><strong>Motivação</strong></h3>
+<p>Em um ambiente corporativo com infraestrutura de domínio e Active Directory já existe uma autoridade certificadora e todos os membros do domínio já confiam nos certificados assinados por esta CA. Desta forma facilita o trabalho de publicação do aplicativo e confiança da assinatura digital deste.</p>
+<p><!--more--></p>
+<h3><strong>Pré-requisito</strong></h3>
+<p>Este post tem como pré-requisito o Windows 2003 Enterprise Edition ou DataCenter Edition. E Acredite não adianta tentar no Standard Edition que não funciona.</p>
+<h3><strong>Passos de uma assinatura de aplicativo:</strong></h3>
+<p>Para realizar a assinatura digital de um aplicativo alguns passos são necessários:</p>
+<ol>
+<li>Gerar requisição do certificado;</li>
+<li>Assinar o certificado através da CA;</li>
+<li>Gerar o arquivo no padrão PKCS#12;</li>
+<li>Assinar o aplicativo;</li>
+<li>Verificação da assinatura do aplicativo.</li>
+</ol>
+<h2>1.  Gerando requisição do certificado</h2>
+<p>Para a geração da requisição do certificado será utilizado o OpenSSL (download do OpenSSL no final do post) por se tratar de um aplicativo OpenSource, de fácil utilização, e com uma completa documentação.</p>
+<h3>1.1. Configurando OpenSSL</h3>
+<p>Para a realização deste procedimento é necessário criar um diretório onde serão salvos diversos arquivos. Neste post o diretório criado foi <strong>C:\CodSign</strong></p>
+<p>Crie um arquivo nomeado openssl.conf neste diretório com o seguinte conteúdo:</p>
+<p>[sourcecode language="shell"]<br />
+# Início do arquivo openssl.conf<br />
+#<br />
+# Criado por Helvio Junior<br />
+# helvio_junior@hotmail.com</p>
+<p>RANDFILE        = openssl/.rnd</p>
+<p>####################################################################<br />
+[ ca ]<br />
+default_ca    = CA_default        # The default ca section</p>
+<p>####################################################################<br />
+[ CA_default ]</p>
+<p>certs        = openssl/certs            # Where the issued certs are kept<br />
+crl_dir        = openssl/crl            # Where the issued crl are kept<br />
+database    = openssl/database.txt        # database index file.<br />
+new_certs_dir    = openssl/certs            # default place for new certs.</p>
+<p>certificate    = cacert.pem            # The CA certificate<br />
+serial        = openssl/serial.txt         # The current serial number<br />
+crl        = crl.pem         # The current CRL<br />
+private_key    = private/cakey.pem       # The private key<br />
+RANDFILE    = private/private.rnd     # private random number file</p>
+<p>x509_extensions    = x509v3_extensions    # The extentions to add to the cert<br />
+default_days    = 365            # how long to certify for<br />
+default_crl_days= 30            # how long before next CRL<br />
+default_md    = md5            # which md to use.<br />
+preserve    = no            # keep passed DN ordering</p>
+<p># A few difference way of specifying how similar the request should look<br />
+# For type CA, the listed attributes must be the same, and the optional<br />
+# and supplied fields are just that :-)<br />
+policy        = policy_match</p>
+<p># For the CA policy<br />
+[ policy_match ]<br />
+commonName        = supplied<br />
+emailAddress        = optional<br />
+countryName        = optional<br />
+stateOrProvinceName    = optional<br />
+organizationName    = optional<br />
+organizationalUnitName    = optional</p>
+<p># For the 'anything' policy<br />
+# At this point in time, you must list all acceptable 'object'<br />
+# types.<br />
+[ policy_anything ]<br />
+commonName        = supplied<br />
+emailAddress        = optional<br />
+countryName        = optional<br />
+stateOrProvinceName    = optional<br />
+localityName        = optional<br />
+organizationName    = optional<br />
+organizationalUnitName    = optional</p>
+<p>####################################################################<br />
+[ req ]<br />
+default_bits        = 1024<br />
+default_keyfile     = privkey.pem<br />
+distinguished_name    = req_distinguished_name<br />
+attributes        = req_attributes</p>
+<p>[ req_distinguished_name ]<br />
+commonName            = Common Name (eg, your application name)<br />
+commonName_max            = 64<br />
+emailAddress            = Email Address<br />
+emailAddress_max        = 40<br />
+countryName            = Country Name (2 letter code)<br />
+countryName_min            = 2<br />
+countryName_max            = 2<br />
+countryName_default        = BR<br />
+stateOrProvinceName        = State or Province Name (full name)<br />
+localityName            = Locality Name (eg, city)<br />
+0.organizationName        = Organization Name (eg, company)<br />
+organizationalUnitName        = Organizational Unit Name (eg, section)</p>
+<p>[ req_attributes ]<br />
+challengePassword        = A challenge password<br />
+challengePassword_min        = 4<br />
+challengePassword_max        = 20</p>
+<p>[ v3_code_sign ]<br />
+#Code Sign Object Identifier<br />
+certificatePolicies=1.3.6.1.5.5.7.3.3</p>
+<p>#<br />
+# Final do arquivo openssl.conf<br />
+[/sourcecode]</p>
+<p><a href="http://www.helviojunior.com.br/wp-content/uploads/2012/04/022.jpg"><img class="aligncenter  wp-image-329" title="022" src="{{ site.baseurl }}/assets/2012/04/022.jpg" alt="" width="240" height="146" /></a></p>
+<h3>1.2. Gerando a chave privada do certificado</h3>
+<p>[sourcecode language="shell"]<br />
+openssl genrsa -des3 -out .\app.key 2048<br />
+[/sourcecode]</p>
+<p>Ao executar este comando uma senha será solicitada, esta senha é de proteção da chave privada.</p>
+<p style="text-align: center;"><a href="http://www.helviojunior.com.br/wp-content/uploads/2012/04/023.jpg"><img class="aligncenter  wp-image-331" title="023" src="{{ site.baseurl }}/assets/2012/04/023.jpg" alt="" width="424" height="151" /></a></p>
+<p><span style="text-decoration: underline;"><br />
+</span></p>
+<h3>1.3. Gerando a requisição</h3>
+<p>[sourcecode language="shell"]<br />
+openssl req -reqexts v3_code_sign -new -sha1 -key .\app.key -out .\app.csr -config .\openssl.conf<br />
+[/sourcecode]</p>
+<p>Ao executar este comando a senha da chave privada é solicitada.<br />
+<a href="http://www.helviojunior.com.br/wp-content/uploads/2012/04/024.jpg"><img class="aligncenter  wp-image-332" title="024" src="{{ site.baseurl }}/assets/2012/04/024.jpg" alt="" width="542" height="87" /></a></p>
+<p>Após a senha da chave são solicitados as informações do certificado.<br />
+<a href="http://www.helviojunior.com.br/wp-content/uploads/2012/04/025.jpg"><img class="aligncenter  wp-image-333" title="025" src="{{ site.baseurl }}/assets/2012/04/025.jpg" alt="" width="542" height="274" /></a></p>
+<h3></h3>
+<h3>1.4. Visualizando os arquivos e a requisição</h3>
+<p>Pode-se visualizar no diretório que 2 arquivos foram criados (app.key e app.csr), onde app.key é a chave privada que do certificado da aplicação e app.csr é a requisição de certificado.</p>
+<p style="text-align: center;"><a href="http://www.helviojunior.com.br/wp-content/uploads/2012/04/026.jpg"><img class="aligncenter  wp-image-334" title="026" src="{{ site.baseurl }}/assets/2012/04/026.jpg" alt="" width="246" height="180" /></a></p>
+<p>Abrindo o arquivo app.csr no Bloco de Notas se pode ver a requisição em formato Base64.</p>
+<p style="text-align: center;"><a href="http://www.helviojunior.com.br/wp-content/uploads/2012/04/027.jpg"><img class="aligncenter  wp-image-335" title="027" src="{{ site.baseurl }}/assets/2012/04/027.jpg" alt="" width="455" height="244" /></a></p>
+<h2></h2>
+<h2>2. Assinar o certificado através da CA</h2>
+<p>Para realizar a assinatura do certificado é necessário realizar algumas configurações prévias na CA. Este post considera que a CA está instalada e operacional no Windows 2003 Enterpreise Edition ou no Windows 2003 Data Center Edition.</p>
+<h3></h3>
+<h3>2.1. Criando template na CA</h3>
+<p>Abra o gerenciador da Autoridade Certificadora</p>
+<p style="text-align: center;"><a href="http://www.helviojunior.com.br/wp-content/uploads/2012/04/002.jpg"><img class="aligncenter  wp-image-337" title="002" src="{{ site.baseurl }}/assets/2012/04/002.jpg" alt="" width="516" height="441" /></a></p>
+<p>Clique no nome da sua CA, expanda a arvore, vá em <strong><em>Certificate Templates</em></strong><em>, </em>Clique com o botão direito e clique em <strong><em>Manage</em></strong><em>.</em></p>
+<p style="text-align: center;"><a href="http://www.helviojunior.com.br/wp-content/uploads/2012/04/003.jpg"><img class="aligncenter  wp-image-338" title="003" src="{{ site.baseurl }}/assets/2012/04/003.jpg" alt="" width="214" height="261" /></a></p>
+<p>Neste momento será aberto o gerenciador de templates. Selecione o Template <strong><em>Code Signing </em></strong>e clique em <strong><em>Duplicate Template</em></strong>.</p>
+<p style="text-align: center;"><a href="http://www.helviojunior.com.br/wp-content/uploads/2012/04/004.jpg"><img class="aligncenter  wp-image-339" title="004" src="{{ site.baseurl }}/assets/2012/04/004.jpg" alt="" width="314" height="233" /></a></p>
+<p>Na Aba General digite o nome do template, em nosso exemplo digitei <strong><em>Code Sigining Test</em></strong>.</p>
+<p style="text-align: center;"><a href="http://www.helviojunior.com.br/wp-content/uploads/2012/04/005.jpg"><img class="aligncenter  wp-image-340" title="005" src="{{ site.baseurl }}/assets/2012/04/005.jpg" alt="" width="323" height="373" /></a></p>
+<p>Vá até a aba <strong><em>Subject Name</em></strong> e altere a opção para <strong><em>Supply in the request</em></strong> para permitir que os dados da geração do certificado seja os dados informados no momento da geração da requisição.</p>
+<p style="text-align: center;"><a href="http://www.helviojunior.com.br/wp-content/uploads/2012/04/005.2.jpg"><img class="aligncenter  wp-image-341" title="005.2" src="{{ site.baseurl }}/assets/2012/04/005.2.jpg" alt="" width="323" height="372" /></a></p>
+<p>E por último verifique a permissão de utilização deste template. Estas permissões definem os usuários que podem, entre outras coisas, assinar e ler  um certificado utilizando este template.</p>
+<p style="text-align: center;"><a href="http://www.helviojunior.com.br/wp-content/uploads/2012/04/005.1.jpg"><img class="aligncenter  wp-image-342" title="005.1" src="{{ site.baseurl }}/assets/2012/04/005.1.jpg" alt="" width="258" height="298" /></a></p>
+<p>Clique em OK para finalizar a criação do template e feche o gerenciador de templates.</p>
+<p>Até este ponto foi criado o template porém não foi disponibilizado na console WEB para utilização, desta forma os próximos passos objetiva realizar esta liberação.</p>
+<p>Clique em <strong><em>Certificate Template</em></strong> com o botão direito e clique em <strong><em>new</em></strong> e<strong><em> Certificate Template to Issue</em></strong>.</p>
+<p style="text-align: center;"><a href="http://www.helviojunior.com.br/wp-content/uploads/2012/04/006.jpg"><img class="aligncenter  wp-image-343" title="006" src="{{ site.baseurl }}/assets/2012/04/006.jpg" alt="" width="403" height="268" /></a></p>
+<p>Selecione o template criado nos passos anteriores e clique em OK.</p>
+<p style="text-align: center;"><a href="http://www.helviojunior.com.br/wp-content/uploads/2012/04/007.jpg"><img class="aligncenter  wp-image-344" title="007" src="{{ site.baseurl }}/assets/2012/04/007.jpg" alt="" width="470" height="258" /></a></p>
+<p>Pronto. Toda a configuração necessária na CA está concluída. Agora vamos aos passos de assinatura do certificado.</p>
+<h3>2.2. Assinando o certificado</h3>
+<p>Acesse a console web da CA.</p>
+<p><a href="http://www.helviojunior.com.br/wp-content/uploads/2012/04/008.jpg"><img class="aligncenter size-full wp-image-345" title="008" src="{{ site.baseurl }}/assets/2012/04/008.jpg" alt="" width="205" height="98" /></a></p>
+<p>Clique no link <strong><em>Request a Certificate</em></strong>.</p>
+<p style="text-align: center;"><a href="http://www.helviojunior.com.br/wp-content/uploads/2012/04/009.jpg"><img class="aligncenter  wp-image-346" title="009" src="{{ site.baseurl }}/assets/2012/04/009.jpg" alt="" width="541" height="445" /></a></p>
+<p>Clique no link <strong><em>advanced certificate request</em></strong>.</p>
+<p style="text-align: center;"><a href="http://www.helviojunior.com.br/wp-content/uploads/2012/04/010.jpg"><img class="aligncenter  wp-image-347" title="010" src="{{ site.baseurl }}/assets/2012/04/010.jpg" alt="" width="262" height="226" /></a></p>
+<p>Clique no link <strong><em>Submit a certificate request by using</em></strong>...</p>
+<p style="text-align: center;"><a href="http://www.helviojunior.com.br/wp-content/uploads/2012/04/011.jpg"><img class="aligncenter  wp-image-348" title="011" src="{{ site.baseurl }}/assets/2012/04/011.jpg" alt="" width="542" height="320" /></a></p>
+<p>Selecione o template criado nos passos anteriores, copie o conteúdo do arquivo <strong><em>app.csr</em></strong> (criado no passo 1), cole no campo <strong><em>Saved Request</em></strong> e clique em <strong><em>Submit</em></strong>.</p>
+<p style="text-align: center;"><a href="http://www.helviojunior.com.br/wp-content/uploads/2012/04/012.jpg"><img class="aligncenter  wp-image-349" title="012" src="{{ site.baseurl }}/assets/2012/04/012.jpg" alt="" width="426" height="445" /></a></p>
+<p>Se a assinatura for bem sucedida a tela abaixo deve ser exibida, selecione a opção de <strong><em>Base 64 encoded</em></strong> e clique em <strong><em>Download certificate</em></strong> e salve o certificado no mesmo local da requisição com o nome de <strong><em>app.cer</em></strong>.</p>
+<p style="text-align: center;"><a href="http://www.helviojunior.com.br/wp-content/uploads/2012/04/013.jpg"><img class="aligncenter  wp-image-350" title="013" src="{{ site.baseurl }}/assets/2012/04/013.jpg" alt="" width="335" height="245" /></a></p>
+<p style="text-align: left;">Nas imagens abaixo podemos ver as propriedades do certificado assinado.</p>
+<p style="text-align: center;"><a href="http://www.helviojunior.com.br/wp-content/uploads/2012/04/014.jpg"><img class="aligncenter  wp-image-353" title="014" src="{{ site.baseurl }}/assets/2012/04/014.jpg" alt="" width="327" height="381" /></a></p>
+<p style="text-align: center;"><a href="http://www.helviojunior.com.br/wp-content/uploads/2012/04/015.jpg"><img class="aligncenter  wp-image-354" title="015" src="{{ site.baseurl }}/assets/2012/04/015.jpg" alt="" width="327" height="381" /></a></p>
+<p style="text-align: center;"><a href="http://www.helviojunior.com.br/wp-content/uploads/2012/04/016.jpg"><img class="aligncenter  wp-image-355" title="016" src="{{ site.baseurl }}/assets/2012/04/016.jpg" alt="" width="327" height="381" /></a></p>
+<p style="text-align: center;"><a href="http://www.helviojunior.com.br/wp-content/uploads/2012/04/017.jpg"><img class="aligncenter  wp-image-356" title="017" src="{{ site.baseurl }}/assets/2012/04/017.jpg" alt="" width="177" height="103" /></a></p>
+<p>Por último, volte a tela inicial da console web da CA e realize o download do certificado da CA clicando em <strong><em>Download a CA certificate</em></strong>.</p>
+<p style="text-align: center;"><a href="http://www.helviojunior.com.br/wp-content/uploads/2012/04/018.jpg"><img class="aligncenter  wp-image-351" title="018" src="{{ site.baseurl }}/assets/2012/04/018.jpg" alt="" width="341" height="356" /></a></p>
+<p>Selecione o certificado atual da CA, depois o Encoding <strong><em>Base 64</em></strong> e clique em <strong><em>Download CA Certificate. </em></strong></p>
+<p><strong><em></em></strong>Salve o arquivo no mesmo local da requisição com o nome de <strong><em>ca.cer</em></strong>.</p>
+<h2><a href="http://www.helviojunior.com.br/wp-content/uploads/2012/04/020.jpg"><img class="aligncenter  wp-image-352" title="020" src="{{ site.baseurl }}/assets/2012/04/020.jpg" alt="" width="426" height="331" /></a></h2>
+<p style="text-align: center;"><a href="http://www.helviojunior.com.br/wp-content/uploads/2012/04/021.jpg"><img class="aligncenter  wp-image-358" title="021" src="{{ site.baseurl }}/assets/2012/04/021.jpg" alt="" width="327" height="381" /></a></p>
+<h2>3. Geração do arquivo PKCS#12</h2>
+<p>Para a geração do PKCS#12 será utilizado o OpenSSL e é necessário a <strong><em>chave privada</em></strong> (app.key) + o <strong><em>certificado assinado</em></strong> (app.cer) + o <strong>certificado da CA</strong> (ca.cer).</p>
+<p>Execute o comando abaixo</p>
+<p>[sourcecode language="shell"]<br />
+openssl pkcs12 -export -chain -name &quot;APPSign001&quot; -out .\app.pfx -in .\app.cer -inkey .\app.key -CAfile .\ca.cer<br />
+[/sourcecode]</p>
+<p style="text-align: left;">Ao executar este commando duas senhas serão solicitadas, a primeira é para abrir a chave privada, já a segunda (e sua confirmação) é a senha de exportação do PKCS#12. A senha da exportação pode ser diferente da senha da chave privada.</p>
+<p><a href="http://www.helviojunior.com.br/wp-content/uploads/2012/04/030.jpg"><img class="aligncenter  wp-image-360" title="030" src="{{ site.baseurl }}/assets/2012/04/030.jpg" alt="" width="542" height="99" /></a></p>
+<p>Neste comando há um item de importante que deve variar conforme  o seu ambiente <strong>–name “AppSign001”</strong> este define um apelido para o seu certificado, e este apelido que será utilizado na assinatura do JAVA, desta forma não pode ser suprimido. Este apelido pode ser alterado para o nome que desejar.</p>
+<p>Neste ponto nosso diretório deve conter os seguintes arquivos</p>
+<p><a href="http://www.helviojunior.com.br/wp-content/uploads/2012/04/031.jpg"><img class="aligncenter  wp-image-361" title="031" src="{{ site.baseurl }}/assets/2012/04/031.jpg" alt="" width="246" height="229" /></a></p>
+<h2>4. Assinado o aplicativo JAVA com o certificado gerado.</h2>
+<p>Para a assinatura é necessário a instalação do JAVA JDK e configuração para que no Path do sistema operacional tenha o caminho <strong><em>%programfiles%\java\jdk1.6.0_21\bin</em></strong>. Vale a pena observar que o caminho pode se alterar conforme a versão do JDK que está instalado.</p>
+<p>O Aplicativo que iremos assinar é um teste simples que mostra em tela um Hello World conforme demonstrado na imagem abaixo. O Aplicativo está disponível para download no final do post.</p>
+<p>Copie o<strong> teste.jar</strong> para o diretório onde está o certificado digital.</p>
+<p><a href="http://www.helviojunior.com.br/wp-content/uploads/2012/04/032.jpg"><img class="aligncenter size-full wp-image-362" title="032" src="{{ site.baseurl }}/assets/2012/04/032.jpg" alt="" width="304" height="94" /></a></p>
+<p>Agora vamos verificar as classes do aplicativo bem como se há algum certificado assinando este aplicativo. Execute o comando abaixo:</p>
+<p>[sourcecode language="shell"]<br />
+jarsigner -verify -verbose -certs Teste.jar<br />
+[/sourcecode]</p>
+<p><a href="http://www.helviojunior.com.br/wp-content/uploads/2012/04/033.jpg"><img class="aligncenter  wp-image-363" title="033" src="{{ site.baseurl }}/assets/2012/04/033.jpg" alt="" width="542" height="274" /></a></p>
+<p>Podemos observar que este aplicativo ainda não foi assinado. Para assinar este aplicativo execute o comando abaixo. Ao executar-lo a senha do PKCS#12 é solicitada.</p>
+<p>[sourcecode language="shell"]<br />
+jarsigner -storetype pkcs12 -keystore app.pfx Teste.jar APPSign001<br />
+[/sourcecode]</p>
+<p><a href="http://www.helviojunior.com.br/wp-content/uploads/2012/04/034.jpg"><img class="aligncenter  wp-image-365" title="034" src="{{ site.baseurl }}/assets/2012/04/034.jpg" alt="" width="542" height="60" /></a></p>
+<p>Agora iremos novamente realizar a verificação da assinatura do aplicativo com o comando</p>
+<p>[sourcecode language="shell"]<br />
+jarsigner -verify -verbose -certs Teste.jar<br />
+[/sourcecode]</p>
+<p><a href="http://www.helviojunior.com.br/wp-content/uploads/2012/04/035.jpg"><img class="aligncenter  wp-image-364" title="035" src="{{ site.baseurl }}/assets/2012/04/035.jpg" alt="" width="542" height="370" /></a></p>
+<p>Pronto o aplicativo está assinado digitalmente.</p>
+<h3>Arquivos para download</h3>
+<p><a href="http://www.helviojunior.com.br/wp-content/uploads/2012/03/OpenSSL.zip">OpenSSL</a></p>
+<p><a href="http://www.helviojunior.com.br/wp-content/uploads/2012/04/CodeSign.zip">OpenSSL.conf e teste.jar</a></p>

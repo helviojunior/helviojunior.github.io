@@ -1,0 +1,41 @@
+---
+layout: post
+title: Instalando placa de rede no ubuntu no Hyper-V
+date: 2013-07-04 08:54:40.000000000 -03:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- IT
+tags:
+- hyperv
+- network interface
+- ubuntu
+meta:
+  _edit_last: '1'
+  _syntaxhighlighter_encoded: '1'
+  _av_alb_posts_elements_state: a:0:{}
+  _av_el_mgr_version: '1.0'
+  _av_alb_element_mgr_version: 1.0.1
+  _av_css_styles: a:6:{s:7:"post_id";i:729;s:8:"css_file";s:12:"post-729.css";s:9:"timestamp";s:0:"";s:6:"status";s:6:"no_css";s:13:"processed_ids";a:0:{}s:13:"include_posts";a:0:{}}
+author:
+  login: helvio
+  email: helvio_junior@hotmail.com
+  display_name: Helvio Junior - M4v3r1ck - OSCE3 (OSEP + OSED + OSWE), OSCE, OSCP,
+    eCXD, eMAPT, CEH
+  first_name: Helvio
+  last_name: Junior - M4v3r1ck - OSCE3 (OSEP + OSED + OSWE), OSCE, OSCP, eCXD, eMAPT,
+    CEH
+permalink: "/it/instalando-placa-de-rede-no-ubuntu-no-hyper-v/"
+---
+<p>Se na instalação do ubuntu em Hyper-V a placa de rede não foi identificada, será necessário carregar os módulos do Hyper-V.</p>
+<p>Para isso, edite o arquivo <strong>/etc/initramfs-tools/modules</strong> e adicione as seguintes linhas:</p>
+<p>[sourcecode language="shell"]hv_vmbus<br />
+hv_storvsc<br />
+hv_blkvsc<br />
+hv_netvsc[/sourcecode]</p>
+<p>Agora, atualize a imagem initramfs:</p>
+<p>[sourcecode language="shell"]sudo update-initramfs –u[/sourcecode]</p>
+<p>Basta reiniciar o linux.</p>

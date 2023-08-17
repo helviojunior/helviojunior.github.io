@@ -1,0 +1,44 @@
+---
+layout: post
+title: Corrigindo erro de usuários órfãos no Microsoft SQL
+date: 2016-09-27 17:23:23.000000000 -03:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories: []
+tags: []
+meta:
+  _edit_last: '1'
+  _yoast_wpseo_content_score: '30'
+  _yoast_wpseo_primary_category: ''
+  _aviaLayoutBuilder_active: ''
+  _aviaLayoutBuilderCleanData: ''
+  layout: ''
+  sidebar: ''
+  footer: ''
+  header_title_bar: ''
+  header_transparency: ''
+  _avia_hide_featured_image: '0'
+  _syntaxhighlighter_encoded: '1'
+  _av_alb_posts_elements_state: a:0:{}
+  _av_el_mgr_version: '1.0'
+  _av_alb_element_mgr_version: 1.0.1
+  _av_css_styles: a:6:{s:7:"post_id";i:1594;s:8:"css_file";s:13:"post-1594.css";s:9:"timestamp";s:0:"";s:6:"status";s:6:"no_css";s:13:"processed_ids";a:0:{}s:13:"include_posts";a:0:{}}
+author:
+  login: helvio
+  email: helvio_junior@hotmail.com
+  display_name: Helvio Junior - M4v3r1ck - OSCE3 (OSEP + OSED + OSWE), OSCE, OSCP,
+    eCXD, eMAPT, CEH
+  first_name: Helvio
+  last_name: Junior - M4v3r1ck - OSCE3 (OSEP + OSED + OSWE), OSCE, OSCP, eCXD, eMAPT,
+    CEH
+permalink: "/uncategorized/corrigindo-erro-de-usuarios-orfaos-no-microsoft-sql/"
+---
+<p>Um Erro muito comum é quando se restaura uma base de dados, ou até mesmo ao anexar uma nova base é que os usuários dessa base perdem i vínculo com o usuário de segurança do Microsoft SQL Server.</p>
+<p>Para resolver este problema tem um comando simples e rápido.</p>
+<p>Estes de mais nada garanta que o usuário exista no SQL server e depois execute o comando abaixo dentro da base de dados desejada.</p>
+<p>&nbsp;</p>
+<p>[sourcecode language="sql"]EXEC sp_change_users_login 'Auto_Fix', 'usuario_orfao'<br />
+[/sourcecode]</p>

@@ -1,0 +1,122 @@
+---
+layout: post
+title: Instalando autoridade certificadora raiz (CA Root) com OpenSSL
+date: 2012-03-07 12:56:35.000000000 -03:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- IT
+- Segurança da Informação
+tags:
+- autoridade certificadora
+- ca
+- ca root
+- certificate authority
+- openssl
+meta:
+  _edit_last: '1'
+  _syntaxhighlighter_encoded: '1'
+  _topsy_long_url: http://www.helviojunior.com.br/it/security/instalando-autoridade-certificadora-raiz-ca-root-com-openssl/
+  topsy_short_url: ''
+  _av_alb_posts_elements_state: a:0:{}
+  _av_el_mgr_version: '1.0'
+  _av_alb_element_mgr_version: 1.0.1
+  _av_css_styles: a:6:{s:7:"post_id";i:113;s:8:"css_file";s:12:"post-113.css";s:9:"timestamp";s:0:"";s:6:"status";s:6:"no_css";s:13:"processed_ids";a:0:{}s:13:"include_posts";a:0:{}}
+author:
+  login: helvio
+  email: helvio_junior@hotmail.com
+  display_name: Helvio Junior - M4v3r1ck - OSCE3 (OSEP + OSED + OSWE), OSCE, OSCP,
+    eCXD, eMAPT, CEH
+  first_name: Helvio
+  last_name: Junior - M4v3r1ck - OSCE3 (OSEP + OSED + OSWE), OSCE, OSCP, eCXD, eMAPT,
+    CEH
+permalink: "/it/security/instalando-autoridade-certificadora-raiz-ca-root-com-openssl/"
+---
+<p>Este método de geração de uma CA utiliza-se do aplicativo OpenSSL disponível para Windows e linux, não tendo alteração dos comandos para os diferentes sistemas operacionais.</p>
+<p><!--more--></p>
+<p>1 – Efetue a instalação do OpenSSL;</p>
+<p>2 – Crie um diretório para utilizações durante este processo.</p>
+<p>3 – Crie um arquivo, dentro deste diretório, vazio, com o nome “database.txt”</p>
+<p>4 – Crie um arquivo, dentro deste diretório, contendo o texto 01, com o nome “serial.txt”</p>
+<p>5 – Crie um arquivo nomeado “openssl.conf” e adicione o seguinte conteúdo:</p>
+<p>[sourcecode language="text"]<br />
+RANDFILE  = .rnd</p>
+<p>[ ca ]<br />
+default_ca       = CA_default</p>
+<p>[ CA_default ]<br />
+certs            = certs<br />
+crl_dir          = crl<br />
+database  = database.txt<br />
+new_certs_dir    = certs<br />
+certificate      = cacert.pem<br />
+serial           = serial.txt<br />
+crl       = crl.pem<br />
+private_key      = private\cakey.pem<br />
+RANDFILE  = private\private.rnd<br />
+default_days     = 365<br />
+default_crl_days= 3<br />
+default_md       = sha1<br />
+preserve  = no<br />
+policy           = policy_match</p>
+<p>[ policy_match ]<br />
+commonName              = supplied<br />
+emailAddress            = optional<br />
+countryName             = optional<br />
+stateOrProvinceName     = optional<br />
+localityName            = optional<br />
+organizationName = optional<br />
+organizationalUnitName  = optional</p>
+<p>[ req ]<br />
+default_bits            = 1024<br />
+default_keyfile = privkey.pem<br />
+distinguished_name      = req_distinguished_name</p>
+<p>[ req_distinguished_name ]<br />
+commonName                    = Common Name (eg, your website's domain name)<br />
+commonName_max                = 64<br />
+emailAddress                  = Email Address<br />
+emailAddress_max        = 40<br />
+countryName                   = Country Name (2 letter code)<br />
+countryName_min               = 2<br />
+countryName_max               = 2<br />
+countryName_default           = BR<br />
+stateOrProvinceName           = State or Province Name (full name)<br />
+localityName                  = Locality Name (eg, city)<br />
+0.organizationName            = Organization Name (eg, company)<br />
+organizationalUnitName        = Organizational Unit Name (eg, section)<br />
+countryName_default           = BR</p>
+<p>[ v3_ca ]<br />
+certificatePolicies=2.5.29.32.0<br />
+subjectKeyIdentifier=hash<br />
+authorityKeyIdentifier=keyid:always,issuer<br />
+basicConstraints=critical,CA:TRUE<br />
+keyUsage = critical,cRLSign, keyCertSign, digitalSignature<br />
+[/sourcecode]</p>
+<p>6 – Crie a chave privada da CA root que será utilizada futiramente</p>
+<p>[sourcecode language="bash"]openssl genrsa -des3 -out ca.key 1024[/sourcecode]</p>
+<p>Neste momento será solicitado a senha para armazenamento da chave, está senha será utilizada posteriormente para abertura da chave privada.</p>
+<p>[sourcecode language="text"]Loading 'screen' into random state - done<br />
+Generating RSA private key, 1024 bit long modulus<br />
+..............++++++<br />
+...............++++++<br />
+e is 65537 (0x10001)<br />
+Enter pass phrase for ca.key:[/sourcecode]</p>
+<p>7 – Crie o certificado X.509. Este é o arquivo que será utilizado futuramente para instalação nos clientes.</p>
+<p>[sourcecode language="bash"]openssl req -extensions v3_ca -config openssl.conf -new -x509 -days 3650 -key ca.key -out ca.cer[/sourcecode]</p>
+<p>Neste momento algumas informações serão solicitadas, a primeira delas é a senha da chave privada criada no passo anterior.</p>
+<p>[sourcecode language="text"]Enter pass phrase for ca.key:[/sourcecode]</p>
+<p>Agora serão solicitados os dados do certificado, o único item obrigatório é o Common Name (CN), nele adicione o nome como deseja que a sua CA seja identificada.</p>
+<p>Após a finalização deste processo temos o nosso certificado conforme imagem abaixo:</p>
+<p style="text-align: center;"><a href="http://www.helviojunior.com.br/wp-content/uploads/2012/03/low_image15.jpg"><img class="aligncenter  wp-image-121" title="Certificado digital root" src="{{ site.baseurl }}/assets/2012/03/low_image15.jpg" alt="" width="251" height="313" /></a></p>
+<p>Porém temos 2 arquivos, um para a chave privada e outro para o certificado, desta forma será necessário coloca-los em um único arquivo no formato PKCS#12.</p>
+<p>8 – Crie o arquivo PKCS#12 com a chave privada e o certificado</p>
+<p>[sourcecode language="bash"]openssl pkcs12 -export -out ca.pfx -in ca.cer -inkey ca.key[/sourcecode]</p>
+<p>Neste processo serão solicitadas 2 senhas, a primeira para abertura da chave privada e a segunda para a exportação do arquivo PKCS#12. Esta segunda senha será utilizada no momento da importação do arquivo PKCS#12 no firewall.</p>
+<p>[sourcecode language="text"]Enter pass phrase for ca.key:<br />
+Enter Export Password:<br />
+Verifying - Enter Export Password:[/sourcecode]</p>
+<p align="left">Pronto! O Certificado root foi gerado com sucesso.</p>
+<pre> 
+<a href="http://www.helviojunior.com.br/wp-content/uploads/2012/03/OpenSSL.zip">Download do OpenSSL Standalone</a></pre>

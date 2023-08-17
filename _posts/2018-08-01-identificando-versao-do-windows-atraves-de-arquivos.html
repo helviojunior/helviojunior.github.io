@@ -1,0 +1,389 @@
+---
+layout: post
+title: Identificando Versão do Windows através de arquivos
+date: 2018-08-01 20:44:19.000000000 -03:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Segurança da Informação
+tags: []
+meta:
+  _edit_last: '1'
+  _yoast_wpseo_content_score: '30'
+  _yoast_wpseo_primary_category: ''
+  _aviaLayoutBuilder_active: ''
+  _aviaLayoutBuilderCleanData: ''
+  layout: ''
+  sidebar: ''
+  footer: ''
+  header_title_bar: ''
+  header_transparency: ''
+  _avia_hide_featured_image: '0'
+  _syntaxhighlighter_encoded: '1'
+  _av_alb_posts_elements_state: a:0:{}
+  _av_el_mgr_version: '1.0'
+  _av_alb_element_mgr_version: 1.0.1
+  _av_css_styles: a:6:{s:7:"post_id";i:1782;s:8:"css_file";s:13:"post-1782.css";s:9:"timestamp";s:0:"";s:6:"status";s:6:"no_css";s:13:"processed_ids";a:0:{}s:13:"include_posts";a:0:{}}
+author:
+  login: helvio
+  email: helvio_junior@hotmail.com
+  display_name: Helvio Junior - M4v3r1ck - OSCE3 (OSEP + OSED + OSWE), OSCE, OSCP,
+    eCXD, eMAPT, CEH
+  first_name: Helvio
+  last_name: Junior - M4v3r1ck - OSCE3 (OSEP + OSED + OSWE), OSCE, OSCP, eCXD, eMAPT,
+    CEH
+permalink: "/it/security/identificando-versao-do-windows-atraves-de-arquivos/"
+---
+<p>Um dos desafios em um pentest é identificar a versão exata de um windows, então segue aqui algumas dicas de como faze-lo usando arquivos nativos do Sistema operacional.</p>
+<p>Este procedimento é dividido em 2 passos:</p>
+<ol>
+<li>Buscar o build number, ou seja, o número de compilação</li>
+<li>Traduzir este número em algo que possamos entender</li>
+</ol>
+<p>&nbsp;</p>
+<h2>Buscando o Build Number</h2>
+<p>Arquivo <strong>c:\windows\system32\prodspec.ini</strong>, pode-se observar que a versão é a 5.1.2600.0</p>
+<p>[sourcecode language="text"];<br />
+;Attention : VOUS NE DEVEZ PAS MODIFIER NI SUPPRIMER CE FICHIER.<br />
+;<br />
+[SMS Inventory Identification]<br />
+Version=1.0</p>
+<p>[Product Specification]<br />
+Product=Windows XP Professionnel</p>
+<p>Version=5.0<br />
+Localization=Français<br />
+ServicePackNumber=0<br />
+BitVersion=40<br />
+[Version]<br />
+DriverVer=07/01/2001,5.1.2600.0<br />
+[/sourcecode]</p>
+<p>Arquivo <strong>c:\boot.ini</strong>, este arquivo detém um não tão exato com a versão do windows</p>
+<p>[sourcecode language="text"];[boot loader]<br />
+timeout=1<br />
+default=multi(0)disk(0)rdisk(0)partition(1)\WINDOWS<br />
+[operating systems]<br />
+multi(0)disk(0)rdisk(0)partition(1)\WINDOWS=&quot;Windows Server 2003, Standard&quot; /fastdetect /NoExecute=OptIn<br />
+[/sourcecode]</p>
+<p>Arquivo c:\windows\explorer.exe, é um executável então temos que usar uma ferramenta do linux chamada exiftool para buscar as informações do mesmo</p>
+<p>[sourcecode language="bash"]exiftool /tmp/explorer.exe | grep -i &quot;produ&quot;<br />
+[/sourcecode]</p>
+<p>Esse comando retornará algo parecido com o texto abaixo</p>
+<p>[sourcecode language="text"]Product Version Number          : 6.0.3790.1830<br />
+Product Name                    : Microsoft® Windows® Operating System<br />
+Product Version                 : 6.00.3790.1830<br />
+[/sourcecode]</p>
+<p>&nbsp;</p>
+<h2>Traduzindo o Build Number em informação do qual é o Sistema Operacional</h2>
+<p>Agora de posse da informação tão desejada basta traduzir para a versão do windows com a tabela abaixo (retirada de <a href="https://www.gaijin.at/en/lstwinver.php" target="_blank">https://www.gaijin.at/en/lstwinver.php</a>)</p>
+<table class="table_border">
+<tbody>
+<tr>
+<th>Sistema Operacional</th>
+<th>Versão / Build / Data</th>
+</tr>
+<tr>
+<td>Windows 95 OEM Service Release 1 (95A)</td>
+<td>4.00.950 A *)</td>
+</tr>
+<tr>
+<td>Windows 95 OEM Service Release 2 (95B)</td>
+<td>4.00.1111 B *)</td>
+</tr>
+<tr>
+<td>Windows 95 OEM Service Release 2.1</td>
+<td>4.03.1212-1214 B *)</td>
+</tr>
+<tr>
+<td>Windows 95 OEM Service Release 2.5 C</td>
+<td>4.03.1214 C *)</td>
+</tr>
+<tr>
+<td>Windows 98</td>
+<td>4.10.1998</td>
+</tr>
+<tr>
+<td>Windows 98 Second Edition (SE)</td>
+<td>4.10.2222 A</td>
+</tr>
+<tr>
+<td>Windows Millenium Beta</td>
+<td>4.90.2476</td>
+</tr>
+<tr>
+<td>Windows Millenium</td>
+<td>4.90.3000</td>
+</tr>
+<tr>
+<td>Windows NT 3.1</td>
+<td>3.10.528 (27.07.1993)</td>
+</tr>
+<tr>
+<td>Windows NT 3.5</td>
+<td>3.50.807 (21.09.1994)</td>
+</tr>
+<tr>
+<td>Windows NT 3.51</td>
+<td>3.51.1057 (30.05.1995)</td>
+</tr>
+<tr>
+<td>Windows NT 4.00</td>
+<td>4.00.1381 (24.08.1996)</td>
+</tr>
+<tr>
+<td>Windows NT 5.00 (Beta 2)</td>
+<td>5.00.1515</td>
+</tr>
+<tr>
+<td>Windows 2000 (Beta 3)</td>
+<td>5.00.2031</td>
+</tr>
+<tr>
+<td>Windows 2000 (Beta 3 RC2)</td>
+<td>5.00.2128</td>
+</tr>
+<tr>
+<td>Windows 2000 (Beta 3)</td>
+<td>5.00.2183</td>
+</tr>
+<tr>
+<td>Windows 2000</td>
+<td>5.00.2195 (17.02.2000)</td>
+</tr>
+<tr>
+<td>Whistler Server Preview</td>
+<td>2250</td>
+</tr>
+<tr>
+<td>Whistler Server alpha</td>
+<td>2257</td>
+</tr>
+<tr>
+<td>Whistler Server interim release</td>
+<td>2267</td>
+</tr>
+<tr>
+<td>Whistler Server interim release</td>
+<td>2410</td>
+</tr>
+<tr>
+<td>Windows XP (RC 1)</td>
+<td>5.1.2505</td>
+</tr>
+<tr>
+<td>Windows XP</td>
+<td>5.1.2600 (25.10.2001)</td>
+</tr>
+<tr>
+<td>Windows XP, Service Pack 1</td>
+<td>5.1.2600.1105-1106</td>
+</tr>
+<tr>
+<td>Windows XP, Service Pack 2</td>
+<td>5.1.2600.2180</td>
+</tr>
+<tr>
+<td>Windows XP, Service Pack 3</td>
+<td>5.1.2600 (21.04.2008)</td>
+</tr>
+<tr>
+<td>Windows .NET Server interim</td>
+<td>5.2.3541</td>
+</tr>
+<tr>
+<td>Windows .NET Server Beta 3</td>
+<td>5.2.3590</td>
+</tr>
+<tr>
+<td>Windows .NET Server Release Candidate 1 (RC1)</td>
+<td>5.2.3660</td>
+</tr>
+<tr>
+<td>Windows .NET Server 2003 RC2</td>
+<td>5.2.3718</td>
+</tr>
+<tr>
+<td>Windows Server 2003 (Beta?)</td>
+<td>5.2.3763</td>
+</tr>
+<tr>
+<td>Windows Server 2003</td>
+<td>5.2.3790 (24.04.2003)</td>
+</tr>
+<tr>
+<td>Windows Server 2003, Service Pack 1</td>
+<td>5.2.3790.1180</td>
+</tr>
+<tr>
+<td>Windows Server 2003</td>
+<td>5.2.3790.1218</td>
+</tr>
+<tr>
+<td>Windows Home Server</td>
+<td>5.2.3790 (16.06.2007)</td>
+</tr>
+<tr>
+<td>Windows Longhorn</td>
+<td>6.0.5048</td>
+</tr>
+<tr>
+<td>Windows Vista, Beta 1</td>
+<td>6.0.5112 (20.07.2005)</td>
+</tr>
+<tr>
+<td>Windows Vista, Community Technology Preview (CTP)</td>
+<td>6.0.5219 (30.08.2005)</td>
+</tr>
+<tr>
+<td>Windows Vista, TAP Preview</td>
+<td>6.0.5259 (17.11.2005)</td>
+</tr>
+<tr>
+<td>Windows Vista, CTP (Dezember)</td>
+<td>6.0.5270 (14.12.2005)</td>
+</tr>
+<tr>
+<td>Windows Vista, CTP (Februar)</td>
+<td>6.0.5308 (17.02.2006)</td>
+</tr>
+<tr>
+<td>Windows Vista, CTP (Refresh)</td>
+<td>6.0.5342 (21.03.2006)</td>
+</tr>
+<tr>
+<td>Windows Vista, April EWD</td>
+<td>6.0.5365 (19.04.2006)</td>
+</tr>
+<tr>
+<td>Windows Vista, Beta 2 Previw</td>
+<td>6.0.5381 (01.05.2006)</td>
+</tr>
+<tr>
+<td>Windows Vista, Beta 2</td>
+<td>6.0.5384 (18.05.2006)</td>
+</tr>
+<tr>
+<td>Windows Vista, Pre-RC1</td>
+<td>6.0.5456 (20.06.2006)</td>
+</tr>
+<tr>
+<td>Windows Vista, Pre-RC1, Build 5472</td>
+<td>6.0.5472 (13.07.2006)</td>
+</tr>
+<tr>
+<td>Windows Vista, Pre-RC1, Build 5536</td>
+<td>6.0.5536 (21.08.2006)</td>
+</tr>
+<tr>
+<td>Windows Vista, RC1</td>
+<td>6.0.5600.16384 (29.08.2006)</td>
+</tr>
+<tr>
+<td>Windows Vista, Pre-RC2</td>
+<td>6.0.5700 (10.08.2006)</td>
+</tr>
+<tr>
+<td>Windows Vista, Pre-RC2, Build 5728</td>
+<td>6.0.5728 (17.09.2006)</td>
+</tr>
+<tr>
+<td>Windows Vista, RC2</td>
+<td>6.0.5744.16384 (03.10.2006)</td>
+</tr>
+<tr>
+<td>Windows Vista, Pre-RTM, Build 5808</td>
+<td>6.0.5808 (12.10.2006)</td>
+</tr>
+<tr>
+<td>Windows Vista, Pre-RTM, Build 5824</td>
+<td>6.0.5824 (17.10.2006)</td>
+</tr>
+<tr>
+<td>Windows Vista, Pre-RTM, Build 5840</td>
+<td>6.0.5840 (18.10.2006)</td>
+</tr>
+<tr>
+<td>Windows Vista, RTM (Release to Manufacturing)</td>
+<td>6.0.6000.16386 (01.11.2006)</td>
+</tr>
+<tr>
+<td>Windows Vista</td>
+<td>6.0.6000 (08.11.2006)</td>
+</tr>
+<tr>
+<td>Windows Vista, Service Pack 2</td>
+<td>6.0.6002 (04.02.2008)</td>
+</tr>
+<tr>
+<td>Windows Server 2008</td>
+<td>6.0.6001 (27.02.2008)</td>
+</tr>
+<tr>
+<td>Windows 7, RTM (Release to Manufacturing)</td>
+<td>6.1.7600.16385 (22.10.2009)</td>
+</tr>
+<tr>
+<td>Windows 7</td>
+<td>6.1.7600 (22.10.2009)</td>
+</tr>
+<tr>
+<td>Windows 7, Service Pack 1</td>
+<td>6.1.7601</td>
+</tr>
+<tr>
+<td>Windows Server 2008 R2, RTM (Release to Manufacturing)</td>
+<td>6.1.7600.16385 (22.10.2009)</td>
+</tr>
+<tr>
+<td>Windows Server 2008 R2, SP1</td>
+<td>6.1.7601</td>
+</tr>
+<tr>
+<td>Windows Home Server 2011</td>
+<td>6.1.8400 (05.04.2011)</td>
+</tr>
+<tr>
+<td>Windows Server 2012</td>
+<td>6.2.9200 (04.09.2012)</td>
+</tr>
+<tr>
+<td>Windows 8</td>
+<td>6.2.9200 (26.10.2012)</td>
+</tr>
+<tr>
+<td>Windows Phone 8</td>
+<td>6.2.10211 (29.10.2012)</td>
+</tr>
+<tr>
+<td>Windows Server 2012 R2</td>
+<td>6.3.9200 (18.10.2013)</td>
+</tr>
+<tr>
+<td>Windows 8.1</td>
+<td>6.3.9200 (17.10.2013)</td>
+</tr>
+<tr>
+<td>Windows 8.1, Update 1</td>
+<td>6.3.9600 (08.04.2014)</td>
+</tr>
+<tr>
+<td>Windows 10</td>
+<td>10.0.10240 (29.07.2015)</td>
+</tr>
+<tr>
+<td>Windows 10 (1511)</td>
+<td>10.0.10586</td>
+</tr>
+<tr>
+<td>Windows 10 (1607)</td>
+<td>10.0.14393</td>
+</tr>
+<tr>
+<td>Windows Server 2016, RTM (Release to Manufacturing)</td>
+<td>10.0.14393 (26.09.2016)</td>
+</tr>
+</tbody>
+</table>
+<p>*) O Build Number nem sempre é exibido exatamente como está na tabela</p>

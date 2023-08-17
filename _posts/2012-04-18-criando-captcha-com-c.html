@@ -1,0 +1,385 @@
+---
+layout: post
+title: Criando CAPTCHA com C#
+date: 2012-04-18 16:33:02.000000000 -03:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Desenvolvimento
+- IT
+- Segurança da Informação
+tags: []
+meta:
+  _edit_last: '1'
+  _syntaxhighlighter_encoded: '1'
+  _topsy_long_url: http://www.helviojunior.com.br/it/devel/criando-captcha-com-c/
+  topsy_short_url: http://bit.ly/HUgyCK
+  _av_alb_posts_elements_state: a:0:{}
+  _av_el_mgr_version: '1.0'
+  _av_alb_element_mgr_version: 1.0.1
+  _av_css_styles: a:6:{s:7:"post_id";i:301;s:8:"css_file";s:12:"post-301.css";s:9:"timestamp";s:0:"";s:6:"status";s:6:"no_css";s:13:"processed_ids";a:0:{}s:13:"include_posts";a:0:{}}
+author:
+  login: helvio
+  email: helvio_junior@hotmail.com
+  display_name: Helvio Junior - M4v3r1ck - OSCE3 (OSEP + OSED + OSWE), OSCE, OSCP,
+    eCXD, eMAPT, CEH
+  first_name: Helvio
+  last_name: Junior - M4v3r1ck - OSCE3 (OSEP + OSED + OSWE), OSCE, OSCP, eCXD, eMAPT,
+    CEH
+permalink: "/it/devel/criando-captcha-com-c/"
+---
+<p>CAPTCHA é um acrônimo da expressão "Completely Automated Public Turing test to tell Computers and Humans Apart" (teste de Turing público completamente automatizado para diferenciação entre computadores e humanos): um teste de desafio cognitivo, utilizado como ferramenta anti-spam evitando que aplicativos automatizados realize post em formulários sem uma interação humana.</p>
+<p>Um tipo comum de CAPTCHA requer que o usuário identifique as letras de uma imagem distorcida, às vezes com a adição de uma sequência obscurecida das letras ou dos dígitos que apareça na tela.</p>
+<p>Tendo como base essa descrição retirada do Wikipédia (http://pt.wikipedia.org/wiki/CAPTCHA), irei demonstrar como implementar um CAPTCHA utilizando C#.</p>
+<p>Este código gera o CAPTCHA conforme os exemplos abaixo</p>
+<p><a href="http://www.helviojunior.com.br/wp-content/uploads/2012/04/captcha_samples.jpg"><img class="aligncenter size-full wp-image-303" title="Captcha Samples" src="{{ site.baseurl }}/assets/2012/04/captcha_samples.jpg" alt="" width="446" height="177" /></a></p>
+<p><!--more--><br />
+O Código que será utilizado foi retirado da internet em buscas pessoais, porém realizei diversos ajustes e melhorias objetivando torná-lo mais completo.</p>
+<p>A Classe base de todo o processo foi nomeada como CaptchaImage e seu código segue abaixo</p>
+<p>[sourcecode language="csharp"]<br />
+using System;<br />
+using System.Collections.Generic;<br />
+using System.Text;<br />
+using System.Drawing;<br />
+using System.Drawing.Drawing2D;<br />
+using System.Drawing.Imaging;<br />
+using System.Drawing.Text;<br />
+using System.IO;</p>
+<p>public class CaptchaImage<br />
+{<br />
+    // Public properties (all read-only).<br />
+    public string Text<br />
+    {<br />
+        get { return this.text; }<br />
+    }</p>
+<p>    public Bitmap Image<br />
+    {<br />
+        get { return this.image; }<br />
+    }</p>
+<p>    public Byte[] PngImage<br />
+    {<br />
+        get<br />
+        {<br />
+            MemoryStream stream = new MemoryStream();<br />
+            this.image.Save(stream, ImageFormat.Png);</p>
+<p>            Byte[] data = stream.ToArray();<br />
+            stream = null;</p>
+<p>            return data;<br />
+        }<br />
+    }</p>
+<p>    public String Base64PngImage<br />
+    {<br />
+        get<br />
+        {<br />
+            return Convert.ToBase64String(PngImage);<br />
+        }<br />
+    }</p>
+<p>    public int Width<br />
+    {<br />
+        get { return this.width; }<br />
+    }</p>
+<p>    public int Height<br />
+    {<br />
+        get { return this.height; }<br />
+    }</p>
+<p>    // Internal properties.<br />
+    private string text;<br />
+    private int width;<br />
+    private int height;<br />
+    private string familyName;<br />
+    private Bitmap image;</p>
+<p>    // For generating random numbers.<br />
+    private Random random = new Random();</p>
+<p>    // ====================================================================<br />
+    // Initializes a new instance of the CaptchaImage class using the<br />
+    // specified width and height.<br />
+    // ====================================================================<br />
+    public CaptchaImage(Int32 length, Int32 width, Int32 height)<br />
+    {<br />
+        this.GenerateRandomCode(length);<br />
+        this.SetDimensions(width, height);<br />
+        this.GenerateImage();<br />
+    }</p>
+<p>    // ====================================================================<br />
+    // Initializes a new instance of the CaptchaImage class using the<br />
+    // specified text, width and height.<br />
+    // ====================================================================<br />
+    public CaptchaImage(String s, Int32 width, Int32 height)<br />
+    {<br />
+        this.text = s;<br />
+        this.SetDimensions(width, height);<br />
+        this.GenerateImage();<br />
+    }</p>
+<p>    // ====================================================================<br />
+    // Initializes a new instance of the CaptchaImage class using the<br />
+    // specified width, height and font family.<br />
+    // ====================================================================<br />
+    public CaptchaImage(Int32 length, Int32 width, Int32 height, String familyName)<br />
+    {<br />
+        this.GenerateRandomCode(length);<br />
+        this.SetDimensions(width, height);<br />
+        this.SetFamilyName(familyName);<br />
+        this.GenerateImage();<br />
+    }</p>
+<p>    // ====================================================================<br />
+    // Initializes a new instance of the CaptchaImage class using the<br />
+    // specified text, width, height and font family.<br />
+    // ====================================================================<br />
+    public CaptchaImage(String s, Int32 width, Int32 height, String familyName)<br />
+    {<br />
+        this.text = s;<br />
+        this.SetDimensions(width, height);<br />
+        this.SetFamilyName(familyName);<br />
+        this.GenerateImage();<br />
+    }</p>
+<p>    // ====================================================================<br />
+    // This member overrides Object.Finalize.<br />
+    // ====================================================================<br />
+    ~CaptchaImage()<br />
+    {<br />
+        Dispose(false);<br />
+    }</p>
+<p>    // ====================================================================<br />
+    // Releases all resources used by this object.<br />
+    // ====================================================================<br />
+    public void Dispose()<br />
+    {<br />
+        GC.SuppressFinalize(this);<br />
+        this.Dispose(true);<br />
+    }</p>
+<p>    // ====================================================================<br />
+    // Custom Dispose method to clean up unmanaged resources.<br />
+    // ====================================================================<br />
+    protected virtual void Dispose(bool disposing)<br />
+    {<br />
+        if (disposing)<br />
+            // Dispose of the bitmap.<br />
+            this.image.Dispose();<br />
+    }</p>
+<p>    // ====================================================================<br />
+    // Generate Random Code of Captcha.<br />
+    // ====================================================================<br />
+    private void GenerateRandomCode(Int32 length)<br />
+    {<br />
+        List&lt;String&gt; codes = new List&lt;String&gt;();</p>
+<p>        for (Int32 i = 65; i &lt;= 90; i++)<br />
+        {<br />
+            codes.Add(Encoding.ASCII.GetString(new Byte[] { Byte.Parse(i.ToString(&quot;X&quot;), System.Globalization.NumberStyles.HexNumber) }));<br />
+        }</p>
+<p>        /*<br />
+        //Uncomment this for use Numeric text too<br />
+        for (Int32 i = 0; i &lt;= 9; i++)<br />
+        {<br />
+            codes.Add(i.ToString());<br />
+        }*/</p>
+<p>        for (Int32 i = 97; i &lt;= 122; i++)<br />
+        {<br />
+            codes.Add(Encoding.ASCII.GetString(new Byte[] { Byte.Parse(i.ToString(&quot;X&quot;), System.Globalization.NumberStyles.HexNumber) }));<br />
+        }</p>
+<p>        Random rnd = new Random();<br />
+        string s = &quot;&quot;;<br />
+        for (int i = 0; i &lt; length; i++)<br />
+            s = String.Concat(s, codes[rnd.Next(0, codes.Count - 1)]);</p>
+<p>        this.text = s;<br />
+    }</p>
+<p>    // ====================================================================<br />
+    // Sets the image width and height.<br />
+    // ====================================================================<br />
+    private void SetDimensions(int width, int height)<br />
+    {<br />
+        // Check the width and height.<br />
+        if (width &lt;= 0)<br />
+            throw new ArgumentOutOfRangeException(&quot;width&quot;, width, &quot;Argument out of range, must be greater than zero.&quot;);<br />
+        if (height &lt;= 0)<br />
+            throw new ArgumentOutOfRangeException(&quot;height&quot;, height, &quot;Argument out of range, must be greater than zero.&quot;);<br />
+        this.width = width;<br />
+        this.height = height;<br />
+    }</p>
+<p>    // ====================================================================<br />
+    // Sets the font used for the image text.<br />
+    // ====================================================================<br />
+    private void SetFamilyName(string familyName)<br />
+    {<br />
+        // If the named font is not installed, default to a system font.<br />
+        try<br />
+        {<br />
+            Font font = new Font(this.familyName, 12F);<br />
+            this.familyName = familyName;<br />
+            font.Dispose();<br />
+        }<br />
+        catch (Exception ex)<br />
+        {<br />
+            this.familyName = System.Drawing.FontFamily.GenericSerif.Name;<br />
+        }<br />
+    }</p>
+<p>    // ====================================================================<br />
+    // Creates the bitmap image.<br />
+    // ====================================================================<br />
+    private void GenerateImage()<br />
+    {<br />
+        // Create a new 32-bit bitmap image.<br />
+        Bitmap bitmap = new Bitmap(this.width, this.height, PixelFormat.Format32bppArgb);</p>
+<p>        Color backColor = Color.FromArgb((random.Next(100, 255)),<br />
+            (random.Next(100, 255)), (random.Next(100, 255)));</p>
+<p>        Color foreColor = Color.FromArgb(random.Next(0, 100),<br />
+               random.Next(0, 100), random.Next(0, 100));</p>
+<p>        // Create a graphics object for drawing.<br />
+        Graphics g = Graphics.FromImage(bitmap);<br />
+        g.SmoothingMode = SmoothingMode.AntiAlias;<br />
+        Rectangle rect = new Rectangle(0, 0, this.width, this.height);</p>
+<p>        HatchStyle[] aHatchStyles = new HatchStyle[]<br />
+            {<br />
+             HatchStyle.BackwardDiagonal, HatchStyle.Cross,<br />
+	            HatchStyle.DashedDownwardDiagonal, HatchStyle.DashedHorizontal,<br />
+             HatchStyle.DashedUpwardDiagonal, HatchStyle.DashedVertical,<br />
+	            HatchStyle.DiagonalBrick, HatchStyle.DiagonalCross,<br />
+             HatchStyle.Divot, HatchStyle.DottedDiamond, HatchStyle.DottedGrid,<br />
+	            HatchStyle.ForwardDiagonal, HatchStyle.Horizontal,<br />
+             HatchStyle.HorizontalBrick, HatchStyle.LargeCheckerBoard,<br />
+	            HatchStyle.LargeConfetti, HatchStyle.LargeGrid,<br />
+             HatchStyle.LightDownwardDiagonal, HatchStyle.LightHorizontal,<br />
+	            HatchStyle.LightUpwardDiagonal, HatchStyle.LightVertical,<br />
+             HatchStyle.Max, HatchStyle.Min, HatchStyle.NarrowHorizontal,<br />
+	            HatchStyle.NarrowVertical, HatchStyle.OutlinedDiamond,<br />
+             HatchStyle.Plaid, HatchStyle.Shingle, HatchStyle.SmallCheckerBoard,<br />
+	            HatchStyle.SmallConfetti, HatchStyle.SmallGrid,<br />
+             HatchStyle.SolidDiamond, HatchStyle.Sphere, HatchStyle.Trellis,<br />
+	            HatchStyle.Vertical, HatchStyle.Wave, HatchStyle.Weave,<br />
+             HatchStyle.WideDownwardDiagonal, HatchStyle.WideUpwardDiagonal, HatchStyle.ZigZag<br />
+            };</p>
+<p>        // Fill in the background.<br />
+        HatchBrush hatchBrush = new HatchBrush(aHatchStyles[random.Next<br />
+            (aHatchStyles.Length - 1)], backColor, Color.White);<br />
+        g.FillRectangle(hatchBrush, rect);</p>
+<p>        // Set up the text font.<br />
+        SizeF size;<br />
+        float fontSize = rect.Height * 2;<br />
+        Font font;</p>
+<p>        // Adjust the font size until the text fits within the image.<br />
+        do<br />
+        {<br />
+            fontSize -= 0.3F;<br />
+            font = new Font(this.familyName, fontSize, FontStyle.Bold);<br />
+            size = g.MeasureString(this.text, font);<br />
+        } while ((size.Width &gt; rect.Width) || (size.Height &gt; rect.Height));</p>
+<p>        fontSize = fontSize + (fontSize * 0.20F);<br />
+        font = new Font(this.familyName, fontSize, FontStyle.Bold);</p>
+<p>        // Set up the text format.<br />
+        StringFormat format = new StringFormat();<br />
+        format.Alignment = StringAlignment.Center;<br />
+        format.LineAlignment = StringAlignment.Center;</p>
+<p>        // Create a path using the text and warp it randomly.<br />
+        GraphicsPath path = new GraphicsPath();<br />
+        path.AddString(this.text, font.FontFamily, (int)font.Style, font.Size, rect, format);</p>
+<p>        float v = 20F;<br />
+        PointF[] points =<br />
+			{<br />
+				new PointF(this.random.Next(rect.Width) / v, this.random.Next(rect.Height) / v),<br />
+				new PointF(rect.Width - this.random.Next(rect.Width) / v, this.random.Next(rect.Height) / v),<br />
+				new PointF(this.random.Next(rect.Width) / v, rect.Height - this.random.Next(rect.Height) / v),<br />
+				new PointF(rect.Width - this.random.Next(rect.Width) / v, rect.Height - this.random.Next(rect.Height) / v)<br />
+			};</p>
+<p>        Matrix matrix = new Matrix();<br />
+        matrix.Translate(0F, 0F);<br />
+        path.Warp(points, rect, matrix, WarpMode.Perspective, 0F);</p>
+<p>        // Draw the text.<br />
+        hatchBrush = new HatchBrush(hatchBrush.HatchStyle, foreColor, backColor);<br />
+        g.FillPath(hatchBrush, path);</p>
+<p>        // Add some random noise.</p>
+<p>        int m = Math.Max(rect.Width, rect.Height);<br />
+        for (int i = 0; i &lt; (int)(rect.Width * rect.Height / 30F); i++)<br />
+        {<br />
+            int x = this.random.Next(rect.Width);<br />
+            int y = this.random.Next(rect.Height);<br />
+            int w = this.random.Next(m / 50);<br />
+            int h = this.random.Next(m / 50);<br />
+            g.FillEllipse(hatchBrush, x, y, w, h);<br />
+        }</p>
+<p>        // Draw random lines<br />
+        Int32 linesCount = random.Next(3, 5);<br />
+        Pen lPen = new Pen(new SolidBrush(hatchBrush.ForegroundColor));<br />
+        for (Int32 l = 1; l &lt;= linesCount; l++)<br />
+        {<br />
+            g.DrawLine(lPen,<br />
+                new Point(random.Next(0, this.width), random.Next(0, this.height)),<br />
+                new Point(random.Next(0, this.width), random.Next(0, this.height))<br />
+                );<br />
+        }</p>
+<p>        // Clean up.<br />
+        font.Dispose();<br />
+        hatchBrush.Dispose();<br />
+        g.Dispose();</p>
+<p>        // Set the image.<br />
+        this.image = bitmap;<br />
+    }<br />
+}</p>
+<p>[/sourcecode]</p>
+<p>Para sua utilização há, pelo menos, duas metodologias possíveis, uma página que retornará uma imagem, ou uma tag &lt;img&gt; com o base64 da imagem.</p>
+<p>Segue o código da página que retorna a imagem</p>
+<p>[sourcecode language="csharp"]<br />
+using System;<br />
+using System.Collections;<br />
+using System.Configuration;<br />
+using System.Data;<br />
+using System.Text;<br />
+using System.Web;<br />
+using System.Web.Security;<br />
+using System.Web.UI;<br />
+using System.Web.UI.HtmlControls;<br />
+using System.Web.UI.WebControls;<br />
+using System.Web.UI.WebControls.WebParts;<br />
+using System.IO;<br />
+using System.Drawing;</p>
+<p>public partial class EventImage : System.Web.UI.Page<br />
+{<br />
+    protected void Page_Load(object sender, EventArgs e)<br />
+    {<br />
+        try<br />
+        {<br />
+            //Set Response code<br />
+            this.Response.StatusCode = 200;<br />
+            this.Response.Status = &quot;200 OK&quot;;</p>
+<p>            //Add last modified date<br />
+            this.Response.AddHeader(&quot;Last-Modified&quot;, DateTime.Now.ToString(&quot;r&quot;, System.Globalization.CultureInfo.CreateSpecificCulture(&quot;en-US&quot;)));</p>
+<p>            //Change content type<br />
+            this.Response.ContentType = &quot;image/png&quot;;</p>
+<p>            //Create the captcha bitmap<br />
+            CaptchaImage cap = new CaptchaImage(6, 130, 40, &quot;Verdana&quot;);</p>
+<p>            //Get Byte array of image in PNG<br />
+            Byte[] imgData = cap.PngImage;</p>
+<p>            //Set the byte array of the image in output stream<br />
+            this.Response.OutputStream.Write(imgData, 0, imgData.Length);</p>
+<p>            //Set the session of the text for the captcha validation<br />
+            Session[&quot;captchaText&quot;] = cap.Text;</p>
+<p>        }<br />
+        catch (Exception ex)<br />
+        {<br />
+            //Set error response code<br />
+            this.Response.Status = &quot;505 Internal error&quot;;<br />
+            this.Response.StatusCode = 505;<br />
+        }</p>
+<p>    }<br />
+}</p>
+<p>[/sourcecode]</p>
+<p>Segue o código para retorno do base64 da imagem</p>
+<p>[sourcecode language="csharp"]<br />
+//Create the captcha bitmap<br />
+CaptchaImage cap = new CaptchaImage(6, 130, 40, &quot;Verdana&quot;);</p>
+<p>Holder1.Controls.Add(new LiteralControl(&quot;&lt;img border=\&quot;0\&quot; style=\&quot;width: 200px; height: 50px; background: url('data:image/png;base64,&quot; + cap.Base64PngImage + &quot;') no-repeat scroll 0px 0px transparent;\&quot; src=\&quot;/images/empty.gif\&quot; title=\&quot;Imagem de confirmação\&quot;&gt;&quot;));</p>
+<p>//Set the session of the text for the captcha validation<br />
+Session[&quot;captchaText&quot;] = cap.Text;<br />
+[/sourcecode]</p>
+<p>Note que em ambos as metodologias acima, foi gravado em uma sessão o texto do captcha, desta fora a validação pode ser realizada com esta sessão conforme exemplo abaixo</p>
+<p>[sourcecode language="csharp"]<br />
+String captchaText = Request.Form[&quot;captcha&quot;];<br />
+String sCaptchaText = (String)Session[&quot;captchaText&quot;];<br />
+if (sCaptchaText == null)<br />
+    sCaptchaText = &quot;&quot;;</p>
+<p>if (captchaText.ToLower() = sCaptchaText.ToLower())<br />
+{<br />
+    //OK<br />
+}<br />
+[/sourcecode]</p>

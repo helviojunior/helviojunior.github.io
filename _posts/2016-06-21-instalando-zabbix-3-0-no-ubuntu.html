@@ -1,0 +1,118 @@
+---
+layout: post
+title: Instalando Zabbix 3.4 no Ubuntu
+date: 2016-06-21 14:51:50.000000000 -03:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- IT
+- Monitoramento
+- Zabbix
+tags: []
+meta:
+  footer: ''
+  sidebar: ''
+  layout: ''
+  _aviaLayoutBuilderCleanData: ''
+  _aviaLayoutBuilder_active: ''
+  _avia_hide_featured_image: '0'
+  header_transparency: ''
+  header_title_bar: ''
+  _syntaxhighlighter_encoded: '1'
+  _edit_last: '1'
+  _yoast_wpseo_content_score: '30'
+  _yoast_wpseo_primary_category: ''
+  _av_alb_posts_elements_state: a:0:{}
+  _av_el_mgr_version: '1.0'
+  _av_alb_element_mgr_version: 1.0.1
+  _av_css_styles: a:6:{s:7:"post_id";i:1529;s:8:"css_file";s:13:"post-1529.css";s:9:"timestamp";s:0:"";s:6:"status";s:6:"no_css";s:13:"processed_ids";a:0:{}s:13:"include_posts";a:0:{}}
+author:
+  login: helvio
+  email: helvio_junior@hotmail.com
+  display_name: Helvio Junior - M4v3r1ck - OSCE3 (OSEP + OSED + OSWE), OSCE, OSCP,
+    eCXD, eMAPT, CEH
+  first_name: Helvio
+  last_name: Junior - M4v3r1ck - OSCE3 (OSEP + OSED + OSWE), OSCE, OSCP, eCXD, eMAPT,
+    CEH
+permalink: "/it/instalando-zabbix-3-0-no-ubuntu/"
+---
+<p>Aprenda neste post passo-a-passo como instalar o Zabbix 3.x no ubuntu ou debian.</p>
+<p><!--more--></p>
+<p>O primeiro passo, em qualquer instalação de servidor ao meu ver, é garantir que todos os pacotes básicos estejam devidamente atualizados.</p>
+<p>[sourcecode language="shell"]apt-get update;<br />
+apt-get upgrade;<br />
+[/sourcecode]</p>
+<p>Na sequência vamos instalar os pacotes básicos para possibilitar a compilação e a gerência do dispositivo. Enquanto o comando abaixo estiver sendo executado aproveite para buscar um café ou ler outros artigos aqui do blog pois devido às características do hardware o comando abaixo irá gastar facilmente uns 10 minutos.</p>
+<p>[sourcecode language="shell"]apt-get -y install gcc g++ build-essential snmp libiksemel-dev libcurl4-gnutls-dev vim libssh2-1-dev libssh2-1 libopenipmi-dev libsnmp-dev wget curl fping snmp-mibs-downloader libldap2-dev libldap2-dev iotop ntp fping mysql-common libmysqlclient18 libmysqlclient-dev libxml2-dev mysql-client apache2 php5 php5-mysql php5-gd libevent-dev libpcre3 libpcre3-dev<br />
+[/sourcecode]</p>
+<p>Crie o usuário do Zabbix.</p>
+<p>[sourcecode language="shell"]groupadd zabbix<br />
+useradd -g zabbix zabbix -s /bin/false<br />
+[/sourcecode]</p>
+<p>Agora vamos efetuar o download do source do Zabbix (sim… sempre gosto de instalar a partir dos sources, existem repositórios mas prefiro os sources… velha guarda… ) e descompactar os arquivos.</p>
+<p>[sourcecode language="shell"]wget http://repo.zabbix.com/zabbix/3.4/ubuntu/pool/main/z/zabbix/zabbix_3.4.15.orig.tar.gz<br />
+tar -xzvf zabbix_3.4.15.orig.tar.gz -C /usr/src<br />
+cd /usr/src/zabbix_3.4.15/<br />
+[/sourcecode]</p>
+<p>Compile e instale o Zabbix.</p>
+<p>[sourcecode language="shell"]./configure --enable-server --enable-agent --with-mysql --with-net-snmp --with-libcurl --with-libxml2<br />
+make install[/sourcecode]</p>
+<p>O Zabbix-Server irá rodar com MySQL, sendo assim é necessário a criação da estrutura do banco de dados. Crie agora o banco de dados:</p>
+<p>[sourcecode language="shell"]mysql -h 127.0.0.1 -u zabbix -p zabbix &lt; database/mysql/schema.sql<br />
+mysql -h 127.0.0.1 -u zabbix -p zabbix &lt; database/mysql/images.sql<br />
+mysql -h 127.0.0.1 -u zabbix -p zabbix &lt; database/mysql/data.sql<br />
+[/sourcecode]</p>
+<p>Neste momento temos os binários do Zabbix e a base de dados criados. Vamos configurar o server.</p>
+<p>&nbsp;</p>
+<p>Crie os diretórios para log e execução do zabbix</p>
+<p>[sourcecode language="shell"]mkdir /var/log/zabbix<br />
+chown -R zabbix:zabbix /var/log/zabbix[/sourcecode]</p>
+<p>Altere as configurações do proxy no arquivo <strong>/usr/local/etc/zabbix_server.conf</strong> conforme exemplo abaixo.</p>
+<p>[sourcecode language="shell"]LogFile=/var/log/zabbix/zabbix_server.log<br />
+DBHost=127.0.0.1<br />
+DBName=zabbix<br />
+DBPassword=zabbix<br />
+DBPort=3306<br />
+DBUser=zabbix<br />
+FpingLocation=/usr/bin/fping<br />
+LogFile=/var/log/zabbix_server.log<br />
+LogSlowQueries=3000<br />
+StartHTTPPollers=150<br />
+StartPingers=50<br />
+StartPollers=256<br />
+StartTimers=30<br />
+Timeout=4[/sourcecode]</p>
+<p>Verifique o local de instalação do fping, este local de instalação deverá ser colocado no arquivo de configuração, no meu ambiente o local é <strong>/usr/bin/fping</strong></p>
+<p>[sourcecode language="shell"]whereis fping[/sourcecode]</p>
+<p>Altere o arquivo  <strong>/usr/local/etc/zabbix_server.conf</strong> com este caminho conforme exemplo abaixo</p>
+<p>[sourcecode language="shell"]FpingLocation=/usr/sbin/fping[/sourcecode]</p>
+<p>Altere as configurações do agente no arquivo <strong>/usr/local/etc/zabbix_agentd.conf</strong> conforme exemplo abaixo.</p>
+<p>[sourcecode language="shell"]LogFile=/var/log/zabbix/zabbix_agentd.log<br />
+LogFileSize=10<br />
+Server=127.0.0.1<br />
+DebugLevel=3<br />
+StartAgents=4<br />
+Hostname=nomedamaquina[/sourcecode]</p>
+<p>Agora precisamos copiar e configurar os arquivos de inicialização do Zabbix.</p>
+<p>[sourcecode language="shell"]cp -v misc/init.d/debian/zabbix-* /etc/init.d/[/sourcecode]</p>
+<p>&nbsp;</p>
+<p>Configure o sistema operacional para possibilitar a carga automática do Proxy e do agente.</p>
+<p>[sourcecode language="shell"]update-rc.d -f zabbix-server defaults<br />
+update-rc.d -f zabbix-agent defaults[/sourcecode]</p>
+<p>Inicie os serviços do Zabbix</p>
+<p>[sourcecode language="shell"]service zabbix-server start<br />
+service zabbix-agent start[/sourcecode]</p>
+<p>Edite o arquivo <strong>/etc/php5/apache2/php.ini</strong> conforme abaixo:</p>
+<p>[sourcecode language="shell"]post_max_size=16M<br />
+max_execution_time=300<br />
+max_input_time=300<br />
+date.timezone = 'America/Sao_Paulo'[/sourcecode]</p>
+<p>Copie o conte[udo do frontend para o diret[orio do apache</p>
+<p>[sourcecode language="shell"]rsync -av frontends/php/* /var/www/html/<br />
+[/sourcecode]</p>
+<p>Reinicie o Apache e acesse o Zabbix com a URL http://IP_DO_SERVIDOR/</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>

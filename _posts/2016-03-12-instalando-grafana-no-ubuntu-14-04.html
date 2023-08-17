@@ -1,0 +1,70 @@
+---
+layout: post
+title: Instalando Grafana no Ubuntu 14.04
+date: 2016-03-12 17:16:18.000000000 -03:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories: []
+tags: []
+meta:
+  _edit_last: '1'
+  _syntaxhighlighter_encoded: '1'
+  _aviaLayoutBuilder_active: ''
+  _aviaLayoutBuilderCleanData: ''
+  layout: ''
+  sidebar: ''
+  footer: ''
+  header_title_bar: ''
+  header_transparency: ''
+  _avia_hide_featured_image: '0'
+  _av_alb_posts_elements_state: a:0:{}
+  _av_el_mgr_version: '1.0'
+  _av_alb_element_mgr_version: 1.0.1
+  _av_css_styles: a:6:{s:7:"post_id";i:1475;s:8:"css_file";s:13:"post-1475.css";s:9:"timestamp";s:0:"";s:6:"status";s:6:"no_css";s:13:"processed_ids";a:0:{}s:13:"include_posts";a:0:{}}
+author:
+  login: helvio
+  email: helvio_junior@hotmail.com
+  display_name: Helvio Junior - M4v3r1ck - OSCE3 (OSEP + OSED + OSWE), OSCE, OSCP,
+    eCXD, eMAPT, CEH
+  first_name: Helvio
+  last_name: Junior - M4v3r1ck - OSCE3 (OSEP + OSED + OSWE), OSCE, OSCP, eCXD, eMAPT,
+    CEH
+permalink: "/uncategorized/instalando-grafana-no-ubuntu-14-04/"
+---
+<p>O Grafana é um poderoso e elegante software de dashboard, que possibilita integração com diversas aplicações.</p>
+<p><!--more--></p>
+<h2>Instalação de dependências</h2>
+<p>O primeiro passo, em qualquer instalação de servidor ao meu ver, é garantir que todos os pacotes básicos estejam devidamente atualizados.</p>
+<p>[sourcecode language="shell"]apt-get update;<br />
+apt-get upgrade;<br />
+[/sourcecode]</p>
+<p>Antes de mais nada vamos remover o Apache para ter certeza que não teremos problemas com ele.</p>
+<p>[sourcecode language="shell"]apt-get remove --purge apache2;<br />
+apt-get autoclean;<br />
+apt-get autoremove;<br />
+[/sourcecode]</p>
+<h2>Instalando o Grafana a partir do repositório oficial</h2>
+<p>Execute os comandos abaixo para adicionar o repositório do Grafana no Linux.</p>
+<p>[sourcecode language="shell"]echo &quot;deb https://packagecloud.io/grafana/stable/debian/ wheezy main&quot; &amp;gt;&amp;gt; /etc/apt/sources.list<br />
+curl https://packagecloud.io/gpg.key | sudo apt-key add -<br />
+apt-get update<br />
+[/sourcecode]</p>
+<p>Realize a instalação do Grafana</p>
+<p>[sourcecode language="shell"]apt-get install grafana<br />
+[/sourcecode]</p>
+<p>Atualize a permissão do aplicativo para que o mesmo possa iniciar em outras portas como 80 e 443</p>
+<p>[sourcecode language="shell"]setcap 'cap_net_bind_service=+ep' /usr/sbin/grafana-server<br />
+[/sourcecode]</p>
+<p>&nbsp;</p>
+<p>Edite o arquivo <strong>/etc/grafana/grafana.ini </strong>alterando os parâmetros de inicialização do mesmo conforme exemplo abaixo</p>
+<p>[sourcecode language="shell"][server]<br />
+protocol = http<br />
+http_addr = 0.0.0.0<br />
+http_port = 80<br />
+[/sourcecode]</p>
+<p>Inicie o serviço do Grafana com comando abaixo</p>
+<p>[sourcecode language="shell"]service grafana-server start<br />
+[/sourcecode]</p>

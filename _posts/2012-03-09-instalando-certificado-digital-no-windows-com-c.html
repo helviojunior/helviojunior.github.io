@@ -1,0 +1,85 @@
+---
+layout: post
+title: Instalando certificado digital no windows com C#
+date: 2012-03-09 15:08:54.000000000 -03:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Desenvolvimento
+- IT
+- Segurança da Informação
+tags: []
+meta:
+  _edit_last: '1'
+  _topsy_long_url: http://www.helviojunior.com.br/it/devel/instalando-certificado-digital-no-windows-com-c/
+  topsy_short_url: ''
+  _syntaxhighlighter_encoded: '1'
+  _av_alb_posts_elements_state: a:0:{}
+  _av_el_mgr_version: '1.0'
+  _av_alb_element_mgr_version: 1.0.1
+  _av_css_styles: a:6:{s:7:"post_id";i:248;s:8:"css_file";s:12:"post-248.css";s:9:"timestamp";s:0:"";s:6:"status";s:6:"no_css";s:13:"processed_ids";a:0:{}s:13:"include_posts";a:0:{}}
+author:
+  login: helvio
+  email: helvio_junior@hotmail.com
+  display_name: Helvio Junior - M4v3r1ck - OSCE3 (OSEP + OSED + OSWE), OSCE, OSCP,
+    eCXD, eMAPT, CEH
+  first_name: Helvio
+  last_name: Junior - M4v3r1ck - OSCE3 (OSEP + OSED + OSWE), OSCE, OSCP, eCXD, eMAPT,
+    CEH
+permalink: "/it/devel/instalando-certificado-digital-no-windows-com-c/"
+---
+<p>Este post objetiva mostrar como realizar a instalação de um certificado digital na base de certificados pessoais do usuário através de um aplicativo C#.</p>
+<p><!--more--></p>
+<p>Quando executado o aplicativo o certificado será instalado na base de certificados pessoais do usuário executor do aplicativo.</p>
+<p>Segue o código:</p>
+<p>[sourcecode language="csharp"]<br />
+using System;<br />
+using System.Security.Cryptography;<br />
+using System.Security.Cryptography.X509Certificates;<br />
+using System.IO;</p>
+<p>namespace InstallCertificate<br />
+{<br />
+ class Program<br />
+ {<br />
+ public static void Main(string[] args)<br />
+ {<br />
+ try {<br />
+ InstallCertificate(args[0], args[1]);</p>
+<p> } catch (Exception ex) {<br />
+ Console.WriteLine( ex.Message);<br />
+ }</p>
+<p> Console.Write(&quot;&quot;);<br />
+ Console.Write(&quot;Press any key to continue . . . &quot;);<br />
+ Console.ReadKey(true);<br />
+ }</p>
+<p> private static void InstallCertificate(string certificatePath, string certificatePassword)<br />
+ {<br />
+ try<br />
+ {<br />
+ var serviceRuntimeUserCertificateStore = new X509Store(StoreName.My);<br />
+ serviceRuntimeUserCertificateStore.Open(OpenFlags.ReadWrite);</p>
+<p> X509Certificate2 cert;</p>
+<p> try<br />
+ {<br />
+ cert = new X509Certificate2(certificatePath, certificatePassword);<br />
+ }<br />
+ catch(Exception ex)<br />
+ {<br />
+ Console.WriteLine(&quot;Failed to load certificate &quot; + certificatePath + &quot;: &quot; + ex.Message);<br />
+ throw new Exception(&quot;Certificate appeared to load successfully but also seems to be null.&quot;, ex);<br />
+ }</p>
+<p> serviceRuntimeUserCertificateStore.Add(cert);<br />
+ serviceRuntimeUserCertificateStore.Close();<br />
+ Console.WriteLine(&quot;Installation OK!&quot;);<br />
+ }<br />
+ catch(Exception ex)<br />
+ {<br />
+ Console.WriteLine(&quot;Failed to install {0}. Check the certificate index entry and verify the certificate file exists.\n {1}&quot;, certificatePath, ex.Message);<br />
+ }<br />
+ }</p>
+<p> }<br />
+}<br />
+[/sourcecode]</p>

@@ -1,0 +1,68 @@
+---
+layout: post
+title: Instalando PHP7 no Ubuntu
+date: 2017-05-15 17:02:32.000000000 -03:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Linux
+tags: []
+meta:
+  _edit_last: '1'
+  _yoast_wpseo_content_score: '60'
+  _yoast_wpseo_primary_category: '26'
+  _aviaLayoutBuilder_active: ''
+  _aviaLayoutBuilderCleanData: ''
+  layout: ''
+  sidebar: ''
+  footer: ''
+  header_title_bar: ''
+  header_transparency: ''
+  _avia_hide_featured_image: '0'
+  _syntaxhighlighter_encoded: '1'
+  _wp_old_slug: instalando-php7-no-ubunto
+  _av_alb_posts_elements_state: a:0:{}
+  _av_el_mgr_version: '1.0'
+  _av_alb_element_mgr_version: 1.0.1
+  _av_css_styles: a:6:{s:7:"post_id";i:1659;s:8:"css_file";s:13:"post-1659.css";s:9:"timestamp";s:0:"";s:6:"status";s:6:"no_css";s:13:"processed_ids";a:0:{}s:13:"include_posts";a:0:{}}
+author:
+  login: helvio
+  email: helvio_junior@hotmail.com
+  display_name: Helvio Junior - M4v3r1ck - OSCE3 (OSEP + OSED + OSWE), OSCE, OSCP,
+    eCXD, eMAPT, CEH
+  first_name: Helvio
+  last_name: Junior - M4v3r1ck - OSCE3 (OSEP + OSED + OSWE), OSCE, OSCP, eCXD, eMAPT,
+    CEH
+permalink: "/it/linux/instalando-php7-no-ubuntu/"
+---
+<p>Segue um passo a passo para instalação do PHP7 no Ubuntu</p>
+<h3>Preparando Ambiente</h3>
+<p>Primeiro passo é remover a versão atual do PHP</p>
+<p>[sourcecode language="shell"]sudo apt-get remove --purge php5*<br />
+[/sourcecode]</p>
+<p>Depois, adicionar o repositório do PHP7 e atualizar a listagem de pacotes</p>
+<p>[sourcecode language="shell"]wget http://nginx.org/packages/keys/nginx_signing.key<br />
+cat nginx_signing.key | sudo apt-key add -<br />
+apt-get update<br />
+[/sourcecode]</p>
+<h3>Instalando PHP7 + NGINX</h3>
+<p>Adicione o repositório do NGINX e atualize a listagem de pacotes</p>
+<p>[sourcecode language="shell"]echo deb http://nginx.org/packages/mainline/ubuntu/ `lsb_release --codename --short` nginx &gt;&gt; /etc/apt/sources.list<br />
+sudo apt-get update<br />
+[/sourcecode]</p>
+<p>E por fim instale o NGINX + PHP-FPM</p>
+<p>[sourcecode language="shell"]sudo apt-get install nginx php7.0-common php7.0-cli php7.0-fpm<br />
+[/sourcecode]</p>
+<h3>Instalando PHP7 + Apache2</h3>
+<p>Recomendo a utilização do ambiente com NGINX, por ter menos falhas e um desempenho muito melhor. Mas caso precise/deseje utilizar o Apache basta instalar com os comandos abaixo:</p>
+<p>[sourcecode language="shell"]apt-get install apache2 php7.0-common php7.0-cli php7.0 libapache2-mod-php7.0<br />
+[/sourcecode]</p>
+<h3>Biblioteca para MySQL</h3>
+<p>Caso vá utilizar o MySQL como base de dados basta adicionar o pacote do MySQL</p>
+<p>[sourcecode language="shell"]sudo apt-get install php7.0-mysql<br />
+[/sourcecode]</p>
+<p>Pronto!</p>
+<p>&nbsp;</p>

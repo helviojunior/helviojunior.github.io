@@ -1,0 +1,71 @@
+---
+layout: post
+title: Como montar um volume Linux LVM no Linux
+date: 2014-08-06 09:04:57.000000000 -03:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- IT
+- Linux
+tags: []
+meta:
+  _syntaxhighlighter_encoded: '1'
+  _edit_last: '1'
+  _av_alb_posts_elements_state: a:0:{}
+  _av_el_mgr_version: '1.0'
+  _av_alb_element_mgr_version: 1.0.1
+  _av_css_styles: a:6:{s:7:"post_id";i:1020;s:8:"css_file";s:13:"post-1020.css";s:9:"timestamp";s:0:"";s:6:"status";s:6:"no_css";s:13:"processed_ids";a:0:{}s:13:"include_posts";a:0:{}}
+author:
+  login: helvio
+  email: helvio_junior@hotmail.com
+  display_name: Helvio Junior - M4v3r1ck - OSCE3 (OSEP + OSED + OSWE), OSCE, OSCP,
+    eCXD, eMAPT, CEH
+  first_name: Helvio
+  last_name: Junior - M4v3r1ck - OSCE3 (OSEP + OSED + OSWE), OSCE, OSCP, eCXD, eMAPT,
+    CEH
+permalink: "/it/como-montar-um-volume-linux-lvm-no-linux/"
+---
+<p>Em muitos casos é necessário montar um volume LVM em um linux, como um HD externo, por exemplo. Segue o procedimento de identificação e montagem do volume LVM.</p>
+<p><!--more--></p>
+<p>Listando os discos e partições</p>
+<p>[sourcecode language="shell"]fdisk -l<br />
+[/sourcecode]</p>
+<p>Este comando irá listar a tabela de partições do sistema.</p>
+<p>[sourcecode language="shell"]<br />
+Device Boot Start End Blocks Id System<br />
+/dev/sda1 * 1 4864 39070048+ 7 HPFS/NTFS<br />
+/dev/sda2 4865 6691 14675377+ 83 LVM2_member<br />
+[/sourcecode]</p>
+<p>Para trabalhar com volumes será necessário instalar os aplicativos com o comando abaixo:</p>
+<p>[sourcecode language="shell"]sudo apt-get install lvm2<br />
+[/sourcecode]</p>
+<p>Após a instalação do aplicativo será necessário forçar o linux para listar e entender os volumes LVM utilizando os comandos abaixo:</p>
+<p>[sourcecode language="shell"]<br />
+vgscan<br />
+vgchange -a y<br />
+[/sourcecode]</p>
+<p>Agora podemos rodar o comando pvs.</p>
+<p>[sourcecode language="shell"]<br />
+pvs<br />
+[/sourcecode]</p>
+<p>Este irá listar os grupos de volume dos discos físicos.</p>
+<p>[sourcecode language="shell"]<br />
+PV VG Fmt Attr PSize PFree<br />
+/dev/hda2 VolGroup01 lvm2 a- 148.94G 32.00M<br />
+[/sourcecode]</p>
+<p>A segunda coluna (VG) exibe o nome do grupo de volume, utilizando este nome podemos obter maiores informações deste volume</p>
+<p>[sourcecode language="shell"]<br />
+lvdisplay /dev/VolGroup01<br />
+[/sourcecode]</p>
+<p>A saída deste comando será o nome do volume, pelo qual poderemos monta-lo no Linux</p>
+<p>[sourcecode language="shell"]<br />
+LV Name /dev/VolGroup01/LogVol00<br />
+[/sourcecode]</p>
+<p>Verifique qual volume deseja montar e execute o comando de montagem com este volume, conforme exemplo abaixo</p>
+<p>[sourcecode language="shell"]<br />
+mount /dev/VolGroup01/LogVol00   /mnt<br />
+[/sourcecode]</p>
+<p>Pronto! Agora basta acessar os arquivos montado em /mnt</p>

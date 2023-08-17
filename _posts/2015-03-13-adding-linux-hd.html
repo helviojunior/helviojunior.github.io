@@ -1,0 +1,53 @@
+---
+layout: post
+title: Adicionando HD em um linux sem reboot
+date: 2015-03-13 14:44:08.000000000 -03:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- IT
+- Linux
+tags: []
+meta:
+  _edit_last: '1'
+  _syntaxhighlighter_encoded: '1'
+  _yoast_wpseo_metadesc: Veja como é simples adicionar disco no linux com o sistema
+    on-line.
+  _wp_old_slug: adicionando-hd-em-um-linus-sem-reboot
+  _yoast_wpseo_primary_category: ''
+  _aviaLayoutBuilder_active: ''
+  _aviaLayoutBuilderCleanData: ''
+  layout: ''
+  sidebar: ''
+  footer: ''
+  header_title_bar: ''
+  header_transparency: ''
+  _avia_hide_featured_image: '0'
+  _yoast_wpseo_content_score: '60'
+  _av_alb_posts_elements_state: a:0:{}
+  _av_el_mgr_version: '1.0'
+  _av_alb_element_mgr_version: 1.0.1
+  _av_css_styles: a:6:{s:7:"post_id";i:1196;s:8:"css_file";s:13:"post-1196.css";s:9:"timestamp";s:0:"";s:6:"status";s:6:"no_css";s:13:"processed_ids";a:0:{}s:13:"include_posts";a:0:{}}
+author:
+  login: helvio
+  email: helvio_junior@hotmail.com
+  display_name: Helvio Junior - M4v3r1ck - OSCE3 (OSEP + OSED + OSWE), OSCE, OSCP,
+    eCXD, eMAPT, CEH
+  first_name: Helvio
+  last_name: Junior - M4v3r1ck - OSCE3 (OSEP + OSED + OSWE), OSCE, OSCP, eCXD, eMAPT,
+    CEH
+permalink: "/it/adding-linux-hd/"
+---
+<p>Quando é utilizado um ambiente virtual (VMWare) é possível adicionar novos discos sem a necessidade de reiniciar o servidor. Porém o linux não identifica automaticamente este novos disco em /dev/sdX, desta forma este procedimento visa mostrar como realizar a releitura deste disco.</p>
+<p>Digite o comando abaixo para listar os discos:</p>
+<p>[sourcecode language="shell"]ls -ltr /sys/class/scsi_host<br />
+[/sourcecode]</p>
+<p>Execute o comando (trocando hostX por um dos hosts listados co comando anterior) abaixo para scanear o disco e mapear as unidades /dev/sdX:</p>
+<p>[sourcecode language="shell"]echo &quot;- - -&quot; &gt; /sys/class/scsi_host/hostX/scan<br />
+[/sourcecode]</p>
+<p>Opcionalmente você pode executar o comando abaixo que realiza esse passo-a-passo acima de forma automática<br />
+[sourcecode language="shell"]for h in `ls /sys/class/scsi_host/` ; do echo &quot;- - -&quot; &gt; /sys/class/scsi_host/$h/scan; done<br />
+[/sourcecode]</p>
