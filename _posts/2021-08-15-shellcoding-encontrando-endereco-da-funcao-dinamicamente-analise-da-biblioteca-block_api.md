@@ -11,34 +11,6 @@ categories:
 - Criação de Exploits
 - Offensive Security
 tags: []
-meta:
-  _syntaxhighlighter_encoded: '1'
-  _edit_last: '1'
-  _yoast_wpseo_content_score: '30'
-  _aviaLayoutBuilder_active: ''
-  _aviaLayoutBuilderCleanData: ''
-  layout: ''
-  sidebar: ''
-  footer: ''
-  header_title_bar: ''
-  header_transparency: ''
-  _avia_hide_featured_image: '0'
-  _oembed_14754e114ea4bde8f1cb5225349f342d: "{{unknown}}"
-  _oembed_abf0d53fcac5cf84debb68cec7d848f7: "{{unknown}}"
-  _oembed_2bdf3ae46ba31ea4fb98e23d144a1cd7: "{{unknown}}"
-  _oembed_9b8359dd2da694fae8b21fede47dd15c: "{{unknown}}"
-  _yoast_wpseo_opengraph-title: Encontrando endereço da função dinamicamente. Análise
-    da biblioteca block_api
-  _yoast_wpseo_opengraph-description: Neste artigo iremos dissecar a biblioteca da
-    Metasploit chamada Block API responsável por localizar em tempo de execução o
-    endereço das funções dentro dos módulos carregados na aplicação.
-  _yoast_wpseo_opengraph-image: {{site.baseurl}}/assets/2021/08/36c41ddc969a4761a25396a46edbf8a3.png
-  _yoast_wpseo_opengraph-image-id: '2272'
-  _yoast_wpseo_primary_category: '80'
-  _av_alb_posts_elements_state: a:0:{}
-  _av_el_mgr_version: '1.0'
-  _av_alb_element_mgr_version: 1.0.1
-  _av_css_styles: a:6:{s:7:"post_id";i:2264;s:8:"css_file";s:13:"post-2264.css";s:9:"timestamp";s:0:"";s:6:"status";s:6:"no_css";s:13:"processed_ids";a:0:{}s:13:"include_posts";a:0:{}}
 author: Helvio Junior (m4v3r1ck)
 permalink: '/it/security/criacao-de-exploits/shellcoding-encontrando-endereco-da-funcao-dinamicamente-analise-da-biblioteca-block_api/'
 ---
