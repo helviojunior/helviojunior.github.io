@@ -5,42 +5,36 @@ order: 4
 ---
 
 
-<h1 align="center">Hi 👋, I'm Helvio Junior (aka M4v3r1ck)</h1>
-<h3 align="center">Cybersecurity Researcher && Trainer && Penetration Tester</h3>
+# Hi 👋, I'm Helvio Junior (aka M4v3r1ck)
+### Cybersecurity Researcher && Trainer && Penetration Tester
 
 <p align="left"> <a href="https://www.linkedin.com/in/helviojunior/" target="_blank"><img src="https://img.shields.io/twitter/follow/helviojunior?logo=linkedin&style=for-the-badge" alt="itsfading_" /></a> </p>
 
 - 📔 I’m co-founder and CEO of [Sec4US](https://sec4us.com.br/)
-
-- I am currently learning **Low Level stuffs and studing to OSEE**
-
-- I am the first to earn [OSCE3](https://www.credly.com/badges/549448c6-e476-410a-8d7f-fe63281cd0d3/public_url) in Latin America
-
-- I hold the majors offensive security certifications **OSCE3, OSEP, OSED, OSWE, OSCE, OSCP, eMAPT, eCXD, CEH**
-
+- 📚 I’m currently learning **Low Level stuffs and studing to OSEE**
+- 🔖 I’m the first to earn [OSCE3](https://www.credly.com/badges/549448c6-e476-410a-8d7f-fe63281cd0d3/public_url) in Latin America
+- 🔖 I hold the majors offensive security certifications **OSCE3, OSEP, OSED, OSWE, OSCE, OSCP, eMAPT, eCXD, CEH**
 - 📝 I regularly (or not) write articles on [https://www.helviojunior.com.br](https://www.helviojunior.com.br)
-
 - 💬 Ask me about **buffer overflow, assembly, shellcoding, binary exploitation, exploit dev, malware dev, network, mobile pentesting and Source Code Review and so on**
-
 - 📫 How to reach me **helvio.junior@sec4us.com.br**
 
-<h3 align="left">Connect with me:</h3>
+### Connect with me:
 <p align="left">
-<a href="https://www.linkedin.com/in/helviojunior/" target="blank"><img align="center" src="https://raw.githubusercontent.com/rahuldkjain/github-profile-readme-generator/master/src/images/icons/Social/linked-in-alt.svg" alt="helviojunior" height="30" width="40" /></a>
-<a href="https://www.youtube.com/c/sec4us" target="blank"><img align="center" src="https://raw.githubusercontent.com/rahuldkjain/github-profile-readme-generator/master/src/images/icons/Social/youtube.svg" alt="Sec4us YouTube" height="30" width="40" /></a>
+<a href="https://www.linkedin.com/in/helviojunior/" target="_blank"><img align="center" src="https://raw.githubusercontent.com/rahuldkjain/github-profile-readme-generator/master/src/images/icons/Social/linked-in-alt.svg" alt="helviojunior" height="30" width="40" /></a>
+<a href="https://www.youtube.com/c/sec4us" target="_blank"><img align="center" src="https://raw.githubusercontent.com/rahuldkjain/github-profile-readme-generator/master/src/images/icons/Social/youtube.svg" alt="Sec4us YouTube" height="30" width="40" /></a>
 </p>
 
-<h3 align="left">Creator of 🇧🇷 Brazilian Cyber Security Certifications:</h3>
+### Creator of 🇧🇷 Brazilian Cyber Security Certifications:
 <p align="left">
     <a href="https://sec4us.com.br/certificacao/scmpa-sec4us-certified-mobile-pentester-android/" target="_blank" rel="noreferrer"> 
-        <img src="https://sec4us.com.br/static/images/logo-scmpa.png" alt="osee prep" width="40" height="40"/> 
+        <img src="https://sec4us.com.br/static/images/logo-scmpa.png" alt="osee prep" width="64" height="64"/> 
     </a>
     <a href="https://sec4us.com.br/certificacao/scwap-sec4us-certified-web-api-pentester/" target="_blank" rel="noreferrer"> 
-        <img src="https://sec4us.com.br/static/images/logo-scwap.png" alt="osce3" width="40" height="40"/> 
+        <img src="https://sec4us.com.br/static/images/logo-scwap.png" alt="osce3" width="64" height="64"/> 
     </a> 
 </p>
 
-<h3 align="left">Some Badges:</h3>
+### Some Badges:
 <p align="left">
     <a href="https://certificates.blackhat.com/04634f86-3ad7-4c2e-b38e-08560949a85c" target="_blank" rel="noreferrer"> 
         <img src="https://templates.images.credential.net/16583524934465784585269502996387.png" alt="osee prep" width="40" height="40"/> 
@@ -64,4 +58,5 @@ order: 4
         <img src="https://images.credly.com/size/680x680/images/ec81134d-e80b-4eb5-ae07-0eb8e1a60fcd/image.png" alt="osce3" width="40" height="40"/> 
     </a>
 </p>
+
 
