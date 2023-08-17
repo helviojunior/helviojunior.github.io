@@ -40,15 +40,15 @@ meta:
   _av_alb_element_mgr_version: 1.0.1
   _av_css_styles: a:6:{s:7:"post_id";i:2264;s:8:"css_file";s:13:"post-2264.css";s:9:"timestamp";s:0:"";s:6:"status";s:6:"no_css";s:13:"processed_ids";a:0:{}s:13:"include_posts";a:0:{}}
 author: Helvio Junior (m4v3r1ck)
-permalink: "/it/security/criacao-de-exploits/shellcoding-encontrando-endereco-da-funcao-dinamicamente-analise-da-biblioteca-block_api/"
+permalink: '/it/security/criacao-de-exploits/shellcoding-encontrando-endereco-da-funcao-dinamicamente-analise-da-biblioteca-block_api/'
 ---
+
+Introdução
+----------
 
 Neste artigo iremos dissecar a biblioteca da Metasploit chamada Block API responsável por localizar em tempo de execução o endereço das funções dentro dos módulos carregados na aplicação.
 
-Introdução
-==========
-
-Antes de entrarmos efetivamente no assunto deste post é interessante conceituar algumas coisas: A primeira delas é sobre o termo Shellcoding.
+Porém, antes de entrarmos efetivamente no assunto deste post é interessante conceituar algumas coisas: A primeira delas é sobre o termo Shellcoding.
 
 Shellcoding é um termo muito utilizado para designar um código escrito em assembly utilizando durante o processo de exploração de binários (Windows e Linux), seja para criação de um shell reverso, bind shell como para execução de comandos, execução de uma aplicação e etc.
 
