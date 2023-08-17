@@ -1,7 +1,6 @@
 ---
 layout: post
-title: Shellcoding - Encontrando endereço da função dinamicamente. Análise da biblioteca
-  block_api
+title: 'Shellcoding - Encontrando endereço da função dinamicamente. Análise da biblioteca block_api'
 date: 2021-08-15 16:26:52.000000000 -03:00
 type: post
 parent_id: '0'
@@ -43,6 +42,7 @@ meta:
 author: Helvio Junior (m4v3r1ck)
 permalink: "/it/security/criacao-de-exploits/shellcoding-encontrando-endereco-da-funcao-dinamicamente-analise-da-biblioteca-block_api/"
 ---
+
 Neste artigo iremos dissecar a biblioteca da Metasploit chamada Block API responsável por localizar em tempo de execução o endereço das funções dentro dos módulos carregados na aplicação.
 
 Introdução
