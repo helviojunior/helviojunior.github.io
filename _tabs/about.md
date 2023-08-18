@@ -3,7 +3,7 @@ title: About
 icon: fas fa-info
 order: 4
 image:
-  path: /assets/img/ilustra_about.jpg
+  src: /assets/img/ilustra_about.jpg
   alt: Ilustration.
 ---
 
