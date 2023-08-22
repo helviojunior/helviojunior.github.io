@@ -24,8 +24,8 @@ excerpt: "Aprenda como resolver o problema de lentidão na importação de grand
 ## Introdução
 
 Muito comumente durante um teste de invasão (Pentest) que envolve ambiente do Microsoft Active Directory (aka AD), utilizamos diversas ferramentas para automatizar e transformar um dado em valor, uma dessas ferramentas é o [BloodHound]( https://github.com/BloodHoundAD/BloodHound). A grande sacada do BloodHound é o fato de obter uma infinidade de informações de um ambiente do Active Directory e os representar de uma forma que deixem de ser apenas informações soltas e as relacione de forma a gerar valor e criar hipóteses de caminhos a serem explorados.
-O BloodHound representa os diversos objetos do AD como nós (em inglês Nodes), exemplo, Usuários, Computadores, CPOs, ACLs, ACEs ,entre outros, bem como os seus respectivos relacionamentos são representados como arestas (do inglês Edges), exemplo, MemberOf, Owns, CanRDP, GenericWrite, entre outros. Desta forma é possível identificar os potenciais caminhos para uma cadeia de exploração.
-Neste post irei descrever um pouco da minha experiencia utilizando o BloodHound, incluindo o principal desafio que encontrei em manipular/importar base de dados grandes. Adicionalmente demonstrarei como resolvi este principal problema (a lentidão de importação dos dados no BloodHound) com a criação de uma ferramenta para manupulação, tratamento e importação dos dados do BloodHound.
+O BloodHound representa os diversos objetos do AD como nós (em inglês Nodes), exemplo, `Usuários`, `Computadores`, `GPOs`, `ACLs`, `ACEs` ,entre outros, bem como os seus respectivos relacionamentos são representados como arestas (do inglês Edges), exemplo, `MemberOf`, `Owns`, `CanRDP`, `GenericWrite`, entre outros. Desta forma é possível identificar os potenciais caminhos para uma cadeia de exploração.
+Neste post irei descrever um pouco da minha experiencia utilizando o BloodHound, incluindo o principal desafio que encontrei em manipular/importar base de dados grandes. Adicionalmente demonstrarei como resolvi o principal problema, `a lentidão de importação dos dados no BloodHound`, com a criação de uma ferramenta para manipulação, tratamento e importação dos dados do BloodHound.
 
 
 O [GitHub]( https://github.com/BloodHoundAD/BloodHound) do BoodHound o define da seguinte forma:
@@ -41,7 +41,7 @@ A primeira fase no uso do BloodHound é coletar dados dos servidores do Active D
 [![]({{site.baseurl}}/assets/2023/08/ad_001.jpg)]({{site.baseurl}}/assets/2023/08/ad_001.jpg)
 
 ## Coletores
-A principal ferramenta fornecida com o BloodHound para coletar informações do Active Directory é o SharpHound. SharpHound é um executável .NET 4 que possui diversos parâmetros para configurar quais dados precisam ser coletados. Esses parâmetros influenciam a quantidade de dados coletados e a furtividade da execução. O SharpHound coletará informações do LDAP/LDAPS de um controlador de domínio. Além disso, dependendo dos parâmetros de coleta/enumeração especificados, ele também se conectará a hosts individuais por meio do protocolo RPC usando um `named pipe` (ncacn_np) que ocorre na porta Microsoft-DS (445/TCP) para obter informações sobre membros de grupos locais e usuários conectados .
+A principal ferramenta fornecida com o BloodHound para coletar informações do Active Directory é o SharpHound. SharpHound é um executável .NET 4 que possui diversos parâmetros para configurar quais dados precisam ser coletados. Esses parâmetros influenciam a quantidade de dados coletados e a furtividade da execução. O SharpHound coletará informações do `LDAP/LDAPS` de um controlador de domínio. Além disso, dependendo dos parâmetros de coleta/enumeração especificados, ele também se conectará a hosts individuais por meio do protocolo RPC usando um `named pipe` (ncacn_np) que ocorre na porta `Microsoft-DS` (`445/TCP`) para obter informações sobre membros de grupos locais e usuários conectados .
 
 Além da ferramenta SharpHound, existem várias outras opções para coletar dados conforme listado na tabela abaixo:
 
@@ -59,7 +59,7 @@ Depois de coletar os arquivos de entrada necessários, podemos passar para a pr�
 
 ## Importando
 
-Depois de configurar o BloodHound com o back-end do banco de dados do Neo4j, conforme descrito na seção Instalação em https://bloodhound.readthedocs.io/, os dados coletados podem ser importados.
+Depois de configurar o BloodHound com o back-end do banco de dados do Neo4j, conforme descrito na seção Instalação em [https://bloodhound.readthedocs.io/](https://bloodhound.readthedocs.io/), os dados coletados podem ser importados.
 
 A maneira usual de importar é simplesmente iniciar a GUI do BloodHound e arrastar os arquivos JSON e/ou zip sobre a janela principal do aplicativo. Como alternativa, o botão Importar à direita pode ser usado para selecionar os arquivos que deseja importar.
 
@@ -70,7 +70,9 @@ A importação geralmente funciona bem, porém às vezes falha. Nesse caso, uma 
 
 ## Dados fictícios
 
-*Nota:* Caso você não tenha um um ambiente do Active Directory disponível, mas ainda gostaria de realizar as consultas Cypher (discutidas na seção Consultas), você também pode carregar alguns dados fictícios no BloodHound usando duas possibilidades:
+> Caso você não tenha um um ambiente do Active Directory disponível, mas ainda gostaria de realizar as consultas Cypher (discutidas na seção Consultas), você também pode carregar alguns dados fictícios no BloodHound usando uma das duas possibilidades abaixo.
+{: .prompt-tip }
+
 
 ### Opção 1 - ferramenta DBCreator.py, que pode ser instalada da seguinte maneira:
 
@@ -121,9 +123,9 @@ Com o problema de lentidão na importação e soluções que não me ajudaram mu
 
 Durante os meus testes de invasão, sempre realizo os seguinte procedimento ao final do comprometimento do AD
 
-1. Extração de todos os hashes através do ntds.dit ou DCSync;
-2. Geração de uma wordlist customizada com o nome do cliente (com as senhas mais comuns, ex.: Cliente@2023)
-3. Quebra dos hashes (usando hashcat) com a wordlist customizada + senhas encontradas durante o teste + wordlist comuns de marcado (listadas abaixo).
+* [x] Extração de todos os hashes através do `ntds.dit` ou `DCSync`;
+* [x] Geração de uma wordlist customizada com o nome do cliente (com as senhas mais comuns, ex.: `Cliente@2023`)
+* [x] Quebra dos hashes (usando hashcat) com a `wordlist customizada` + `senhas encontradas durante o teste` + `wordlist` comuns de marcado (listadas abaixo).
 
 *Minhas wordlists preferidas*
 
@@ -183,18 +185,18 @@ Foi neste momento em que decidi agregar na mesma ferramenta os dados vindos do B
 
 Durante o desenvolvimento do KnowsMore, diversos problemas foram encontrados como:
 
-* Entendimento (atualizado) de como os dados são importados e relacionados (pois é o importador que cria os nós e arestas)
-* Caractéres não ASCII vindos no JSON
-* Trabalhando com arquivos grandes
-* Trabalhar com versões diferentes de coletores (v3, v4), uma vez que pequenas diferenças são geradas nos arquivos JSON
+* [x] Entendimento (atualizado) de como os dados são importados e relacionados (pois é o importador que cria os nós e arestas)
+* [x] Caractéres não ASCII vindos no JSON (quebrando a importação)
+* [x] Trabalhando com arquivos grandes
+* [x] Trabalhar com versões diferentes de coletores (v3, v4), uma vez que pequenas diferenças são geradas nos arquivos JSON
 
 
 Desta forma em minha pesquisa se baseei muito no próprio código fonte do BloodHound [util.js](https://github.com/BloodHoundAD/BloodHound/blob/master/src/js/utils.js) para criar o meu próprio importador. Desta forma eu coloquei as seguintes premissas para o importador:
 
-1. Ser rápido (pois a lentidão foi principal problema que me motivou a começar este trabalho)
-2. Importar os dados de forma fidedigna (para não correr o risco de não encontrar um caminho viável para o comprometimento em virtude de falha no meu software)
-3. Ser retro-compatível, ou seja, permitir importar dados das versões antigas dos coletores em banco de dados/BloodHound mais atuais.
-4. Ser uma ferramenta em que o Blue Team, Auditoria e outros times interessados, possam utilizar para auditar o seu próprio ambiente.
+* [x] Ser rápido (pois a lentidão foi principal problema que me motivou a começar este trabalho)
+* [x] Importar os dados de forma fidedigna (para não correr o risco de não encontrar um caminho viável para o comprometimento em virtude de falha no meu software)
+* [x] Ser retro-compatível, ou seja, permitir importar dados das versões antigas dos coletores em banco de dados/BloodHound mais atuais.
+* [x] Ser uma ferramenta em que o Blue Team, Auditoria e outros times interessados, possam utilizar para auditar o seu próprio ambiente.
 
 Desta forma o KnowsMore nasceu e atualmente inclui as seguintes funcionalidades:
 
@@ -236,7 +238,7 @@ knowsmore --create-db
 
 ### Importando arquivos JSON
 
-Embora você possa importar um arquivo JSON diretamente, recomendo realizar a importação através do arquivo ZIP inteiro, pois o KnoesMore irá otimizar a ordem de importação visando um melhor correlacionamento dos dados.
+Embora você possa importar um arquivo JSON diretamente, recomendo realizar a importação através do arquivo ZIP inteiro, pois o KnowsMore irá otimizar a ordem de importação visando um melhor correlacionamento dos dados.
 
 ```bash
 # Bloodhound ZIP File
@@ -253,7 +255,9 @@ knowsmore --bloodhound --import-data ~/Desktop/20220912105336_users.json
 knowsmore --bloodhound --sync 10.10.10.10:7687 -d neo4j -u neo4j -p 12345678
 ```
 
-*Nota:* Para que você possa interagir com o Neo4J remotamente é necessário alterar o seu arquivo de configuração `/etc/neo4j/neo4j.conf` conforme a linha abaixo e reiniciar o seu serviço.
+> Para que você possa interagir com o Neo4J remotamente é necessário alterar o seu arquivo de configuração `/etc/neo4j/neo4j.conf` conforme a linha abaixo e reiniciar o seu serviço.
+{: .prompt-warning }
+
 
 ```
 server.bolt.listen_address=0.0.0.0:7687
