@@ -503,6 +503,37 @@ footer {
     }
   }
 
+  ul.task-list {
+    -webkit-padding-start: 1.25rem;
+    padding-inline-start: 1.25rem;
+
+    li {
+      list-style-type: none;
+      padding-left: 0;
+
+      /* checkbox icon */
+      > i {
+        width: 2rem;
+        margin-left: -1.25rem;
+        color: var(--checkbox-color);
+
+        &.checked {
+          color: var(--checkbox-checked-color);
+        }
+      }
+
+      ul {
+        -webkit-padding-start: 1.75rem;
+        padding-inline-start: 1.75rem;
+      }
+    }
+
+    input[type='checkbox'] {
+      margin: 0 0.5rem 0.2rem -1.3rem;
+      vertical-align: middle;
+    }
+  } /* ul */
+
   dl > dd {
     margin-left: 1rem;
   }
