@@ -644,6 +644,11 @@ footer {
   transition: background-color 0.15s ease-in-out, border-color 0.15s ease-in-out;
 }
 
+.img-link {
+  color: transparent;
+  display: inline-flex;
+}
+
 /* --- Overriding --- */
 
 // magnific-popup
