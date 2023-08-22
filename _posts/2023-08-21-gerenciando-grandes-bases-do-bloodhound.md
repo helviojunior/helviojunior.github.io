@@ -119,7 +119,7 @@ Durante os meus testes de invasão, sempre realizo os seguinte procedimento ao f
 
 *Minhas wordlists preferidas*
 
-* [x] Wordlist customizada com o domando `knowsmore --word-list -o minha_lista.txt --batch --name sec4us`
+* [x] Wordlist customizada com o comando `knowsmore --word-list -o minha_lista.txt --batch --name sec4us`
 * [x] [hashesorg2019](https://weakpass.com/wordlist/1851)
 * [x] [weakpass_2](https://weakpass.com/wordlist/1863)
 
