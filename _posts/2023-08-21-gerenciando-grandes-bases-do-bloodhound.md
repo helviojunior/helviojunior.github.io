@@ -210,7 +210,7 @@ Desta forma o KnowsMore nasceu e atualmente inclui as seguintes funcionalidades:
 + [x] Analisar a similatiedade da senha com o nome da empresa e nome do usuário
 + [x] Busca rápida por usuários, senhas e hashes durante o teste
 + [x] Exportação para a base de dados do BloodHound (Neo4j) os objetos com as senhas quebradas como 'owned object'
-+ [x] Exportação para SIEM como Slunk e ELK
++ [x] Exportação para SIEM como Splunk e ELK
 + [x] Muito mais...
 
 Para o processo de importação dos arquivos JSON do BloodHound (Objeto deste post) o KnowsMore segue o seguinte fluxo:
