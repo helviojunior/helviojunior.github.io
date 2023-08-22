@@ -119,8 +119,9 @@ Durante os meus testes de invasão, sempre realizo os seguinte procedimento ao f
 
 *Minhas wordlists preferidas*
 
-1. [hashesorg2019](https://weakpass.com/wordlist/1851)
-2. [weakpass_2](https://weakpass.com/wordlist/1863)
+* [x] Wordlist customizada com o domando `knowsmore --word-list -o minha_lista.txt --batch --name sec4us`
+* [x] [hashesorg2019](https://weakpass.com/wordlist/1851)
+* [x] [weakpass_2](https://weakpass.com/wordlist/1863)
 
 Sempre faço isso para poder gerar os dados de como está a segurança/entropia geral do ambiente do cliente. Por mais que simples, os clientes sempre se surpreendem e amam essa informação.
 
@@ -268,7 +269,7 @@ Posteriormente é possível sincronizar com o Neo4J
 knowsmore --bloodhound --mark-owned 10.10.10.10 -d neo4j -u neo4j -p 123456
 ```
 
-## Conslusão
+## Conclusão
 
 BloodHound é uma ferramenta muito poderosa para atacantes e defensores identificarem caminhos não intencionais em ambientes do Active Directory. Isso é facilitado pelo banco de dados de gráficos Neo4j, que pode ser consultado diretamente usando o Cypher para extrair e pós-processar eficientemente qualquer informação para que possa ser usada pelos atacantes, administradores e defensores para aumentar o jogo contínuo de ataque e defesa.
 
