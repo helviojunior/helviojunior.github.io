@@ -103,6 +103,7 @@ Edite o arquivo de configuração `/etc/neo4j/neo4j.conf`, e inclua/edite a linh
 dbms.default_database=bloodhoundexampledb.db
 dbms.databases.allow_upgrade=true
 ```
+{: file='/etc/neo4j/neo4j.conf'}
 
 Reinicie o o Neo4J
 
@@ -123,15 +124,15 @@ Com o problema de lentidão na importação e soluções que não me ajudaram mu
 
 Durante os meus testes de invasão, sempre realizo os seguinte procedimento ao final do comprometimento do AD
 
-* [x] Extração de todos os hashes através do `ntds.dit` ou `DCSync`;
-* [x] Geração de uma wordlist customizada com o nome do cliente (com as senhas mais comuns, ex.: `Cliente@2023`)
-* [x] Quebra dos hashes (usando hashcat) com a `wordlist customizada` + `senhas encontradas durante o teste` + `wordlist` comuns de marcado (listadas abaixo).
++ [x] Extração de todos os hashes através do `ntds.dit` ou `DCSync`;
++ [x] Geração de uma wordlist customizada com o nome do cliente (com as senhas mais comuns, ex.: `Cliente@2023`)
++ [x] Quebra dos hashes (usando hashcat) com a `wordlist customizada` + `senhas encontradas durante o teste` + `wordlist` comuns de marcado (listadas abaixo).
 
 **Minhas wordlists preferidas**
 
-* [x] Wordlist customizada com o comando `knowsmore --word-list -o minha_lista.txt --batch --name sec4us`
-* [x] [hashesorg2019](https://weakpass.com/wordlist/1851)
-* [x] [weakpass_2](https://weakpass.com/wordlist/1863)
++ [x] Wordlist customizada com o comando `knowsmore --word-list -o minha_lista.txt --batch --name sec4us`
++ [x] [hashesorg2019](https://weakpass.com/wordlist/1851)
++ [x] [weakpass_2](https://weakpass.com/wordlist/1863)
 
 Sempre faço isso para poder gerar os dados de como está a segurança/entropia geral do ambiente do cliente. Por mais que simples, os clientes sempre se surpreendem e amam essa informação.
 
@@ -185,32 +186,32 @@ Foi neste momento em que decidi agregar na mesma ferramenta os dados vindos do B
 
 Durante o desenvolvimento do KnowsMore, diversos problemas foram encontrados como:
 
-* [x] Entendimento (atualizado) de como os dados são importados e relacionados (pois é o importador que cria os nós e arestas)
-* [x] Caractéres não ASCII vindos no JSON (quebrando a importação)
-* [x] Trabalhando com arquivos grandes
-* [x] Trabalhar com versões diferentes de coletores (v3, v4), uma vez que pequenas diferenças são geradas nos arquivos JSON
++ [x] Entendimento (atualizado) de como os dados são importados e relacionados (pois é o importador que cria os nós e arestas)
++ [x] Caractéres não ASCII vindos no JSON (quebrando a importação)
++ [x] Trabalhando com arquivos grandes
++ [x] Trabalhar com versões diferentes de coletores (v3, v4), uma vez que pequenas diferenças são geradas nos arquivos JSON
 
 
 Desta forma em minha pesquisa se baseei muito no próprio código fonte do BloodHound [util.js](https://github.com/BloodHoundAD/BloodHound/blob/master/src/js/utils.js) para criar o meu próprio importador. Desta forma eu coloquei as seguintes premissas para o importador:
 
-* [x] Ser rápido (pois a lentidão foi principal problema que me motivou a começar este trabalho)
-* [x] Importar os dados de forma fidedigna (para não correr o risco de não encontrar um caminho viável para o comprometimento em virtude de falha no meu software)
-* [x] Ser retro-compatível, ou seja, permitir importar dados das versões antigas dos coletores em banco de dados/BloodHound mais atuais.
-* [x] Ser uma ferramenta em que o Blue Team, Auditoria e outros times interessados, possam utilizar para auditar o seu próprio ambiente.
++ [x] Ser rápido (pois a lentidão foi principal problema que me motivou a começar este trabalho)
++ [x] Importar os dados de forma fidedigna (para não correr o risco de não encontrar um caminho viável para o comprometimento em virtude de falha no meu software)
++ [x] Ser retro-compatível, ou seja, permitir importar dados das versões antigas dos coletores em banco de dados/BloodHound mais atuais.
++ [x] Ser uma ferramenta em que o Blue Team, Auditoria e outros times interessados, possam utilizar para auditar o seu próprio ambiente.
 
 Desta forma o KnowsMore nasceu e atualmente inclui as seguintes funcionalidades:
 
-* [x] Importação dos hashes NTLM do txt vindo do output .ntds (gerado pelo CrackMapExec ou secretsdump.py)
-* [x] Importação direta dos hashes NTLM pelos arquivos NTDS.dit e SYSTEM
-* [x] Importar e cruzar os hashes NTLM quebrados pelo hashcat
-* [x] Importação dos arquivos BloodHound ZIP ou JSON
-* [X] Ser um `BloodHound importer` (importar os arquivos JSON para Neo4J sem a interface do BloodHound)
-* [x] Analisar a qualidade das senhas quebradas (tamanho , minúsculo, maiusculo, numero, caracteres especiais e caracteres latinos)
-* [x] Analisar a similatiedade da senha com o nome da empresa e nome do usuário
-* [x] Busca rápida por usuários, senhas e hashes durante o teste
-* [x] Exportação para a base de dados do BloodHound (Neo4j) os objetos com as senhas quebradas como 'owned object'
-* [x] Exportação para SIEM como Slunk e ELK
-* [x] Muito mais...
++ [x] Importação dos hashes NTLM do txt vindo do output .ntds (gerado pelo CrackMapExec ou secretsdump.py)
++ [x] Importação direta dos hashes NTLM pelos arquivos NTDS.dit e SYSTEM
++ [x] Importar e cruzar os hashes NTLM quebrados pelo hashcat
++ [x] Importação dos arquivos BloodHound ZIP ou JSON
++ [x] Ser um `BloodHound importer` (importar os arquivos JSON para Neo4J sem a interface do BloodHound)
++ [x] Analisar a qualidade das senhas quebradas (tamanho , minúsculo, maiusculo, numero, caracteres especiais e caracteres latinos)
++ [x] Analisar a similatiedade da senha com o nome da empresa e nome do usuário
++ [x] Busca rápida por usuários, senhas e hashes durante o teste
++ [x] Exportação para a base de dados do BloodHound (Neo4j) os objetos com as senhas quebradas como 'owned object'
++ [x] Exportação para SIEM como Slunk e ELK
++ [x] Muito mais...
 
 Para o processo de importação dos arquivos JSON do BloodHound (Objeto deste post) o KnowsMore segue o seguinte fluxo:
 
