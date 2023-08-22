@@ -12,7 +12,7 @@ categories:
 tags: []
 author: Helvio Junior (m4v3r1ck)
 permalink: "/offsec/gerenciando-grandes-bases-do-bloodhound/"
-excerpt: "Neste post irei descrever um pouco da minha experiencia utilizando o BloodHound, incluindo o principal desafio que encontrei em manipular/importar base de dados grandes. Adicionalmente demonstrarei como resolvi este principal problema (a lentidão de importação dos dados no BloodHound) com a criação de uma ferramenta para manupulação, tratamento e importação dos dados do BloodHound"
+excerpt: "Aprenda como resolver o problema de lentidão na importação de grandes arquivos JSON do BloodHound."
 ---
 
 ## Introdução
