@@ -255,7 +255,7 @@ server.bolt.listen_address=0.0.0.0:7687
 Independente de como, ao ser identificado uma senha de usuário você pode indicar ao KnowsMore que este usuário foi comprometido através do comando abaixo:
 
 ```bash
-knowsmore --ntlm-hash --add-password @Pass123
+knowsmore --user-pass --username administrator --password @Pass123
 ```
 
 Posteriormente é possível sincronizar com o Neo4J
