@@ -29,7 +29,9 @@ Neste post irei descrever um pouco da minha experiencia utilizando o BloodHound,
 
 
 O [GitHub]( https://github.com/BloodHoundAD/BloodHound) do BoodHound o define da seguinte forma:
-O BloodHound usa a teoria dos gráficos para revelar os relacionamentos ocultos e muitas vezes não intencionais em um ambiente Active Directory ou Azure. Os invasores podem usar o BloodHound para identificar facilmente caminhos de ataque altamente complexos que, de outra forma, seriam impossíveis de identificar rapidamente. Os times de ataque (Red Team), bem como os times de defesa (Blue team) podem utiliza-lo para identificar e eliminar esses mesmos caminhos de ataque. As times podem usar o BloodHound para obter facilmente uma compreensão mais profunda das relações de privilégio em um ambiente Active Directory ou Azure.
+> O `BloodHound` usa a teoria dos gráficos para revelar os relacionamentos ocultos e muitas vezes não intencionais em um ambiente Active Directory ou Azure. Os invasores podem usar o BloodHound para identificar facilmente caminhos de ataque altamente complexos que, de outra forma, seriam impossíveis de identificar rapidamente. Os times de ataque (Red Team), bem como os times de defesa (Blue team) podem utiliza-lo para identificar e eliminar esses mesmos caminhos de ataque. As times podem usar o BloodHound para obter facilmente uma compreensão mais profunda das relações de privilégio em um ambiente Active Directory ou Azure.
+{: .prompt-tip }
+
 
 Atualmente o BloodHound suporta a extração e tratamento dos dados do Microsoft Active Directory On-Premisses e também do Azure AD. Porém este post foca no procedimento para o AD On-Premisses.
 
