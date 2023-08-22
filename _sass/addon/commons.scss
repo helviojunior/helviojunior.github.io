@@ -113,10 +113,50 @@ blockquote {
   border-left: 5px solid var(--blockquote-border-color);
   padding-left: 1rem;
   color: var(--blockquote-text-color);
+
+  &[class^='prompt-'] {
+    border-left: 0;
+    position: relative;
+    padding: 1rem 1rem 1rem 3rem;
+    color: var(--prompt-text-color);
+
+    @extend %rounded;
+
+    &::before {
+      text-align: center;
+      width: 3rem;
+      position: absolute;
+      left: 0.25rem;
+      margin-top: 0.4rem;
+      text-rendering: auto;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    > p:last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  @include prompt('tip', '\f0eb', 'regular');
+  @include prompt('info', '\f06a');
+  @include prompt('warning', '\f06a');
+  @include prompt('danger', '\f071');
 }
 
 kbd {
+  font-family: inherit;
+  display: inline-block;
+  vertical-align: middle;
+  line-height: 1.3rem;
+  min-width: 1.75rem;
+  text-align: center;
   margin: 0 0.3rem;
+  padding-top: 0.1rem;
+  color: var(--kbd-text-color);
+  background-color: var(--kbd-bg-color);
+  border-radius: 0.25rem;
+  border: solid 1px var(--kbd-wrap-color);
+  box-shadow: inset 0 -2px 0 var(--kbd-wrap-color);
 }
 
 footer {
@@ -634,7 +674,7 @@ $sidebar-display: "sidebar-display";
       width: 6rem;
       height: 6rem;
       border-radius: 50%;
-      border: 2px solid #b6b6b6;
+      /*border: 2px solid #b6b6b6;*/
       overflow: hidden;
       transform: translateZ(0); // fixed the zoom in Safari
       -webkit-transition: border-color 0.35s ease-in-out;
