@@ -30,7 +30,7 @@ Atualmente o BloodHound suporta a extração e tratamento dos dados do Microsoft
 A primeira fase no uso do BloodHound é coletar dados dos servidores do Active Directory através do protocolo LDAP usando um dos coletores disponíveis como o SharpHound (ou as APIs do Azure no caso do AzureHound) e armazená-los em arquivos JSON compactados para reduzir o tamanho do arquivo. Em seguida, esses arquivos podem ser movidos para o sistema no qual a análise será realizada e importados para um banco de dados Neo4j. Por fim, as consultas podem ser realizadas, seja usando a ferramenta BloodHound, outras ferramentas de terceiros ou diretamente usando a linguagem Cypher do Neo4j. Neste artigo vamos passar por essas três etapas.
 
 
-[![]({{site.baseurl}}/assets/2023/08/ad_001.png)]({{site.baseurl}}/assets/2023/08/ad_001.png)
+[![]({{site.baseurl}}/assets/2023/08/ad_001.jpg)]({{site.baseurl}}/assets/2023/08/ad_001.jpg)
 
 ## Coletores
 A principal ferramenta fornecida com o BloodHound para coletar informações do Active Directory é o SharpHound. SharpHound é um executável .NET 4 que possui diversos parâmetros para configurar quais dados precisam ser coletados. Esses parâmetros influenciam a quantidade de dados coletados e a furtividade da execução. O SharpHound coletará informações do LDAP/LDAPS de um controlador de domínio. Além disso, dependendo dos parâmetros de coleta/enumeração especificados, ele também se conectará a hosts individuais por meio do protocolo RPC usando um `named pipe` (ncacn_np) que ocorre na porta Microsoft-DS (445/TCP) para obter informações sobre membros de grupos locais e usuários conectados .
@@ -255,7 +255,11 @@ server.bolt.listen_address=0.0.0.0:7687
 Independente de como, ao ser identificado uma senha de usuário você pode indicar ao KnowsMore que este usuário foi comprometido através do comando abaixo:
 
 ```bash
-knowsmore --user-pass --username administrator --password @Pass123
+knowsmore --user-pass --username administrator --password Sec4US@2023
+
+# ou adicionando o nome da empresa
+
+--company sec4us --user-pass --username administrator --password Sec4US@2023 --company sec4us
 ```
 
 Posteriormente é possível sincronizar com o Neo4J
