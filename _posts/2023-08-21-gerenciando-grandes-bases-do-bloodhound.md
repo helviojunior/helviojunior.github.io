@@ -114,7 +114,7 @@ Comumente nos testes que realizo me deparo com ambientes grandes do AD, que cons
 
 Minha primeira tentativa de resolver o problema de importação foi usar o script [bloodhound-importer.py](https://github.com/fox-it/bloodhound-import), no entanto, apenas o formato de dados BloodHound v3 é suportado atualmente, enquanto os arquivos que geramos atualmente são de versões superiores (geralmente v4 ou superior). 
 
-Descobri mais tarde, o formato do arquivo não tem muitas diferenças, mas nem primeiro momento tentei localizar outras soluções para o meu problema, inclusive chegando ao artigo original em que me basei para escrever este post. Basicamente o autor divide o arquivo JSON em vários arquivos menores. Estratégia essa que não me ajudou muito, pois continuava com o problema de lentidão na importação. 
+Descobri mais tarde, o formato do arquivo não tem muitas diferenças, mas nem primeiro momento tentei localizar outras soluções para o meu problema, inclusive chegando ao artigo original ([Dealing with large BloodHound datasets](https://blog.bitsadmin.com/dealing-with-large-bloodhound-datasets)), escrito pelo Arris Huijgen,  em que me basei para escrever este post. Basicamente o autor divide o arquivo JSON em vários arquivos menores. Estratégia essa que não me ajudou muito, pois continuava com o problema de lentidão na importação. 
 
 
 ## Nascimento do knowsmore
@@ -127,7 +127,7 @@ Durante os meus testes de invasão, sempre realizo os seguinte procedimento ao f
 * [x] Geração de uma wordlist customizada com o nome do cliente (com as senhas mais comuns, ex.: `Cliente@2023`)
 * [x] Quebra dos hashes (usando hashcat) com a `wordlist customizada` + `senhas encontradas durante o teste` + `wordlist` comuns de marcado (listadas abaixo).
 
-*Minhas wordlists preferidas*
+**Minhas wordlists preferidas**
 
 * [x] Wordlist customizada com o comando `knowsmore --word-list -o minha_lista.txt --batch --name sec4us`
 * [x] [hashesorg2019](https://weakpass.com/wordlist/1851)
