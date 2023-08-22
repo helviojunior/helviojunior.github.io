@@ -275,6 +275,6 @@ BloodHound é uma ferramenta muito poderosa para atacantes e defensores identifi
 
 O ódigo fonte do KnowsMore pode ser encontrado no meu GitHub
 
-https://github.com/helviojunior/knowsmore
+[https://github.com/helviojunior/knowsmore](https://github.com/helviojunior/knowsmore)
 
 Obrigado pela leitura e espero que você consiga usar alguns dos truques em suas futuras atribuições do Active Directory!
