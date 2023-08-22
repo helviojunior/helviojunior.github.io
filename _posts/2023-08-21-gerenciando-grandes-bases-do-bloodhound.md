@@ -260,7 +260,7 @@ knowsmore --user-pass --username administrator --password Sec4US@2023
 
 # ou adicionando o nome da empresa
 
---company sec4us --user-pass --username administrator --password Sec4US@2023 --company sec4us
+knowsmore --user-pass --username administrator --password Sec4US@2023 --company sec4us
 ```
 
 Posteriormente é possível sincronizar com o Neo4J
@@ -268,6 +268,26 @@ Posteriormente é possível sincronizar com o Neo4J
 ```bash
 knowsmore --bloodhound --mark-owned 10.10.10.10 -d neo4j -u neo4j -p 123456
 ```
+
+## Múltiplas bases de dados
+
+Você pode estar trabalhando em várias tarefas para as quais está usando o BloodHound. Embora seja possível simplesmente importar os domínios de todas as atribuições em um único banco de dados e consultar os dados individualmente, isso pode ficar lento e confuso rapidamente.
+
+Por esse motivo é útil usar vários bancos de dados no Neo4j. Isso é possível simplesmente usando diferentes pastas de banco de dados para os diferentes projetos, o que pode ser feito usando as etapas abaixo. Este procedimento funciona tanto em ambiente Windows como Linux.
+
+1. Pare o serviço neo4j em um prompt de comando elevado: 
+    a. Windows: `net stop neo4j` (PowerShell: `Stop-Service neo4j`)
+    b. Linux: `systemctl stop neo4j`
+2. Navegue até a pasta `data\databases` dentro da pasta de instalação do Neo4j
+    a. Windows: `c:\Program Files\Neo4j`
+    b. Linux: consulte com o comand `grep -oE '^dbms.directories.data[ =]{1,3}(.*)$' /etc/neo4j/neo4j.conf | cut -d'=' -f2 | tr -d ' '`
+3. Renomeie a pasta `graph.db` existente para outra coisa, por exemplo `graph.db-ProjectX`
+4. Inicie o serviço neo4j novamente usando os comandos abaixo, que uma nova pasta graph.db será criada automaticamente
+    a. Windows: `net start neo4j` (PowerShell: `Start-Service neo4j`). 
+    b. Linux: `systemctl start neo4j`
+5. Importe seus dados para este banco de dados limpo. Sempre que quiser voltar, siga estas etapas novamente renomeando a pasta graph.db existente para, por exemplo, `graph.db-ProjectY` e renomeando a pasta renomeada anteriormente de volta para `graph.db`
+
+Uma maneira alternativa de alternar entre os bancos de dados é descomentar e atualizar a linha `dbms.active_database=graph.db` no arquivo `neo4j.conf` dentro do diretório de configuração do Neo4j. Uma terceira opção é iniciar várias instâncias do Neo4j usando o Docker, conforme descrito na página [Neo4j com Docker](https://neo4j.com/developer/docker/) na documentação do desenvolvedor do Neo4j.
 
 ## Conclusão
 
