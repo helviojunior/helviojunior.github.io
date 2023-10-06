@@ -20,7 +20,7 @@ author: Helvio Junior (m4v3r1ck)
 permalink: "/en/offsec/dealing-with-large-bloodHound-datasets/"
 excerpt: "Aprenda como resolver o problema de lentidão na importação de grandes arquivos JSON do BloodHound."
 image:
-  src: {{site.baseurl}}/assets/2023/08/bloodhound.png
+  src: /assets/2023/08/bloodhound.png
   alt: BloodHound
 ---
 
