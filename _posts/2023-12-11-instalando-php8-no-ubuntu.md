@@ -1,7 +1,7 @@
 ---
 layout: post
 title: Instalando PHP8 no Ubuntu
-date: 2023-12-11 17:02:32.000000000 -03:00
+date: 2023-12-11 15:00:00.000000000 -03:00
 type: post
 parent_id: '0'
 published: true
