@@ -19,6 +19,7 @@ tags:
 - OSCE3
 - Pentest
 - Criação de Exploits
+- Windows Internals
 author: Helvio Junior (m4v3r1ck)
 permalink: '/it/security/criacao-de-exploits/shellcoding-encontrando-endereco-da-funcao-dinamicamente-analise-da-biblioteca-block_api/'
 excerpt: "Neste artigo iremos dissecar a biblioteca da Metasploit chamada Block API responsável por localizar em tempo de execução o endereço das funções dentro dos módulos carregados na aplicação."

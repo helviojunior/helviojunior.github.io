@@ -8,7 +8,7 @@ published: true
 password: ''
 status: publish
 categories:
-- Criação de Exploits
+- Exploits Development
 - Offensive Security
 tags:
 - Offensive Security
@@ -18,7 +18,8 @@ tags:
 - OSEE
 - OSCE3
 - Pentest
-- Criação de Exploits
+- Exploits Development
+- Windows Internals
 author: Helvio Junior (m4v3r1ck)
 permalink: '/en/it/security/exploits/2021-08-15-shellcoding-finding-the-address-of-the-function-dynamically-analysis-of-the block_api-library/'
 excerpt: "In this article, we will dissect the Metasploit 32 bits library called Block API, responsible for dynamically locating the addresses of functions within the loaded modules in the application."
@@ -27,7 +28,7 @@ excerpt: "In this article, we will dissect the Metasploit 32 bits library called
 Introduction
 ----------
 
-In this article, we will dissect the Metasploit library called Block API, responsible for dynamically locating the addresses of functions within the loaded modules in the application.
+In this article, we will dissect the Metasploit 32 bits library called Block API, responsible for dynamically locating the addresses of functions within the loaded modules in the application.
 
 However, before we delve into the subject of this post, it's interesting to conceptualize a few things. The first of them is the term "Shellcoding."
 
