@@ -21,7 +21,7 @@ tags:
 - Exploits Development
 - Windows Internals
 author: Helvio Junior (m4v3r1ck)
-permalink: '/en/it/security/exploits/shellcoding-finding-the-address-of-the-function-dynamically-analysis-of-the block_api-library/'
+permalink: '/en/it/security/exploits/shellcoding-finding-the-address-of-the-function-dynamically-analysis-of-the-block_api-library/'
 excerpt: "In this article, we will dissect the Metasploit 32 bits library called Block API, responsible for dynamically locating the addresses of functions within the loaded modules in the application."
 ---
 
@@ -78,7 +78,7 @@ In our training, we teach how to use the Metasploit libraries called Block API f
 *   **64 bits:** [https://github.com/rapid7/metasploit-framework/blob/master/external/source/shellcode/windows/x64/src/block/block_api.asm](https://github.com/rapid7/metasploit-framework/blob/master/external/source/shellcode/windows/x64/src/block/block_api.asm)
 
 > By the way, I made some optimizations to ensure that the 64-bit version of the ASM code doesn't contain null bytes, and as a bonus, there was a reduction in size. Due to internal reasons, and as explained in the Pull Request comments, it wasn't merged, but for those interested, here is the reference: [Pull Request #17934](https://github.com/rapid7/metasploit-framework/pull/17934).
-{: .prompt-warning }
+{: .prompt-tip }
 
 We also have a mini-training available on our YouTube channel about 64-bit Shellcoding (In Brazilian Language): [https://www.youtube.com/watch?v=ySKEF8MHcZA](https://www.youtube.com/watch?v=ySKEF8MHcZA), using this library.
 
@@ -979,4 +979,4 @@ Sources:
 *   [https://software.intel.com/content/www/us/en/develop/articles/intel-sdm.html](https://software.intel.com/content/www/us/en/develop/articles/intel-sdm.html)
 *   [https://www.youtube.com/watch?v=ySKEF8MHcZA](https://www.youtube.com/watch?v=ySKEF8MHcZA)
 *   [https://github.com/rapid7/metasploit-framework/blob/master/external/source/shellcode/windows/x64/src/block/block_api.asm](https://github.com/rapid7/metasploit-framework/blob/master/external/source/shellcode/windows/x64/src/block/block_api.asm)
-*   [https://sec4us.com.br/cheatsheet/shellcoding](https://sec4us.com.br/cheatsheet/shellcoding)
+*   [https://cheatsheet.sec4us.com.br/shellcoding](https://cheatsheet.sec4us.com.br/shellcoding)
