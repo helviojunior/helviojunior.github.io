@@ -187,7 +187,7 @@ Note that the hash of the **ExitProcess** function is **0x56A2B5F0**, and this h
 
 #### Assembly - Using the block_api
 
-```asm
+```
 [BITS 32]
 
 global _start
@@ -288,7 +288,7 @@ VMA is equal to VRA + BaseAddress, which means it's the virtual address that can
 
 Here is the code snippet of the first api_call function:
 
-```asm
+```
 api_call:
 pushad ; We preserve all the registers for the caller, bar EAX and ECX.
 mov ebp, esp ; Create a new stack frame
@@ -316,7 +316,7 @@ This instruction copies the VRA of the PEB into the EDX register.
 
 Within Windbg, we can view this information using the following command:
 
-```txt
+```
 0:009> dt nt!_TEB @$teb
 ntdll!_TEB
 +0x000 NtTib : _NT_TIB
@@ -350,7 +350,7 @@ After executing the instruction, we can confirm the information:
 
 This instruction copies the VRA of the LDR into the EDX register.
 
-```txt
+```
 0:009> dt nt!_PEB 0x010da000
 ntdll!_PEB
 +0x000 InheritedAddressSpace : 0 ''
@@ -385,7 +385,7 @@ ntdll!_PEB
 
 This instruction copies the VRA of the first element of the **InMemoryOrderModuleList** array from the LDR table into the EDX register.
 
-```txt
+```
 0:009> dt _PEB_LDR_DATA 0x77d40c40
 ntdll!_PEB_LDR_DATA
 +0x000 Length : 0x30
@@ -407,7 +407,7 @@ At this point, EDX contains the VRA of the first element in the doubly-linked li
 
 [![]({{site.baseurl}}/assets/2021/08/263625546a4046e3b33d92971fae19ea.png)]({{site.baseurl}}/assets/2021/08/263625546a4046e3b33d92971fae19ea.png)
 
-```txt
+```
 0:009> dt _LIST_ENTRY (0x77d40c40 + 0x14)
 ntdll!_LIST_ENTRY
 [ 0x13d32a8 - 0x140d718 ]
@@ -417,7 +417,7 @@ ntdll!_LIST_ENTRY
 
 This information may not seem very useful, but as we can see in the documentation ([https://docs.microsoft.com/en-us/windows/win32/api/winternl/ns-winternl-peb_ldr_data](https://docs.microsoft.com/en-us/windows/win32/api/winternl/ns-winternl-peb_ldr_data)), the LIST_ENTRY structure is part of a larger structure called `_LDR_DATA_TABLE_ENTRY`.
 
-```txt
+```
 typedef struct _LIST_ENTRY {  
 struct _LIST_ENTRY *Flink;  
 struct _LIST_ENTRY *Blink;  
@@ -443,7 +443,7 @@ ULONG TimeDateStamp;
 
 To dump the structure, we need to subtract 0x08 from the address of `_LIST_ENTRY` in order to find the start of the `_LDR_DATA_TABLE_ENTRY` structure.
 
-```txt
+```
 0:009> dt _LDR_DATA_TABLE_ENTRY (013d32a8 - 0x8)
 ntdll!_LDR_DATA_TABLE_ENTRY
 +0x000 InLoadOrderLinks : _LIST_ENTRY [ 0x13d31b8 - 0x77d40c4c ]
@@ -462,7 +462,7 @@ ntdll!_LDR_DATA_TABLE_ENTRY
 
 ### Function next_mod
 
-```asm
+```
 next_mod: 
 mov esi, [edx+0x28] ; Get pointer to module's name (unicode string)
 movzx ecx, word [edx+0x26] ; Set ECX to the length we want to check
@@ -473,7 +473,7 @@ xor edi, edi ; Clear EDI which will store the hash of the module name
 
 This instruction copies the VMA of the module name.
 
-```txt
+```
 0:009> du @esi
 013d1eb6 "Runner.exe"
 ```
@@ -495,7 +495,7 @@ Clears EDI to use it as a storage location for the hash of the module name.
 
 ### Function loop_modname
 
-```asm
+```
 loop_modname: 
 xor eax, eax ; Clear EAX
 lodsb ; Read in the next byte of the name
@@ -537,7 +537,7 @@ If the character is lowercase, subtracting 0x20 will turn it into uppercase.
 
 In this phase of the function, we are retrieving information about the exported functions from the current module.
 
-```asm
+```
 ; Proceed to iterate the export address table,
 mov edx, [edx+0x10] ; Get this module's base address
 mov eax, [edx+0x3c] ; Get PE header
@@ -564,7 +564,7 @@ We can also confirm this value in two more ways:
 
 [![]({{site.baseurl}}/assets/2021/08/b5d48cd0bece439d8eca9dad186b0dfc.png)]({{site.baseurl}}/assets/2021/08/b5d48cd0bece439d8eca9dad186b0dfc.png)
 
-```txt
+```
 0:009> dd @edx + 10
 013d32b8 00f40000 00000000 000a2000 00480046
 013d32c8 013d1e84 00160014 013d1eb6 014022c4
@@ -586,7 +586,7 @@ This instruction copies the RVA of the PE Header to the EAX register.
 
 We can see that EAX has been set to 0x80, which means the PE Header is at Base Address + 0x80, as shown in the following output:
 
-```txt
+```
 0:009> dt ntdll!_IMAGE_NT_HEADERS 00f40000 + 0x80
 +0x000 Signature : 0x4550
 +0x004 FileHeader : _IMAGE_FILE_HEADER
@@ -597,7 +597,7 @@ We can see that EAX has been set to 0x80, which means the PE Header is at Base A
 
 Additionally, we can see the additional headers at Offset 0x80 relative to the PE Header:
 
-```txt
+```
 0:009> dt ntdll!_IMAGE_OPTIONAL_HEADER 00f40000 + 0x80 + 0x18
 +0x000 Magic : 0x10b
 +0x002 MajorLinkerVersion : 0x30 '0'
@@ -706,7 +706,7 @@ At this point, we have the memory address with the name of the first function in
 
 ### Function `get_next_func`
 
-```asm
+```
 ; Computing the module hash + function hash  
 get_next_func: ;  
 test ecx, ecx ; Changed from jecxz to accommodate the larger offset produced by random jumps below  
@@ -761,7 +761,7 @@ Clears the EDI register for use as storage for the function hash.
 
 ### Function `loop_funcname`
 
-```txt
+```
 loop_funcname: ;  
 xor eax, eax ; Clear EAX  
 lodsb ; Read in the next byte of the ASCII function name  
@@ -888,7 +888,7 @@ Note: This is the execution address of the function and can be used by the "call
 
 ### Finish function
 
-```txt
+```
 finish:
 mov [esp+0x24], eax ; Overwrite the old EAX value with the desired API address for the upcoming popad
 pop ebx ; Clear the current module's hash
@@ -934,7 +934,7 @@ Jumps to the address of the desired function to execute it. From the code flow p
 
 ### Additional functions
 
-```txt
+```
 get_next_mod: ;
 pop eax ; Pop off the current (now the previous) module's EAT
 get_next_mod1: ;

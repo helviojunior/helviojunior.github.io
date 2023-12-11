@@ -191,7 +191,7 @@ Note que o hash da função **ExitProcess** é **0x56A2B5F0**, este hash não se
 
 #### Assembly - utilizando a block_api
 
-```asm
+```
 [BITS 32]
 
 global _start
@@ -467,7 +467,7 @@ ntdll!_LDR_DATA_TABLE_ENTRY
 
 ### Função next_mod
 
-```asm
+```
 next_mod: ;  
 mov esi, [edx+0x28] ; Get pointer to modules name (unicode string)  
 movzx ecx, word [edx+0x26] ; Set ECX to the length we want to check  
@@ -502,7 +502,7 @@ Zera o EDI para utilizar como local de armazenamento do hash do nome do módulo
 
 ### Função loop_modname
 
-```asm
+```
 loop_modname: ;  
 xor eax, eax ; Clear EAX  
 lodsb ; Read in the next byte of the name  
@@ -549,7 +549,7 @@ Esta é uma função grande que na verdade realiza as seguintes operaçÕes:
 
 Desta forma iremos analisar parte por parte dessa função (em pequenos códigos)
 
-```asm
+```
 not_lowercase: ;  
 ror edi, 0xd ; Rotate right our hash value  
 add edi, eax ; Add the next byte of the name  
@@ -588,7 +588,7 @@ Salva na pilha o hash do nome do módulo atual
 
 Essa fase da função irá buscar as informações das funções exportadas de dentro do módulo atual.
 
-```asm
+```
 ; Proceed to iterate the export address table,  
 mov edx, [edx+0x10] ; Get this modules base address  
 mov eax, [edx+0x3c] ; Get PE header  
@@ -819,7 +819,7 @@ Neste momento temos em EBX o endereço de memória com o nome da primeira funç�
 
 ### Função get_next_func
 
-```asm
+```
 ; Computing the module hash + function hash  
 get_next_func: ;  
 test ecx, ecx ; Changed from jecxz to accomodate the larger offset produced by random jmps below  
