@@ -92,7 +92,7 @@ During this study, we will discuss various topics and emphasize or delve deeper 
 *   [https://www.youtube.com/watch?v=ySKEF8MHcZA](https://www.youtube.com/watch?v=ySKEF8MHcZA)
 
 > If you are not familiar with assembly instructions, pointers, and the stack, I recommend watching this YouTube lecture [https://www.youtube.com/watch?v=ySKEF8MHcZA](https://www.youtube.com/watch?v=ySKEF8MHcZA) before continuing with this article, as it covers many essential concepts necessary for understanding this article.
-{: .prompt-tip }
+{: .prompt-warning }
 
 
 Installing WinDbg
@@ -187,7 +187,7 @@ Note that the hash of the **ExitProcess** function is **0x56A2B5F0**, and this h
 
 #### Assembly - Using the block_api
 
-```assembly
+```asm
 [BITS 32]
 
 global _start
@@ -224,43 +224,26 @@ We then execute the block_api using the instruction **call edi**.
 
 #### Assembly - Assembling and Running
 
-To assemble the code (convert the ASM mnemonics to binary/hex), we will use NASM, and for execution, we will use ShellcodeTester (Available at [https://github.com/helviojunior/shellcodetester](https://github.com/helviojunior/shellcodetester)).
+> We will use the `shellcodetester` application developed by me for testing. You can install it directly via PyPi with the command `pip3 install shellcodetester`.
+{: .prompt-warning }
 
-[![]({{site.baseurl}}/assets/2021/08/117c5675f98f4c608304ce20b0fde377.png)]({{site.baseurl}}/assets/2021/08/117c5675f98f4c608304ce20b0fde377.png)
+For assembly (conversion of ASM mnemonics to binary/hex), we will use ShellcodeTester (Available at [https://github.com/helviojunior/shellcodetester](https://github.com/helviojunior/shellcodetester))
 
-We can see that the assembly process was successful. Now, you can open the file in ShellcodeTester by going to File > Open and selecting **exit.o**.
+To install it, simply use the following command:
 
-Choose the options **32 bits** and **Add a breakpoint before the shellcode**, then click Execute.
+```bash
+pip3 install --upgrade shellcodetester
+```
 
-[![]({{site.baseurl}}/assets/2021/08/a96eebb6fc5c4d229fbb4c5c1ef41feb.png)]({{site.baseurl}}/assets/2021/08/a96eebb6fc5c4d229fbb4c5c1ef41feb.png)
+After installation, assemble and compile an EXE using the command:
 
-At this point, an alert will appear to attach the debugger.
+```bash
+shellcodetester -asm exit.asm --break-point
+```
 
-[![]({{site.baseurl}}/assets/2021/08/850cad29f9314944ad4706bfacb19041.png)]({{site.baseurl}}/assets/2021/08/850cad29f9314944ad4706bfacb19041.png)
+Open WinDbg and execute the generated file `st-exit.exe`.
 
-**DO NOT click OK**. Instead, go to WinDbg and click File > Attach to Process.
-
-[![]({{site.baseurl}}/assets/2021/08/c99d8980034544f4ad90054bbaff8da7.png)]({{site.baseurl}}/assets/2021/08/c99d8980034544f4ad90054bbaff8da7.png)
-
-Select the process **runner.exe**.
-
-[![]({{site.baseurl}}/assets/2021/08/bedaad542bd641378f9b533b3094fb93.png)]({{site.baseurl}}/assets/2021/08/bedaad542bd641378f9b533b3094fb93.png)
-
-In the WinDbg command line, type g (for GO) to continue execution and press Enter.
-
-[![]({{site.baseurl}}/assets/2021/08/76b862ca0c354dd4b08d5f795c3abc15.png)]({{site.baseurl}}/assets/2021/08/76b862ca0c354dd4b08d5f795c3abc15.png)
-
-After that, the message **Debuggee is running...** should appear.
-
-[![]({{site.baseurl}}/assets/2021/08/a7d19e909f3941b5ba4e62f0952d074d.png)]({{site.baseurl}}/assets/2021/08/a7d19e909f3941b5ba4e62f0952d074d.png)
-
-Now, go back to the alert and click OK.
-
-[![]({{site.baseurl}}/assets/2021/08/850cad29f9314944ad4706bfacb19041.png)]({{site.baseurl}}/assets/2021/08/850cad29f9314944ad4706bfacb19041.png)
-
-At this point, a message will appear in the WinDbg console.
-
-[![]({{site.baseurl}}/assets/2021/08/19703e5c46704abda4add7881e27b36b.png)]({{site.baseurl}}/assets/2021/08/19703e5c46704abda4add7881e27b36b.png)
+Now, in the WinDbg console, enter the `go` command.
 
 
 Analysis of Our Shellcode
@@ -305,7 +288,7 @@ VMA is equal to VRA + BaseAddress, which means it's the virtual address that can
 
 Here is the code snippet of the first api_call function:
 
-```assembly
+```asm
 api_call:
 pushad ; We preserve all the registers for the caller, bar EAX and ECX.
 mov ebp, esp ; Create a new stack frame
@@ -479,7 +462,7 @@ ntdll!_LDR_DATA_TABLE_ENTRY
 
 ### Function next_mod
 
-```assembly
+```asm
 next_mod: 
 mov esi, [edx+0x28] ; Get pointer to module's name (unicode string)
 movzx ecx, word [edx+0x26] ; Set ECX to the length we want to check
@@ -512,7 +495,7 @@ Clears EDI to use it as a storage location for the hash of the module name.
 
 ### Function loop_modname
 
-```assembly
+```asm
 loop_modname: 
 xor eax, eax ; Clear EAX
 lodsb ; Read in the next byte of the name
@@ -554,7 +537,7 @@ If the character is lowercase, subtracting 0x20 will turn it into uppercase.
 
 In this phase of the function, we are retrieving information about the exported functions from the current module.
 
-```assembly
+```asm
 ; Proceed to iterate the export address table,
 mov edx, [edx+0x10] ; Get this module's base address
 mov eax, [edx+0x3c] ; Get PE header

@@ -92,7 +92,7 @@ Durante este estudo iremos falar de diversos assuntos e daremos ênfase/aprofund
 *   [https://www.youtube.com/watch?v=ySKEF8MHcZA](https://www.youtube.com/watch?v=ySKEF8MHcZA)
 
 > Caso não tenha familiaridade com instruções assembly, ponteiros e pilha, recomendo antes da continuidade da leitura a visualização desta aula do Youtube [https://www.youtube.com/watch?v=ySKEF8MHcZA](https://www.youtube.com/watch?v=ySKEF8MHcZA) pois nesta aula é apresentada diversos conceitos extremamente necessários para o entendimento deste artigo.
-{: .prompt-tip }
+{: .prompt-warning }
 
 Instalando WinDbg
 -----------------
@@ -230,43 +230,27 @@ E posteriormente executamos a block_api através da instrução **call edi**
 
 #### Montagem e executando
 
-Para a montagem (conversão dos mnemônico ASM para binário/hexa) utilizaremos o NASM e para a execução utilizaremos o ShellcodeTester (Disponível em [https://github.com/helviojunior/shellcodetester](https://github.com/helviojunior/shellcodetester))
+> Utilizaremos a aplicação `shellcodetester` desenvolvida por mim para a realização dos testes. Denso assim você pode realizar a instalação diretamente via PyPi com o comando `pip3 install shellcodetester`
+{: .prompt-warning }
 
-[![]({{site.baseurl}}/assets/2021/08/117c5675f98f4c608304ce20b0fde377.png)]({{site.baseurl}}/assets/2021/08/117c5675f98f4c608304ce20b0fde377.png)
+Para a montagem (conversão dos mnemônico ASM para binário/hexa) utilizaremos o o ShellcodeTester (Disponível em [https://github.com/helviojunior/shellcodetester](https://github.com/helviojunior/shellcodetester))
 
-Podemos ver que a montagem ocorreu com sucesso, agora podemos abrir no shellcode tester Arquivo > Abrir e selecione o **exit.o**
+Para a instalação do mesmo basta realizar o comando 
 
-Selecione as opções **32 bits** e **Adicionar um breakpoint antes do shellcode** e clique em Executar
+```bash
+pip3 install --upgrade shellcodetester
+```
 
-[![]({{site.baseurl}}/assets/2021/08/a96eebb6fc5c4d229fbb4c5c1ef41feb.png)]({{site.baseurl}}/assets/2021/08/a96eebb6fc5c4d229fbb4c5c1ef41feb.png)
+Após a instalação realize a montagem e compilação de um EXE através do comando
 
-Neste momento aparecerá um alerta para anexar o debugger
+```bash
+shellcodetester -asm exit.asm --break-point
+```
 
-[![]({{site.baseurl}}/assets/2021/08/850cad29f9314944ad4706bfacb19041.png)]({{site.baseurl}}/assets/2021/08/850cad29f9314944ad4706bfacb19041.png)
+Abra o Windbg e execute o arquivo gerado `st-exit.exe`
 
-**NÃO clique em OK**, vá no Windbg clique em File > Attach to Process
+Agora na console do windbg digite o comando `go`
 
-[![]({{site.baseurl}}/assets/2021/08/c99d8980034544f4ad90054bbaff8da7.png)]({{site.baseurl}}/assets/2021/08/c99d8980034544f4ad90054bbaff8da7.png)
-
-Selecione o processo **runner.exe**
-
-[![]({{site.baseurl}}/assets/2021/08/bedaad542bd641378f9b533b3094fb93.png)]({{site.baseurl}}/assets/2021/08/bedaad542bd641378f9b533b3094fb93.png)
-
-Na linha de comando do WinDbg digite g (de GO) para continuar a execução e pressione enter
-
-[![]({{site.baseurl}}/assets/2021/08/76b862ca0c354dd4b08d5f795c3abc15.png)]({{site.baseurl}}/assets/2021/08/76b862ca0c354dd4b08d5f795c3abc15.png)
-
-Após isso a mensagem **Debuggee is running...** deve aparecer
-
-[![]({{site.baseurl}}/assets/2021/08/a7d19e909f3941b5ba4e62f0952d074d.png)]({{site.baseurl}}/assets/2021/08/a7d19e909f3941b5ba4e62f0952d074d.png)
-
-Agora volte no alerta e pressione OK
-
-[![]({{site.baseurl}}/assets/2021/08/850cad29f9314944ad4706bfacb19041.png)]({{site.baseurl}}/assets/2021/08/850cad29f9314944ad4706bfacb19041.png)
-
-Neste momento uma mensagem aparecerá na console do WinDBG
-
-[![]({{site.baseurl}}/assets/2021/08/19703e5c46704abda4add7881e27b36b.png)]({{site.baseurl}}/assets/2021/08/19703e5c46704abda4add7881e27b36b.png)
 
 Análise do nosso shellcode
 --------------------------
