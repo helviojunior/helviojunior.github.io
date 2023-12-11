@@ -76,6 +76,10 @@ Em nossos treinamentos ensinamos a utilizar as bibliotecas da Metasploit, chamad
 *   **32 bits:** [https://github.com/rapid7/metasploit-framework/blob/master/external/source/shellcode/windows/x86/src/block/block_api.asm](https://github.com/rapid7/metasploit-framework/blob/master/external/source/shellcode/windows/x86/src/block/block_api.asm)
 *   **64 bits:** [https://github.com/rapid7/metasploit-framework/blob/master/external/source/shellcode/windows/x64/src/block/block_api.asm](https://github.com/rapid7/metasploit-framework/blob/master/external/source/shellcode/windows/x64/src/block/block_api.asm)
 
+> A propósito eu realizei algumas otimizações para que o ASM da versão em 64 bits não tenha nullbyte e de quebra houve uma redução de tamanho. Por questões internas e comentadas no Pull Request o mesmo não foi realizado o merge, mas para quem tiver interesse segue a referencia: [Pull Request #17934](https://github.com/rapid7/metasploit-framework/pull/17934).
+{: .prompt-warning }
+
+
 Inclusive temos um mini-treinamento disponível em nosso canal do Youtube sobre Shellcoding para 64 bits: [https://www.youtube.com/watch?v=ySKEF8MHcZA](https://www.youtube.com/watch?v=ySKEF8MHcZA) utilizando essa biblioteca.
 
 O que faremos neste artigo é entender passo a passo (dissecar) o que essa biblioteca realiza, quais estruturas, tabelas e dados da aplicação ela analisa para chegar a identificar de forma precisa o endereço exato da função dentro do Windows.

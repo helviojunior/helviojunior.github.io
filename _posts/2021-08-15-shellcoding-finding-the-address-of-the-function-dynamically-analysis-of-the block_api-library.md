@@ -77,7 +77,10 @@ In our training, we teach how to use the Metasploit libraries called Block API f
 *   **32 bits:** [https://github.com/rapid7/metasploit-framework/blob/master/external/source/shellcode/windows/x86/src/block/block_api.asm](https://github.com/rapid7/metasploit-framework/blob/master/external/source/shellcode/windows/x86/src/block/block_api.asm)
 *   **64 bits:** [https://github.com/rapid7/metasploit-framework/blob/master/external/source/shellcode/windows/x64/src/block/block_api.asm](https://github.com/rapid7/metasploit-framework/blob/master/external/source/shellcode/windows/x64/src/block/block_api.asm)
 
-We also have a mini-training available on our YouTube channel about 64-bit Shellcoding: [https://www.youtube.com/watch?v=ySKEF8MHcZA](https://www.youtube.com/watch?v=ySKEF8MHcZA), using this library.
+> By the way, I made some optimizations to ensure that the 64-bit version of the ASM code doesn't contain null bytes, and as a bonus, there was a reduction in size. Due to internal reasons, and as explained in the Pull Request comments, it wasn't merged, but for those interested, here is the reference: [Pull Request #17934](https://github.com/rapid7/metasploit-framework/pull/17934).
+{: .prompt-warning }
+
+We also have a mini-training available on our YouTube channel about 64-bit Shellcoding (In Brazilian Language): [https://www.youtube.com/watch?v=ySKEF8MHcZA](https://www.youtube.com/watch?v=ySKEF8MHcZA), using this library.
 
 In this article, we will step-by-step dissect what this library does, which structures, tables, and application data it analyzes to precisely identify the exact address of a function within Windows. Therefore, this article will focus solely on the Windows operating system.
 
