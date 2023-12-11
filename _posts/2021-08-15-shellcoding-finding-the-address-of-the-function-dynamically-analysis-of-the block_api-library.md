@@ -956,6 +956,7 @@ Conclusion
 ---------
 
 As we have seen through the study of the block_api library, it is possible to dynamically locate all the modules loaded in the system, including those loaded at runtime, and their respective exported functions.
+
 Training
 ---------
 
@@ -965,7 +966,7 @@ Training Link: [https://sec4us.com.br/treinamentos/shellcoding-para-desenvolvime
 
 [![]({{site.baseurl}}/assets/2021/08/image)](https://sec4us.com.br/treinamentos/shellcoding-para-desenvolvimento-de-exploits/)
 
-Sources:
+References
 -------
 
 *   Pavel, Y at all. Windows Internals Part 1: 7th ed. Washington: Microsoft, 2017.

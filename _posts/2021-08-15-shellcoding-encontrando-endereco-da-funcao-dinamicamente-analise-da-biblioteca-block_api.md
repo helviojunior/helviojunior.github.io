@@ -1078,7 +1078,7 @@ Link do treinamento: [https://sec4us.com.br/treinamentos/shellcoding-para-desenv
 
 [![]({{site.baseurl}}/assets/2021/08/image)](https://sec4us.com.br/treinamentos/shellcoding-para-desenvolvimento-de-exploits/)
 
-Fontes:
+Fontes
 -------
 
 *   Pavel, Y at all. Windows Internals Part 1: 7. ed. Washington: Microsoft, 2017.
