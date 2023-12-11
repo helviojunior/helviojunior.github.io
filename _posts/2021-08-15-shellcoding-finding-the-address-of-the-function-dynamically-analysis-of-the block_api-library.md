@@ -21,7 +21,7 @@ tags:
 - Exploits Development
 - Windows Internals
 author: Helvio Junior (m4v3r1ck)
-permalink: '/en/it/security/exploits/2021-08-15-shellcoding-finding-the-address-of-the-function-dynamically-analysis-of-the block_api-library/'
+permalink: '/en/it/security/exploits/shellcoding-finding-the-address-of-the-function-dynamically-analysis-of-the block_api-library/'
 excerpt: "In this article, we will dissect the Metasploit 32 bits library called Block API, responsible for dynamically locating the addresses of functions within the loaded modules in the application."
 ---
 
@@ -175,6 +175,7 @@ void main() {
   ExitProcess(0);
 }
 ```
+{: file='exit.c'}
 
 #### API Hash
 
@@ -211,6 +212,7 @@ block_api:
 call get_block_api
 %include "../block_api.asm"
 ```
+{: file='exit.asm'}
 
 [![]({{site.baseurl}}/assets/2021/08/5033fcd6f11140fcb573c532cee9d279.png)]({{site.baseurl}}/assets/2021/08/5033fcd6f11140fcb573c532cee9d279.png)
 

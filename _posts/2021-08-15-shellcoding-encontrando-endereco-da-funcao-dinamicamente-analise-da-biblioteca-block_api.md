@@ -167,6 +167,7 @@ UINT uExitCode
 );  
 ```
 
+
 #### Código C
 
 ```c
@@ -179,6 +180,7 @@ ExitProcess(0);
 
 }  
 ```
+{: file='exit.c'}
 
 #### Hash da api
 
@@ -215,6 +217,7 @@ block_api:
 call get_block_api  
 %include "../block_api.asm"  
 ```
+{: file='exit.asm'}
 
 [![]({{site.baseurl}}/assets/2021/08/5033fcd6f11140fcb573c532cee9d279.png)]({{site.baseurl}}/assets/2021/08/5033fcd6f11140fcb573c532cee9d279.png)
 
