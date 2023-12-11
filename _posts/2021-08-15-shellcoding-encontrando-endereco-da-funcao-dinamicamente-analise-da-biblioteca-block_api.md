@@ -91,7 +91,8 @@ Durante este estudo iremos falar de diversos assuntos e daremos ênfase/aprofund
 *   WinDBG: Neste artigo utilizaremos o WinDBG como debugger disponível em: [https://docs.microsoft.com/en-us/windows-hardware/drivers/debugger/debugger-download-tools](https://docs.microsoft.com/en-us/windows-hardware/drivers/debugger/debugger-download-tools)
 *   [https://www.youtube.com/watch?v=ySKEF8MHcZA](https://www.youtube.com/watch?v=ySKEF8MHcZA)
 
-**Nota:** Caso não tenha familiaridade com instruções assembly, ponteiros e pilha, recomendo antes da continuidade da leitura a visualização desta aula do Youtube [https://www.youtube.com/watch?v=ySKEF8MHcZA](https://www.youtube.com/watch?v=ySKEF8MHcZA) pois nesta aula é apresentada diversos conceitos extremamente necessários para o entendimento deste artigo.
+> Caso não tenha familiaridade com instruções assembly, ponteiros e pilha, recomendo antes da continuidade da leitura a visualização desta aula do Youtube [https://www.youtube.com/watch?v=ySKEF8MHcZA](https://www.youtube.com/watch?v=ySKEF8MHcZA) pois nesta aula é apresentada diversos conceitos extremamente necessários para o entendimento deste artigo.
+{: .prompt-tip }
 
 Instalando WinDbg
 -----------------

@@ -40,13 +40,13 @@ Windows and Linux Architecture
 
 In a simplified manner, the image below illustrates the architecture of the Linux operating system.
 
-[![](https://my_host/assets/2021/08/8359a0a3ce9f4b8c8645c9cedffca97e.png)](https://my_host/assets/2021/08/8359a0a3ce9f4b8c8645c9cedffca97e.png)
+[![]({{site.baseurl}}/assets/2021/08/8359a0a3ce9f4b8c8645c9cedffca97e.png)]({{site.baseurl}}/assets/2021/08/8359a0a3ce9f4b8c8645c9cedffca97e.png)
 
 Source: [https://infoslack.com/devops/linux-101-arquitetura](https://infoslack.com/devops/linux-101-arquitetura)
 
 Similarly, the figure below illustrates the architecture of Windows.
 
-[![](https://my_host/assets/2021/08/36c41ddc969a4761a25396a46edbf8a3.png)](https://my_host/assets/2021/08/36c41ddc969a4761a25396a46edbf8a3.png)
+[![]({{site.baseurl}}/assets/2021/08/36c41ddc969a4761a25396a46edbf8a3.png)]({{site.baseurl}}/assets/2021/08/36c41ddc969a4761a25396a46edbf8a3.png)
 
 Source: Pavel, Y at all. Windows Internals Part 1: 1st ed. Washington: Microsoft, 2017. Pg 47
 
@@ -91,7 +91,8 @@ During this study, we will discuss various topics and emphasize or delve deeper 
 *   WinDBG: In this article, we will use WinDBG as a debugger, which is available here: [https://docs.microsoft.com/en-us/windows-hardware/drivers/debugger/debugger-download-tools](https://docs.microsoft.com/en-us/windows-hardware/drivers/debugger/debugger-download-tools).
 *   [https://www.youtube.com/watch?v=ySKEF8MHcZA](https://www.youtube.com/watch?v=ySKEF8MHcZA)
 
-**Note:** If you are not familiar with assembly instructions, pointers, and the stack, I recommend watching this YouTube lecture [https://www.youtube.com/watch?v=ySKEF8MHcZA](https://www.youtube.com/watch?v=ySKEF8MHcZA) before continuing with this article, as it covers many essential concepts necessary for understanding this article.
+> If you are not familiar with assembly instructions, pointers, and the stack, I recommend watching this YouTube lecture [https://www.youtube.com/watch?v=ySKEF8MHcZA](https://www.youtube.com/watch?v=ySKEF8MHcZA) before continuing with this article, as it covers many essential concepts necessary for understanding this article.
+{: .prompt-tip }
 
 
 Installing WinDbg
@@ -99,7 +100,7 @@ Installing WinDbg
 
 To install WinDBG, download the Windows 10 SDK from the following link: [https://docs.microsoft.com/en-us/windows-hardware/drivers/debugger/debugger-download-tools](https://docs.microsoft.com/en-us/windows-hardware/drivers/debugger/debugger-download-tools)
 
-[![](https://my_host/assets/2021/08/63543e7e146c45a298bd1f122c0f5ccf.png)](https://my_host/assets/2021/08/63543e7e146c45a298bd1f122c0f5ccf.png)
+[![]({{site.baseurl}}/assets/2021/08/63543e7e146c45a298bd1f122c0f5ccf.png)]({{site.baseurl}}/assets/2021/08/63543e7e146c45a298bd1f122c0f5ccf.png)
 
 After installation, configure the storage location and download of debug symbols.
 
@@ -109,7 +110,7 @@ Open WinDBG x68 and go to File > Symbol File Path, then add the following conten
 srv*c:\symbols*http://msdl.microsoft.com/download/symbols
 ```
 
-[![](https://my_host/assets/2021/08/8996097d1a4d4be9b6ef0fb04a5f3859.png)](https://my_host/assets/2021/08/8996097d1a4d4be9b6ef0fb04a5f3859.png)
+[![]({{site.baseurl}}/assets/2021/08/8996097d1a4d4be9b6ef0fb04a5f3859.png)]({{site.baseurl}}/assets/2021/08/8996097d1a4d4be9b6ef0fb04a5f3859.png)
 
 Load any 32-bit application like:
 
@@ -117,7 +118,7 @@ Load any 32-bit application like:
 C:\Windows\SysWOW64\notepad.exe
 ```
 
-[![](https://my_host/assets/2021/08/f50155a62904444dae9b7655288ae33f.png)](https://my_host/assets/2021/08/f50155a62904444dae9b7655288ae33f.png)
+[![]({{site.baseurl}}/assets/2021/08/f50155a62904444dae9b7655288ae33f.png)]({{site.baseurl}}/assets/2021/08/f50155a62904444dae9b7655288ae33f.png)
 
 Reload all symbols:
 
@@ -125,7 +126,7 @@ Reload all symbols:
 .reload /f
 ```
 
-[![](https://my_host/assets/2021/08/388d8891016e4654a101bc40fb85bc0b.png)](https://my_host/assets/2021/08/388d8891016e4654a101bc40fb85bc0b.png)
+[![]({{site.baseurl}}/assets/2021/08/388d8891016e4654a101bc40fb85bc0b.png)]({{site.baseurl}}/assets/2021/08/388d8891016e4654a101bc40fb85bc0b.png)
 
 Process Internals
 -----------------
@@ -134,7 +135,7 @@ Each Windows process is represented by an EPROCESS (Executive Process) block. Th
 
 The figure below simplifies the diagram of process and thread structures.
 
-[![](https://my_host/assets/2021/08/d817862488ea47d683756ffa2da72a85.png)](https://my_host/assets/2021/08/d817862488ea47d683756ffa2da72a85.png)  
+[![]({{site.baseurl}}/assets/2021/08/d817862488ea47d683756ffa2da72a85.png)]({{site.baseurl}}/assets/2021/08/d817862488ea47d683756ffa2da72a85.png)  
 Source: Russinovich, M at all. Windows Internals: 5th ed. Washington: Microsoft, 2009. Pg 336
 
 For our study, it's worth noting an extremely important table known as the TEB (Thread Environment Block), also referred to as TIB (Thread Information Block) for compatibility reasons. The TEB can be used to obtain various pieces of information about the process without the need to make Win32 API calls. Among other information, it stores the address of the SEH (Structured Exception Handling) and the address of the PEB (Process Environment Block) table, which in turn can provide access to the IAT (Import Address Table) and more. The TEB can be accessed through the FS segment register.
@@ -180,7 +181,7 @@ The block_api expects, as input at the top of the stack, the hash of the desired
 
 To calculate the hash of the function, we will use an application developed by me, available at [https://github.com/helviojunior/addrfinder](https://github.com/helviojunior/addrfinder).
 
-[![](https://my_host/assets/2021/08/8e005921686341d4a9de29bd0d4dd1ef.png)](https://my_host/assets/2021/08/8e005921686341d4a9de29bd0d4dd1ef.png)
+[![]({{site.baseurl}}/assets/2021/08/8e005921686341d4a9de29bd0d4dd1ef.png)]({{site.baseurl}}/assets/2021/08/8e005921686341d4a9de29bd0d4dd1ef.png)
 
 Note that the hash of the **ExitProcess** function is **0x56A2B5F0**, and this hash remains the same even in different releases of Windows.
 
@@ -210,7 +211,7 @@ call get_block_api
 %include "../block_api.asm"
 ```
 
-[![](https://my_host/assets/2021/08/5033fcd6f11140fcb573c532cee9d279.png)](https://my_host/assets/2021/08/5033fcd6f11140fcb573c532cee9d279.png)
+[![]({{site.baseurl}}/assets/2021/08/5033fcd6f11140fcb573c532cee9d279.png)]({{site.baseurl}}/assets/2021/08/5033fcd6f11140fcb573c532cee9d279.png)
 
 As we can see in the code above, on line 22, we include the library file (exactly the same file listed on the GitHub link above).
 
@@ -225,41 +226,41 @@ We then execute the block_api using the instruction **call edi**.
 
 To assemble the code (convert the ASM mnemonics to binary/hex), we will use NASM, and for execution, we will use ShellcodeTester (Available at [https://github.com/helviojunior/shellcodetester](https://github.com/helviojunior/shellcodetester)).
 
-[![](https://my_host/assets/2021/08/117c5675f98f4c608304ce20b0fde377.png)](https://my_host/assets/2021/08/117c5675f98f4c608304ce20b0fde377.png)
+[![]({{site.baseurl}}/assets/2021/08/117c5675f98f4c608304ce20b0fde377.png)]({{site.baseurl}}/assets/2021/08/117c5675f98f4c608304ce20b0fde377.png)
 
 We can see that the assembly process was successful. Now, you can open the file in ShellcodeTester by going to File > Open and selecting **exit.o**.
 
 Choose the options **32 bits** and **Add a breakpoint before the shellcode**, then click Execute.
 
-[![](https://my_host/assets/2021/08/a96eebb6fc5c4d229fbb4c5c1ef41feb.png)](https://my_host/assets/2021/08/a96eebb6fc5c4d229fbb4c5c1ef41feb.png)
+[![]({{site.baseurl}}/assets/2021/08/a96eebb6fc5c4d229fbb4c5c1ef41feb.png)]({{site.baseurl}}/assets/2021/08/a96eebb6fc5c4d229fbb4c5c1ef41feb.png)
 
 At this point, an alert will appear to attach the debugger.
 
-[![](https://my_host/assets/2021/08/850cad29f9314944ad4706bfacb19041.png)](https://my_host/assets/2021/08/850cad29f9314944ad4706bfacb19041.png)
+[![]({{site.baseurl}}/assets/2021/08/850cad29f9314944ad4706bfacb19041.png)]({{site.baseurl}}/assets/2021/08/850cad29f9314944ad4706bfacb19041.png)
 
 **DO NOT click OK**. Instead, go to WinDbg and click File > Attach to Process.
 
-[![](https://my_host/assets/2021/08/c99d8980034544f4ad90054bbaff8da7.png)](https://my_host/assets/2021/08/c99d8980034544f4ad90054bbaff8da7.png)
+[![]({{site.baseurl}}/assets/2021/08/c99d8980034544f4ad90054bbaff8da7.png)]({{site.baseurl}}/assets/2021/08/c99d8980034544f4ad90054bbaff8da7.png)
 
 Select the process **runner.exe**.
 
-[![](https://my_host/assets/2021/08/bedaad542bd641378f9b533b3094fb93.png)](https://my_host/assets/2021/08/bedaad542bd641378f9b533b3094fb93.png)
+[![]({{site.baseurl}}/assets/2021/08/bedaad542bd641378f9b533b3094fb93.png)]({{site.baseurl}}/assets/2021/08/bedaad542bd641378f9b533b3094fb93.png)
 
 In the WinDbg command line, type g (for GO) to continue execution and press Enter.
 
-[![](https://my_host/assets/2021/08/76b862ca0c354dd4b08d5f795c3abc15.png)](https://my_host/assets/2021/08/76b862ca0c354dd4b08d5f795c3abc15.png)
+[![]({{site.baseurl}}/assets/2021/08/76b862ca0c354dd4b08d5f795c3abc15.png)]({{site.baseurl}}/assets/2021/08/76b862ca0c354dd4b08d5f795c3abc15.png)
 
 After that, the message **Debuggee is running...** should appear.
 
-[![](https://my_host/assets/2021/08/a7d19e909f3941b5ba4e62f0952d074d.png)](https://my_host/assets/2021/08/a7d19e909f3941b5ba4e62f0952d074d.png)
+[![]({{site.baseurl}}/assets/2021/08/a7d19e909f3941b5ba4e62f0952d074d.png)]({{site.baseurl}}/assets/2021/08/a7d19e909f3941b5ba4e62f0952d074d.png)
 
 Now, go back to the alert and click OK.
 
-[![](https://my_host/assets/2021/08/850cad29f9314944ad4706bfacb19041.png)](https://my_host/assets/2021/08/850cad29f9314944ad4706bfacb19041.png)
+[![]({{site.baseurl}}/assets/2021/08/850cad29f9314944ad4706bfacb19041.png)]({{site.baseurl}}/assets/2021/08/850cad29f9314944ad4706bfacb19041.png)
 
 At this point, a message will appear in the WinDbg console.
 
-[![](https://my_host/assets/2021/08/19703e5c46704abda4add7881e27b36b.png)](https://my_host/assets/2021/08/19703e5c46704abda4add7881e27b36b.png)
+[![]({{site.baseurl}}/assets/2021/08/19703e5c46704abda4add7881e27b36b.png)]({{site.baseurl}}/assets/2021/08/19703e5c46704abda4add7881e27b36b.png)
 
 
 Analysis of Our Shellcode
@@ -267,13 +268,13 @@ Analysis of Our Shellcode
 
 Before we reach the block api library itself, we have some instructions that we can compare side by side with our code.
 
-[![](https://my_host/assets/2021/08/bd6ffc8df5b345508a8b063e73cea5b3.png)](https://my_host/assets/2021/08/bd6ffc8df5b345508a8b063e73cea5b3.png)
+[![]({{site.baseurl}}/assets/2021/08/bd6ffc8df5b345508a8b063e73cea5b3.png)]({{site.baseurl}}/assets/2021/08/bd6ffc8df5b345508a8b063e73cea5b3.png)
 
 Since the focus is on the execution of the block_api itself, let's go to the point of the **call edi** instruction.
 
 At this point, the EDI register contains the address of the block_api.
 
-[![](https://my_host/assets/2021/08/19c8531c17944b009ff8244113f6172f.png)](https://my_host/assets/2021/08/19c8531c17944b009ff8244113f6172f.png)
+[![]({{site.baseurl}}/assets/2021/08/19c8531c17944b009ff8244113f6172f.png)]({{site.baseurl}}/assets/2021/08/19c8531c17944b009ff8244113f6172f.png)
 
 We will start our analysis from this point.
 
@@ -286,7 +287,7 @@ To facilitate the analysis process, I will provide the code of the block_api as 
 
 As mentioned earlier, there are several tables that exist and are used in our application. Therefore, here is a diagram showing the flow we will follow in the upcoming instructions.
 
-[![](https://my_host/assets/2021/08/fb50b1ae0c2247498d36b0864c28432a.png)](https://my_host/assets/2021/08/fb50b1ae0c2247498d36b0864c28432a.png)
+[![]({{site.baseurl}}/assets/2021/08/fb50b1ae0c2247498d36b0864c28432a.png)]({{site.baseurl}}/assets/2021/08/fb50b1ae0c2247498d36b0864c28432a.png)
 
 First, we will use the FS segment register at offset 0x30 to obtain the relative memory address (offset) of the TEB table. Next, we will retrieve from inside the TEB at offset 0x0C the address of the LDR table. Finally, within the LDR table, we will obtain the memory address of the first element of the InMemoryOrderModuleList array.
 
@@ -360,7 +361,7 @@ ntdll!_TEB
 
 After executing the instruction, we can confirm the information:
 
-[![](https://my_host/assets/2021/08/21769f1837a241d0b7dcf1cc39f28526.png)](https://my_host/assets/2021/08/21769f1837a241d0b7dcf1cc39f28526.png)
+[![]({{site.baseurl}}/assets/2021/08/21769f1837a241d0b7dcf1cc39f28526.png)]({{site.baseurl}}/assets/2021/08/21769f1837a241d0b7dcf1cc39f28526.png)
 
 #### mov edx, [edx+0xc]
 
@@ -395,7 +396,7 @@ ntdll!_PEB
 +0x028 ProcessInitializing : 0y0
 ```
 
-[![](https://my_host/assets/2021/08/637cc9ff49334ee78bcf36a095d040ea.png)](https://my_host/assets/2021/08/637cc9ff49334ee78bcf36a095d040ea.png)
+[![]({{site.baseurl}}/assets/2021/08/637cc9ff49334ee78bcf36a095d040ea.png)]({{site.baseurl}}/assets/2021/08/637cc9ff49334ee78bcf36a095d040ea.png)
 
 #### mov edx, [edx+0x14]
 
@@ -415,13 +416,13 @@ ntdll!_PEB_LDR_DATA
 +0x02c ShutdownThreadId : (null)
 ```
 
-[![](https://my_host/assets/2021/08/8d5afbd757e84622bee6ac7587f5d806.png)](https://my_host/assets/2021/08
+[![]({{site.baseurl}}/assets/2021/08/8d5afbd757e84622bee6ac7587f5d806.png)]({{site.baseurl}}/assets/2021/08
 
 /8d5afbd757e84622bee6ac7587f5d806.png)
 
 At this point, EDX contains the VRA of the first element in the doubly-linked list **InMemoryOrderModuleList**.
 
-[![](https://my_host/assets/2021/08/263625546a4046e3b33d92971fae19ea.png)](https://my_host/assets/2021/08/263625546a4046e3b33d92971fae19ea.png)
+[![]({{site.baseurl}}/assets/2021/08/263625546a4046e3b33d92971fae19ea.png)]({{site.baseurl}}/assets/2021/08/263625546a4046e3b33d92971fae19ea.png)
 
 ```txt
 0:009> dt _LIST_ENTRY (0x77d40c40 + 0x14)
@@ -474,7 +475,7 @@ ntdll!_LDR_DATA_TABLE_ENTRY
 +0x034 Flags : 0x14022c4
 ```
 
-[![](https://my_host/assets/2021/08/d7bfcd1e25424cdfa2e17772de1c8dd2.png)](https://my_host/assets/2021/08/d7bfcd1e25424cdfa2e17772de1c8dd2.png)
+[![]({{site.baseurl}}/assets/2021/08/d7bfcd1e25424cdfa2e17772de1c8dd2.png)]({{site.baseurl}}/assets/2021/08/d7bfcd1e25424cdfa2e17772de1c8dd2.png)
 
 ### Function next_mod
 
@@ -494,7 +495,7 @@ This instruction copies the VMA of the module name.
 013d1eb6 "Runner.exe"
 ```
 
-[![](https://my_host/assets/2021/08/8a5a33bf66554437b4d62050bd0ffcf8.png)](https://my_host/assets/2021/08/8a5a33bf66554437b4d62050bd0ffcf8.png)
+[![]({{site.baseurl}}/assets/2021/08/8a5a33bf66554437b4d62050bd0ffcf8.png)]({{site.baseurl}}/assets/2021/08/8a5a33bf66554437b4d62050bd0ffcf8.png)
 
 #### movzx ecx, word [edx+0x26]
 
@@ -503,7 +504,7 @@ This instruction retrieves the length of the module name. Keep in mind that each
 *   Runner.exe = 10 characters + 1 null byte
 *   11 * 2 = 22
 
-[![](https://my_host/assets/2021/08/3339f66e40354ec6bcf91b0dc4c6335e.png)](https://my_host/assets/2021/08/3339f66e40354ec6bcf91b0dc4c6335e.png)
+[![]({{site.baseurl}}/assets/2021/08/3339f66e40354ec6bcf91b0dc4c6335e.png)]({{site.baseurl}}/assets/2021/08/3339f66e40354ec6bcf91b0dc4c6335e.png)
 
 #### xor edi, edi
 
@@ -536,7 +537,7 @@ Compares the byte received with the character 'a'.
 
 Before we look at the comparison itself, let's analyze the ASCII table:
 
-[![](https://my_host/assets/2021/08/1c806d639e2e4ce89a3fa1bc9a6c2bae.png)](https://my_host/assets/2021/08/1c806d639e2e4ce89a3fa1bc9a6c2bae.png)
+[![]({{site.baseurl}}/assets/2021/08/1c806d639e2e4ce89a3fa1bc9a6c2bae.png)]({{site.baseurl}}/assets/2021/08/1c806d639e2e4ce89a3fa1bc9a6c2bae.png)
 
 Observe in the ASCII table that lowercase letters range from hexadecimal 0x61 to 0x7a, and uppercase letters range from 0x41 to 0x5a. So:
 
@@ -572,13 +573,13 @@ add ebx, edx ; Add the module's base address
 
 At this point, EDX still holds the address of the `_LIST_ENTRY` structure of the current module. So, at its offset 0x10, we have the BaseAddress of the module. This instruction copies the BaseAddress of the module being analyzed to the EDX register.
 
-[![](https://my_host/assets/2021/08/472981a7d03842059a6aa08dc1264726.png)](https://my_host/assets/2021/08/472981a7d03842059a6aa08dc1264726.png)
+[![]({{site.baseurl}}/assets/2021/08/472981a7d03842059a6aa08dc1264726.png)]({{site.baseurl}}/assets/2021/08/472981a7d03842059a6aa08dc1264726.png)
 
 Note that to parse the `_LDR_DATA_TABLE_ENTRY` structure, we need to subtract 0x08, so the offset shown in the image is 0x18, which is 0x10 + 0x08. This corresponds to the value 0x00f40000.
 
 We can also confirm this value in two more ways:
 
-[![](https://my_host/assets/2021/08/b5d48cd0bece439d8eca9dad186b0dfc.png)](https://my_host/assets/2021/08/b5d48cd0bece439d8eca9dad186b0dfc.png)
+[![]({{site.baseurl}}/assets/2021/08/b5d48cd0bece439d8eca9dad186b0dfc.png)]({{site.baseurl}}/assets/2021/08/b5d48cd0bece439d8eca9dad186b0dfc.png)
 
 ```txt
 0:009> dd @edx + 10
@@ -592,13 +593,13 @@ We can also confirm this value in two more ways:
 013d3328 11fb4e0f 01d79199 10078c54 00000004
 ```
 
-[![](https://my_host/assets/2021/08/c1869b05a5bd4058856189c64a200c77.png)](https://my_host/assets/2021/08/c1869b05a5bd4058856189c64a200c77.png)
+[![]({{site.baseurl}}/assets/2021/08/c1869b05a5bd4058856189c64a200c77.png)]({{site.baseurl}}/assets/2021/08/c1869b05a5bd4058856189c64a200c77.png)
 
 #### mov eax, [edx+0x3c]
 
 This instruction copies the RVA of the PE Header to the EAX register.
 
-[![](https://my_host/assets/2021/08/c0c2939453d0432caaa0e6df186057a5.png)](https://my_host/assets/2021/08/c0c2939453d0432caaa0e6df186057a5.png)
+[![]({{site.baseurl}}/assets/2021/08/c0c2939453d0432caaa0e6df186057a5.png)]({{site.baseurl}}/assets/2021/08/c0c2939453d0432caaa0e6df186057a5.png)
 
 We can see that EAX has been set to 0x80, which means the PE Header is at Base Address + 0x80, as shown in the following output:
 
@@ -609,7 +610,7 @@ We can see that EAX has been set to 0x80, which means the PE Header is at Base A
 +0x018 OptionalHeader : _IMAGE_OPTIONAL_HEADER
 ```
 
-[![](https://my_host/assets/2021/08/cd76b4aa6eda47228e542fa09a92e7d7.png)](https://my_host/assets/2021/08/cd76b4aa6eda47228e542fa09a92e7d7.png)
+[![]({{site.baseurl}}/assets/2021/08/cd76b4aa6eda47228e542fa09a92e7d7.png)]({{site.baseurl}}/assets/2021/08/cd76b4aa6eda47228e542fa09a92e7d7.png)
 
 Additionally, we can see the additional headers at Offset 0x80 relative to the PE Header:
 
@@ -650,11 +651,7 @@ Additionally, we can see the additional headers at Offset 0x80 relative to the P
 +0x060 DataDirectory : [16] _IMAGE_DATA_DIRECTORY
 ```
 
-[![](https://my_host/assets/2021/08/9eb697ab4e664ea6b9b9e8e19f93a37b.png)](https://my_host/assets/2021/08/9eb697ab4e664ea6b9b9e8e19f93a37b.png)
-
-Here is the translation of the provided text without changing the structure:
-
----
+[![]({{site.baseurl}}/assets/2021/08/9eb697ab4e664ea6b9b9e8e19f93a37b.png)]({{site.baseurl}}/assets/2021/08/9eb697ab4e664ea6b9b9e8e19f93a37b.png)
 
 Within the additional headers, we can find that the Export table (DataDirectory) is located at Offset 0x60 relative to the additional headers.
 
@@ -668,19 +665,19 @@ Adds the RVA with the BaseAddress of the current module to obtain the VMA of the
 
 Copies the RVA of the export table to the EAX register.
 
-[![](https://my_host/assets/2021/08/c4da462e06744a94b3d1e2ead1bc3d1d.png)](https://my_host/assets/2021/08/c4da462e06744a94b3d1e2ead1bc3d1d.png)
+[![]({{site.baseurl}}/assets/2021/08/c4da462e06744a94b3d1e2ead1bc3d1d.png)]({{site.baseurl}}/assets/2021/08/c4da462e06744a94b3d1e2ead1bc3d1d.png)
 
 As you can see, this is a scenario where the current module does not have any exported functions. Therefore, we will add a breakpoint at this point in the code to execute the code until it reaches the desired module. Since the `exitprocess` function is within the `kernel32.dll` module, we will execute the code until it reaches this point within the `kernel32.dll` module.
 
-[![](https://my_host/assets/2021/08/711ed42a3fd44518960877bcbb2f48bb.png)](https://my_host/assets/2021/08/711ed42a3fd44518960877bcbb2f48bb.png)
+[![]({{site.baseurl}}/assets/2021/08/711ed42a3fd44518960877bcbb2f48bb.png)]({{site.baseurl}}/assets/2021/08/711ed42a3fd44518960877bcbb2f48bb.png)
 
 Note that now we will execute the "g" command, and the execution proceeds until our breakpoint. Subsequently, we can inspect which module we are dealing with using the `lm a @edx` command, as we have the BaseAddress of the current module in ECX.
 
-[![](https://my_host/assets/2021/08/7997667cafec4e4e88a171ae43c7f922.png)](https://my_host/assets/2021/08/7997667cafec4e4e88a171ae43c7f922.png)
+[![]({{site.baseurl}}/assets/2021/08/7997667cafec4e4e88a171ae43c7f922.png)]({{site.baseurl}}/assets/2021/08/7997667cafec4e4e88a171ae43c7f922.png)
 
 Once we have reached `kernel32.dll`, we can continue the inspection.
 
-[![](https://my_host/assets/2021/08/08564e0c70724f328f260baea7f34fdc.png)](https://my_host/assets/2021/08/08564e0c70724f328f260baea7f34fdc.png)
+[![]({{site.baseurl}}/assets/2021/08/08564e0c70724f328f260baea7f34fdc.png)]({{site.baseurl}}/assets/2021/08/08564e0c70724f328f260baea7f34fdc.png)
 
 #### test eax, eax
 
@@ -692,27 +689,27 @@ If the table exists, i.e., EAX is not zero, the JMP instruction will not occur.
 
 Jump near if zero. It checks if the result of the last mathematical operation was zero. If yes, it performs the jump, verifying that there is no export table. Otherwise, it continues to the next instruction.
 
-[![](https://my_host/assets/2021/08/bd1ee4dbb0494fb397452b53f7fc56f2.png)](https://my_host/assets/2021/08/bd1ee4dbb0494fb397452b53f7fc56f2.png)
+[![]({{site.baseurl}}/assets/2021/08/bd1ee4dbb0494fb397452b53f7fc56f2.png)]({{site.baseurl}}/assets/2021/08/bd1ee4dbb0494fb397452b53f7fc56f2.png)
 
 #### add eax, edx
 
 Adds the RVA with the BaseAddress of the current module to obtain the VMA of the export table and saves it in the EAX register.
 
-[![](https://my_host/assets/2021/08/ddbd3d34d7754dc7bf6da2911c34a0fb.png)](https://my_host/assets/2021/08/ddbd3d34d7754dc7bf6da2911c34a0fb.png)
+[![]({{site.baseurl}}/assets/2021/08/ddbd3d34d7754dc7bf6da2911c34a0fb.png)]({{site.baseurl}}/assets/2021/08/ddbd3d34d7754dc7bf6da2911c34a0fb.png)
 
 #### push eax
 
 Saves the VMA of the export table of the current module on the stack.
 
-[![](https://my_host/assets/2021/08/31d074c5b9c94b2a806bd8d6a78728a7.png)](https://my_host/assets/2021/08/31d074c5b9c94b2a806bd8d6a78728a7.png)
+[![]({{site.baseurl}}/assets/2021/08/31d074c5b9c94b2a806bd8d6a78728a7.png)]({{site.baseurl}}/assets/2021/08/31d074c5b9c94b2a806bd8d6a78728a7.png)
 
 #### mov ecx, [eax+0x18]
 
 Now that we have the VMA of the export table in EAX, it copies the number of exported functions to the ECX register.
 
-[![](https://my_host/assets/2021/08/8dc9a7d1e4e747d0b5d0e5610294ff3b.png)](https://my_host/assets/2021/08/8dc9a7d1e4e747d0b5d0e5610294ff3b.png)
+[![]({{site.baseurl}}/assets/2021/08/8dc9a7d1e4e747d0b5d0e5610294ff3b.png)]({{site.baseurl}}/assets/2021/08/8dc9a7d1e4e747d0b5d0e5610294ff3b.png)
 
-[![](https://my_host/assets/2021/08/9db1702461b648c2b5b3f05eec7b2304.png)](https://my_host/assets/2021/08/9db1702461b648c2b5b3f05eec7b2304.png)
+[![]({{site.baseurl}}/assets/2021/08/9db1702461b648c2b5b3f05eec7b2304.png)]({{site.baseurl}}/assets/2021/08/9db1702461b648c2b5b3f05eec7b2304.png)
 
 #### mov ebx, [eax+0x20]
 
@@ -745,7 +742,7 @@ Performs a comparison between ECX and ECX.
 
 Jump near if zero. It jumps to the `get_next_mod` function if the result of the last mathematical operation is zero, i.e., if ECX (our function counter) reaches zero, it jumps to the code responsible for starting the process of checking the next module. Otherwise, it continues to the next instruction.
 
-[![](https://my_host/assets/2021/08/9cf736a54e064aefbb9720a26e91121a.png)](https://my_host/assets/2021/08/9cf736a54e064aefbb9720a26e91121a.png)
+[![]({{site.baseurl}}/assets/2021/08/9cf736a54e064aefbb9720a26e91121a.png)]({{site.baseurl}}/assets/2021/08/9cf736a54e064aefbb9720a26e91121a.png)
 
 ECX is not zero, so the JMP will not occur.
 
@@ -767,13 +764,13 @@ Retrieves the RVA of the function name. Where:
 
 Adds the RVA with the BaseAddress of the current module to obtain the VMA of the function name and saves it in the ESI register.
 
-[![](https://my_host/assets/2021/08/41dad8cb4ece46e8932b9dc629527137.png)](https://my_host/assets/2021/08/41dad8cb4ece46e8932b9dc629527137.png)
+[![]({{site.baseurl}}/assets/2021/08/41dad8cb4ece46e8932b9dc629527137.png)]({{site.baseurl}}/assets/2021/08/41dad8cb4ece46e8932b9dc629527137.png)
 
 As we decrement ECX during this loop, we effectively traverse the list backward. So, in the first iteration, we have the name of the last function in the array.
 
-[![](https://my_host/assets/2021/08/60bfdfab2d57477d884782fe7b53e6dd.png)](https://my_host/assets/2021/08/60bfdfab2d57477d884782fe7b53e6dd.png)
+[![]({{site.baseurl}}/assets/2021/08/60bfdfab2d57477d884782fe7b53e6dd.png)]({{site.baseurl}}/assets/2021/08/60bfdfab2d57477d884782fe7b53e6dd.png)
 
-[![](https://my_host/assets/2021/08/a82745678fc44ebbb9b3b9a943b6db86.png)](https://my_host/assets/2021/08/a82745678fc44ebbb9b3b9a943b6db86.png)
+[![]({{site.baseurl}}/assets/2021/08/a82745678fc44ebbb9b3b9a943b6db86.png)]({{site.baseurl}}/assets/2021/08/a82745678fc44ebbb9b3b9a943b6db86.png)
 
 #### xor edi, edi
 
@@ -838,11 +835,11 @@ Compares if the calculated hash is equal to the desired hash. Where:
 * EDI: Hash calculated with the module name + function name.
 * EBP + 0x24: Memory location holding the hash of the desired function. In our example, this hash was added to the stack with the PUSH 0x56A2B5F0, which is the hash of the `ExitProcess` function.
 
-[![](https://my_host/assets/2021/08/1eb1b42fa6714ad58a8e3e811f1f27db.png)](https://my_host/assets/2021/08/1eb1b42fa6714ad58a8e3e811f1f27db.png)
+[![]({{site.baseurl}}/assets/2021/08/1eb1b42fa6714ad58a8e3e811f1f27db.png)]({{site.baseurl}}/assets/2021/08/1eb1b42fa6714ad58a8e3e811f1f27db.png)
 
 We will set a breakpoint in this function to check the final hash of the function after calculating the hash of each function name + the module hash to later verify if it matches the desired hash.
 
-[![](https://my_host/assets/2021/08/0e00a89fcb68481aad7fa79e32224480.png)](https://my_host/assets/2021/08/0e00a89fcb68481aad7fa79e32224480.png)
+[![]({{site.baseurl}}/assets/2021/08/0e00a89fcb68481aad7fa79e32224480.png)]({{site.baseurl}}/assets/2021/08/0e00a89fcb68481aad7fa79e32224480.png)
 
 #### jnz get_next_func
 
@@ -852,25 +849,25 @@ Jump near if not zero. If the previous comparison indicates different hashes, th
 
 Restores the VMA of the export table of the current module to the EAX register. This value was saved on the stack by the previous PUSH EAX.
 
-[![](https://my_host/assets/2021/08/11ba7a2da13e4e9abdccf6d1fc7f8a34.png)](https://my_host/assets/2021/08/11ba7a2da13e4e9abdccf6d1fc7f8a34.png)
+[![]({{site.baseurl}}/assets/2021/08/11ba7a2da13e4e9abdccf6d1fc7f8a34.png)]({{site.baseurl}}/assets/2021/08/11ba7a2da13e4e9abdccf6d1fc7f8a34.png)
 
 We set a breakpoint at this instruction because we will only reach it when the hashes are equal, and we will release the execution afterward.
 
-[![](https://my_host/assets/2021/08/dadd5c5e07d046d2b792a7625c6bc5b0.png)](https://my_host/assets/2021/08/dadd5c5e07d046d2b792a7625c6bc5b0.png)
+[![]({{site.baseurl}}/assets/2021/08/dadd5c5e07d046d2b792a7625c6bc5b0.png)]({{site.baseurl}}/assets/2021/08/dadd5c5e07d046d2b792a7625c6bc5b0.png)
 
-[![](https://my_host/assets/2021/08/fe1adf21706641a7bd213526c575cd32.png)](https://my_host/assets/2021/08/fe1adf21706641a7bd213526c575cd32.png)
+[![]({{site.baseurl}}/assets/2021/08/fe1adf21706641a7bd213526c575cd32.png)]({{site.baseurl}}/assets/2021/08/fe1adf21706641a7bd213526c575cd32.png)
 
 #### mov ebx, [eax+0x24]
 
 Remembering the Export table structure
 
-[![](https://my_host/assets/2021/08/e65af62396474ecaa86ea23feaade247-1.png)](https://my_host/assets/2021/08/e65af62396474ecaa86ea23feaade247-1.png)
+[![]({{site.baseurl}}/assets/2021/08/e65af62396474ecaa86ea23feaade247-1.png)]({{site.baseurl}}/assets/2021/08/e65af62396474ecaa86ea23feaade247-1.png)
 
 At offset 0x24, we have the AddressOfNameOrdinals array, so this instruction copies the VMA of the AddressOfNameOrdinals array into the EBX register.
 
-[![](https://my_host/assets/2021/08/dade3a9912334bcfb6573adb18d485f0.png)](https://my_host/assets/2021/08/dade3a9912334bcfb6573adb18d485f0.png)
+[![]({{site.baseurl}}/assets/2021/08/dade3a9912334bcfb6573adb18d485f0.png)]({{site.baseurl}}/assets/2021/08/dade3a9912334bcfb6573adb18d485f0.png)
 
-[![](https://my_host/assets/2021/08/7235f7e1e42345fbb5fbae23607b7d81.png)](https://my_host/assets/2021/08/7235f7e1e42345fbb5fbae23607b7d81.png)
+[![]({{site.baseurl}}/assets/2021/08/7235f7e1e42345fbb5fbae23607b7d81.png)]({{site.baseurl}}/assets/2021/08/7235f7e1e42345fbb5fbae23607b7d81.png)
 
 #### add ebx, edx
 
@@ -880,7 +877,7 @@ Adds the RVA with the BaseAddress of the current module to obtain the VMA of the
 
 In ECX, we have the index of the desired function within the AddressOfNames array. Since the AddressOfNames and AddressOfNameOrdinals arrays use the same index, we can reuse it to find the RVA of the function within the AddressOfNameOrdinals array. In the AddressOfNames array, we use ECX * 4 to jump to each of the records in the array because each record in AddressOfNames is a DWORD value, whereas in the AddressOfNameOrdinals array, each record is a WORD, so we multiply by 0x02 to jump to each record. As we can see in the exports table of the kernel32.dll module:
 
-[![](https://my_host/assets/2021/08/7315b13c4f8948799c7b7da081ec7d7e.png)](https://my_host/assets/2021/08/7315b13c4f8948799c7b7da081ec7d7e.png)
+[![]({{site.baseurl}}/assets/2021/08/7315b13c4f8948799c7b7da081ec7d7e.png)]({{site.baseurl}}/assets/2021/08/7315b13c4f8948799c7b7da081ec7d7e.png)
 
 #### mov ebx, [eax + 0x1c]
 
@@ -904,7 +901,7 @@ Adds the RVA with the BaseAddress of the current module to obtain the VMA of the
 
 Note: This is the execution address of the function and can be used by the "call eax" instruction, for example.
 
-[![](https://my_host/assets/2021/08/9f1a8e78225b4bb08c7b0502a31ddeaa.png)](https://my_host/assets/2021/08/9f1a8e78225b4bb08c7b0502a31ddeaa.png)
+[![]({{site.baseurl}}/assets/2021/08/9f1a8e78225b4bb08c7b0502a31ddeaa.png)]({{site.baseurl}}/assets/2021/08/9f1a8e78225b4bb08c7b0502a31ddeaa.png)
 
 ### Finish function
 
@@ -977,7 +974,7 @@ Interested in learning step by step how to create a shellcode? Take a look at ou
 
 Training Link: [https://sec4us.com.br/treinamentos/shellcoding-para-desenvolvimento-de-exploits/](https://sec4us.com.br/treinamentos/shellcoding-para-desenvolvimento-de-exploits/)
 
-[![](https://my_host/assets/2021/08/image)](https://sec4us.com.br/treinamentos/shellcoding-para-desenvolvimento-de-exploits/)
+[![]({{site.baseurl}}/assets/2021/08/image)](https://sec4us.com.br/treinamentos/shellcoding-para-desenvolvimento-de-exploits/)
 
 Sources:
 -------
