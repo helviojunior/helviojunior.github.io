@@ -22,9 +22,6 @@ author: Helvio Junior (m4v3r1ck)
 permalink: "/it/oswe-uma-historia-de-insucessos/"
 ---
 
-Here is the HTML converted to Markdown:
-
-```markdown
 # Minha Jornada para a Certificação OSWE
 
 Estamos vivendo em um ano que certamente ficará marcado na história da humanidade, mas de forma especial na vida de muitos de nós. Desta forma, decidi escrever um pouco da minha trajetória para me certificar [OSWE](https://www.offensive-security.com/awae-oswe/), mas quero contar essa trajetória com um foco um pouco diferente do que comumente escrevo, quero focar nos insucessos e tropeços dessa trajetória.
