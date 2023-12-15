@@ -888,7 +888,8 @@ Retrieves the RVA of the desired function within the AddressOfFunctions array us
 
 Adds the RVA with the BaseAddress of the current module to obtain the VMA of the desired function and saves it in the EAX register.
 
-Note: This is the execution address of the function and can be used by the "call eax" instruction, for example.
+> This is the execution address of the function and can be used by the `call eax` instruction, for example.
+{: .prompt-warning }
 
 [![]({{site.baseurl}}/assets/2021/08/9f1a8e78225b4bb08c7b0502a31ddeaa.png)]({{site.baseurl}}/assets/2021/08/9f1a8e78225b4bb08c7b0502a31ddeaa.png)
 

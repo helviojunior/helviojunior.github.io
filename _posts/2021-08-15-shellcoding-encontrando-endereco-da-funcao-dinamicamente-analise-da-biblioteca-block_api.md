@@ -1000,7 +1000,8 @@ Resgata o RVA da função desejada dentro da array AddressOfFunctions utilizando
 
 Adiciona o RVA com o BaseAddress do módulo atual para obter o VMA da função desejada e o salva no registrador EAX
 
-Nota: Este ja é o endereço de execução da função e pode ser usado pela instrução **call eax** (por exemplo).
+> Este ja é o endereço de execução da função e pode ser usado pela instrução `call eax` (por exemplo).
+{: .prompt-warning }
 
 [![]({{site.baseurl}}/assets/2021/08/9f1a8e78225b4bb08c7b0502a31ddeaa.png)]({{site.baseurl}}/assets/2021/08/9f1a8e78225b4bb08c7b0502a31ddeaa.png)
 

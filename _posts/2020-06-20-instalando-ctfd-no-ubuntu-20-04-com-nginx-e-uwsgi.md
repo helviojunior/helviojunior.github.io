@@ -148,11 +148,12 @@ Antes de instalar aplicativos no ambiente virtual, você precisa ativá-lo. Faç
 ctfd@M4v3r1ck:~$ source CTFd/bin/activate
 ```
 
-Seu prompt mudará para indicar que você agora está operando no ambiente virtual. Ele se parecerá com isso (CTFd) ctfd@M4v3r1ck:~$.
+Seu prompt mudará para indicar que você agora está operando no ambiente virtual. Ele se parecerá com isso `(CTFd) ctfd@M4v3r1ck:~$`.
 
 Agora vamos instalar todas as dependências python necessárias para o ctfd.
 
-**NOTA: Independente da versão do Python neste ponto usar o pip ao invés do pip3 (pois já estamos dentro de um ambiente python3)**
+> Independente da versão do Python neste ponto usar o pip ao invés do pip3 (pois já estamos dentro de um ambiente python3)
+{: .prompt-warning }
 
 Primeiramente, vamos instalar o wheel com a instância local do pip para garantir que nossos pacotes serão instalados mesmo se estiverem faltando arquivos wheel:
 
