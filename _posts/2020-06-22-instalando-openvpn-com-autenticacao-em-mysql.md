@@ -36,7 +36,8 @@ echo "deb http://build.openvpn.net/debian/openvpn/stable `lsb_release --codename
 curl -s https://swupdate.openvpn.net/repos/repo-public.gpg | apt-key add -
 ```
 
-**Nota:** No momento que criei este tutorial, a instalação do mesmo foi em um Ubuntu 20.04, mas o repositório do OpenVPN ainda não estava aceitando o seu codinome 'focal', sendo assim, eu utilizei o repositório do Ubuntu 18.04, ficando como abaixo a minha linha de comando:
+> No momento que criei este tutorial, a instalação do mesmo foi em um Ubuntu 20.04, mas o repositório do OpenVPN ainda não estava aceitando o seu codinome `focal`, sendo assim, eu utilizei o repositório do Ubuntu 18.04, ficando conforme a linha de comando abaixo.
+{: .prompt-warning }
 
 ```shell
 echo "deb http://build.openvpn.net/debian/openvpn/stable bionic main" > /etc/apt/sources.list.d/openvpn-aptrepo.list
@@ -180,7 +181,8 @@ This process will result in the file **~/openvpn-ca/pki/private/ta.key**, which 
 
 Next, let's generate our OpenVPN server certificate and its corresponding private key.
 
-**Note:** If you choose a different name than "server" here, you will have to adjust some of the instructions below. For example, when copying the generated files to the /etc/openvpn directory, you will have to replace the correct names. You will also need to modify the **/etc/openvpn/server.conf** file later to point to the correct **.crt** and **.key** files.
+> If you choose a different name than "server" here, you will have to adjust some of the instructions below. For example, when copying the generated files to the /etc/openvpn directory, you will have to replace the correct names. You will also need to modify the `/etc/openvpn/server.conf` file later to point to the correct `.crt` and `.key` files.
+{: .prompt-warning }
 
 Start by generating the OpenVPN server certificate and key pair. You can do this by typing:
 
@@ -191,7 +193,8 @@ Start by generating the OpenVPN server certificate and key pair. You can do this
 
 Este processo gerou 2 arquivos **~/openvpn-ca/pki/issued/server.crt** e **~/openvpn-ca/pki/private/server.key**.
 
-**Nota:** Observer que neste comando passamos o parâmetro **nopass** que irá deixar a chave privada do nosso servidor sem senha, isso tem um certo risco de segurança mas se faz necessário pois caso essa chave tenha senha a cada reboot do servidor ou restart do ser serviço OpenVPN você teria que digitar a senha na console o que poderia ocasionar um falha no serviço.
+> Observer que neste comando passamos o parâmetro `nopass` que irá deixar a chave privada do nosso servidor sem senha, isso tem um certo risco de segurança mas se faz necessário pois caso essa chave tenha senha a cada reboot do servidor ou restart do ser serviço OpenVPN você teria que digitar a senha na console o que poderia ocasionar um falha no serviço.
+{: .prompt-warning }
 
 ## Criando o certificado do cliente
 
