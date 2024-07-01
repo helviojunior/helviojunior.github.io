@@ -114,7 +114,7 @@ chmod -R 770 /etc/kibana/certs
 
 ### Configurando o Elasticsearch
 
-Edite o arquivo de congiguração `/etc/elasticsearch/elasticsearch.yml`
+Edite o arquivo de configuração `/etc/elasticsearch/elasticsearch.yml`
 
 ```shell
 http.host: 0.0.0.0
@@ -167,7 +167,7 @@ curl -s -k -X GET "https://localhost:9200" | jq
 
 [![]({{site.baseurl}}/assets/2024/06/7aeb4442e68a0242b85123edffdfb238.png)]({{site.baseurl}}/assets/2024/06/7aeb4442e68a0242b85123edffdfb238.png)
 
-> Co o comando acima recebemos um erro de autenticação `missing authentication credentials for REST request`, porém não se preocupe isso é normal, pois ja configuramos o nosso Elasticsearch para exigir autenticação em sua interações, inclusive na API REST.
+> Com o comando acima recebemos um erro de autenticação `missing authentication credentials for REST request`, porém não se preocupe isso é normal, pois ja configuramos o nosso Elasticsearch para exigir autenticação em sua interações, inclusive na API REST.
 {: .prompt-tip }
 
 Agora vamos resetar as credenciais do sistema
@@ -250,6 +250,7 @@ xpack.security.encryptionKey: "myKey"
 xpack.encryptedSavedObjects.encryptionKey: "myEncKey"
 xpack.reporting.encryptionKey: "my2EncKey"
 ```
+{: file='/etc/kibana/kibana.yml'}
 
 > Lembre-se de alterar os valores das chaves de criptografia `xpack.security.encryptionKey`, `xpack.encryptedSavedObjects.encryptionKey` e `xpack.reporting.encryptionKey`, a senha do usuário `kibana_system` bem como o endereço IP presente no parâmetro `server.publicBaseUrl`.
 {: .prompt-warning }
@@ -369,13 +370,11 @@ Para o correto monitoramento e encaminhamento de logs e alertas vamos configurar
 
 [![]({{site.baseurl}}/assets/2024/06/86108d5989dfea7c9a7ad3c6a6ed22f3.png)]({{site.baseurl}}/assets/2024/06/86108d5989dfea7c9a7ad3c6a6ed22f3.png)
 
-[![]({{site.baseurl}}/assets/2024/06/2e24bf5ea88211c98b491321dcd254ab.png)]({{site.baseurl}}/assets/2024/06/2e24bf5ea88211c98b491321dcd254ab.png)
-
 [![]({{site.baseurl}}/assets/2024/06/2cad626baeab80c32dcb5187e5369e7e.png)]({{site.baseurl}}/assets/2024/06/2cad626baeab80c32dcb5187e5369e7e.png)
 
 [![]({{site.baseurl}}/assets/2024/06/eb10d8a0475575c6fd7b40f8ec453e23.png)]({{site.baseurl}}/assets/2024/06/eb10d8a0475575c6fd7b40f8ec453e23.png)
 
-[![]({{site.baseurl}}/assets/2024/06/eb10d8a0475575c6fd7b40f8ec453e23.png)]({{site.baseurl}}/assets/2024/06/eb10d8a0475575c6fd7b40f8ec453e23.png)
+[![]({{site.baseurl}}/assets/2024/06/2e24bf5ea88211c98b491321dcd254ab.png)]({{site.baseurl}}/assets/2024/06/2e24bf5ea88211c98b491321dcd254ab.png)
 
 
 ## Elastic Defend
