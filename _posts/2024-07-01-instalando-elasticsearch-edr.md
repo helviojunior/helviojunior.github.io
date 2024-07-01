@@ -508,6 +508,14 @@ Quase que instantaneamente foi bloqueado e o arquivo removido.
 
 [![]({{site.baseurl}}/assets/2024/06/c61cfc8a1b31336b203545ed0e9f6e47.png)]({{site.baseurl}}/assets/2024/06/c61cfc8a1b31336b203545ed0e9f6e47.png)
 
+## Licenciamento
+
+O objetivo deste post não é falar sobre as funcionalidades e custos do Elastic EDR, desta forma apenas para conhecimento, do ponto de vista de monitoramento do EDR, foram observados 4 módulos que são desabilitados na versão gratuita do Elastic, exigindo o licenciamento `Platinum`, conforme ilustra a imagem abaixo.
+
+[![]({{site.baseurl}}/assets/2024/06/ac2a5294973f0866ecc7b41c4055a511.png)]({{site.baseurl}}/assets/2024/06/ac2a5294973f0866ecc7b41c4055a511.png)
+
+> Todos os procedimentos e testes presentes neste post foram realizados com a licença gratuita.
+{: .prompt-tip }
 
 ## Conclusão
 
