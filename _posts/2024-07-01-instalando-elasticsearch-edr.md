@@ -12,13 +12,14 @@ categories:
 tags: []
 author: Helvio Junior (m4v3r1ck)
 permalink: "/security/edr/instalando-elasticsearch-edr/"
+excerpt: "Como instalar e configurar o Elastic EDR."
 ---
 
 ## Instalando Elasticsearch EDR
 
 Durante a minha pesquisa de Bypass de EDR e criação da técnica [HookChain](https://github.com/helviojunior/hookchain/) eu me deparei com uma dificuldade para achar um tutorial passo-a-passo que realmente incluisse todos os passos para a instalação e configuração do Elastic EDR, sendo assim decidi escreve-lo.
 
-Segue um passo a passo para instalação do Elasticsearch EDR no Ubuntu.
+Segue um passo a passo para instalação do Elasticsearch EDR no Ubuntu 22.04.
 
 ### Preparando Ambiente
 
@@ -117,6 +118,11 @@ chmod -R 770 /etc/kibana/certs
 Edite o arquivo de configuração `/etc/elasticsearch/elasticsearch.yml`
 
 ```shell
+# ================ Elasticsearch Configuration ================
+# Source: https://www.helviojunior.com.br/security/edr/instalando-elasticsearch-edr/
+# Author: Helvio Junior (M4v3r1ck)
+#
+
 http.host: 0.0.0.0
 network.host: "172.31.255.30"
 http.port: 9200
@@ -205,6 +211,11 @@ Edite o arquivo de configuração `/etc/kibana/kibana.yml` conforme abaixo
 
 
 ```yml
+# =================== Kibana Configuration ====================
+# Source: https://www.helviojunior.com.br/security/edr/instalando-elasticsearch-edr/
+# Author: Helvio Junior (M4v3r1ck)
+#
+
 # =================== System: Kibana Server ===================
 # Kibana is served by a back end server. This setting specifies the port to use.
 server.port: 443
@@ -494,6 +505,8 @@ Quase que instantaneamente foi bloqueado e o arquivo removido.
 
 
 [![]({{site.baseurl}}/assets/2024/06/d2fe28eae1767c8b3218534540e1ca11.png)]({{site.baseurl}}/assets/2024/06/d2fe28eae1767c8b3218534540e1ca11.png)
+
+[![]({{site.baseurl}}/assets/2024/06/c61cfc8a1b31336b203545ed0e9f6e47.png)]({{site.baseurl}}/assets/2024/06/c61cfc8a1b31336b203545ed0e9f6e47.png)
 
 
 ## Conclusão
