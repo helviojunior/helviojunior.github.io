@@ -373,6 +373,12 @@ Edite as configurações do Fleet para que os hosts possam integrar corretamente
 
 [![]({{site.baseurl}}/assets/2024/06/6febdbf2323a30ab868309b577215091.png)]({{site.baseurl}}/assets/2024/06/6febdbf2323a30ab868309b577215091.png)
 
+Habilite o Agente
+
+```bash
+systemctl enable elastic-agent
+```
+
 ### Integração EDR
 
 Para o correto monitoramento e encaminhamento de logs e alertas vamos configurar a integração com o o Elastic Defend para o Fleet Server
