@@ -16,8 +16,15 @@ tags:
 - Pentest
 author: Helvio Junior (m4v3r1ck)
 permalink: "/security/osint/localizando-ips-que-respondem-para-uma-url/"
-excerpt: "Localizando IPs que respondem para uma URL utilizando o Web Finder"
+excerpt: "Realize o Bypass do WAF utilizando o Web Finder para localizar endereços que respondem pelo site sem WAF"
+image:
+  src: /assets/2024/10/cc13eab9f01750e2a810a84e80e5bb5d.png
+  alt: Web Finder
 ---
+
+## Introdução
+
+O Web Finder tem por objetivo auxiliar na localização de endereços IP que respondem por uma URL específica, podendo, desta forma ocorrer o Bypass do WAF.
 
 ## Conceito técnico
 Ao realizar uma requisição HTTP/S para um host a primeira fase a ser realizada pelo cliente é a resolução de nome para IP e posteriormente conexão direta para este IP. Este procedimento se refere até a camada de Transporte do modelo OSI (camada 4) onde temos apenas IP e porta. Após a conexão TCP ocorrer com sucesso o cliente monta um cabeçalho de requisição HTTP e envia ao servidor, veja o exemplo a seguir:
@@ -126,7 +133,7 @@ Na aba **Relations** teremos diversos endereços IPs
 
 Selecione todo o texto/html do site, copie e cole em um arquivo texto.
 
-> Não se importe de vier outros textos neste processo, pois futuramente iremos filtrar somente os endereços IP
+> Não se importe se vier outros textos neste processo, pois futuramente iremos filtrar somente os endereços IP
 {: .prompt-tip }
 
 [![]({{site.baseurl}}/assets/2024/10/4444a223d6c4a4d00fd6e31befb70836.png)]({{site.baseurl}}/assets/2024/10/4444a223d6c4a4d00fd6e31befb70836.png)
@@ -139,7 +146,7 @@ Visualize todos os endereços listados pelo Shodan através da URL `https://www.
 
 Selecione todo o texto/html do site, copie e cole em um arquivo texto.
 
-> Não se importe de vier outros textos neste processo, pois futuramente iremos filtrar somente os endereços IP
+> Não se importe se vier outros textos neste processo, pois futuramente iremos filtrar somente os endereços IP
 {: .prompt-tip }
 
 
@@ -182,7 +189,9 @@ webfinder -t https://x.com/ -ip tst.txt -o x.txt --random-agent
 
 ### Blind check
 
-Um outro método comum de busca é com a parametrização do código de retorno (Ex: 200, 204, 404, 500 e etc...) em conjunto (ou não) com o tamanho da resposta esperado.
+O Web Finder em seu modo de busca padrão, primeiramente irá se conectar ao site original e obter o código de retorno bem como o tamanho do corpo da resposta, este processo tem por objetivo entender o padrão do site original para posteriormente buscar pelo mesmo padrão diretamente nos endereços IP informados. 
+
+Porém existem alguns cenários onde o acesso ao site original não é possível, por diversas razões, como bloqueio, conectividade de rede e etc... Nestes casos o Web Finder detém de um parâmetro `--static` onde é possível a parametrização do código de retorno (Ex: 200, 204, 404, 500 e etc...) em conjunto (ou não) com o tamanho da resposta esperada.
 
 Adotando como base a requisição anterior que obtivemos o código de retorno `200` com o tamanho de `2610 bytes` podemos realizar a execução com 2 variantes:
 
