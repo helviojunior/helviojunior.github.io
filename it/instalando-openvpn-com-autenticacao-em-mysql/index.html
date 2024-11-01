@@ -1,0 +1,713 @@
+<!DOCTYPE html><html lang="en-US" ><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"><meta name="generator" content="Jekyll v4.3.4" /><meta property="og:title" content="Instalando OpenVPN com autenticação em MySQL" /><meta name="author" content="Helvio Junior (m4v3r1ck)" /><meta property="og:locale" content="en_US" /><meta name="description" content="OpenVPN é um software Linux utilizado para criação de túneis VPN. Neste artigo demonstrarei passo-a-passo como instalar o OpenVPN com os seguintes pré-requisitos:" /><meta property="og:description" content="OpenVPN é um software Linux utilizado para criação de túneis VPN. Neste artigo demonstrarei passo-a-passo como instalar o OpenVPN com os seguintes pré-requisitos:" /><link rel="canonical" href="https://www.helviojunior.com.br/it/instalando-openvpn-com-autenticacao-em-mysql/" /><meta property="og:url" content="https://www.helviojunior.com.br/it/instalando-openvpn-com-autenticacao-em-mysql/" /><meta property="og:site_name" content="Helvio Junior" /><meta property="og:type" content="article" /><meta property="article:published_time" content="2020-06-22T16:38:05-03:00" /><meta name="twitter:card" content="summary" /><meta property="twitter:title" content="Instalando OpenVPN com autenticação em MySQL" /><meta name="twitter:site" content="@helvioju" /><meta name="twitter:creator" content="@Helvio Junior (m4v3r1ck)" /><meta name="google-site-verification" content="JR4IIP9jfvOwxn2ybV_Qn0SrtDPlTrKomdPWgBuP55k"" /> <script type="application/ld+json"> {"@context":"https://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Helvio Junior (m4v3r1ck)"},"dateModified":"2023-12-15T13:11:54-03:00","datePublished":"2020-06-22T16:38:05-03:00","description":"OpenVPN é um software Linux utilizado para criação de túneis VPN. Neste artigo demonstrarei passo-a-passo como instalar o OpenVPN com os seguintes pré-requisitos:","headline":"Instalando OpenVPN com autenticação em MySQL","mainEntityOfPage":{"@type":"WebPage","@id":"https://www.helviojunior.com.br/it/instalando-openvpn-com-autenticacao-em-mysql/"},"url":"https://www.helviojunior.com.br/it/instalando-openvpn-com-autenticacao-em-mysql/"}</script><title>Instalando OpenVPN com autenticação em MySQL | Helvio Junior</title><link rel="apple-touch-icon" sizes="180x180" href="/assets/img/favicons/apple-touch-icon.png"><link rel="icon" type="image/png" sizes="32x32" href="/assets/img/favicons/favicon-32x32.png"><link rel="icon" type="image/png" sizes="16x16" href="/assets/img/favicons/favicon-16x16.png"><link rel="manifest" href="/assets/img/favicons/site.webmanifest"><link rel="shortcut icon" href="/assets/img/favicons/favicon.ico"><meta name="apple-mobile-web-app-title" content="Helvio Junior"><meta name="application-name" content="Helvio Junior"><meta name="msapplication-TileColor" content="#da532c"><meta name="msapplication-config" content="/assets/img/favicons/browserconfig.xml"><meta name="theme-color" content="#ffffff"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous"><link rel="dns-prefetch" href="https://fonts.gstatic.com"><link rel="preconnect" href="https://www.google-analytics.com" crossorigin="use-credentials"><link rel="dns-prefetch" href="https://www.google-analytics.com"><link rel="preconnect" href="https://www.googletagmanager.com" crossorigin="anonymous"><link rel="dns-prefetch" href="https://www.googletagmanager.com"><link rel="preconnect" href="https://cdn.jsdelivr.net"><link rel="dns-prefetch" href="https://cdn.jsdelivr.net"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css"><link rel="stylesheet" href="/assets/css/style.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/afeld/bootstrap-toc@1.0.1/dist/bootstrap-toc.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/magnific-popup@1.1.0/dist/magnific-popup.min.css"> <script src="https://cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script> <script defer src="https://cdn.jsdelivr.net/combine/npm/popper.js@1.15.0,npm/bootstrap@4/dist/js/bootstrap.min.js"></script> <script async src="https://cdn.jsdelivr.net/combine/npm/lozad/dist/lozad.min.js,npm/magnific-popup@1/dist/jquery.magnific-popup.min.js"></script> <script defer src="/assets/js/dist/post.min.js"></script> <script defer src="/app.js"></script> <script defer src="https://www.googletagmanager.com/gtag/js?id="></script> <script> document.addEventListener("DOMContentLoaded", function(event) { window.dataLayer = window.dataLayer || []; function gtag(){dataLayer.push(arguments);} gtag('js', new Date()); gtag('config', ''); }); </script><body data-spy="scroll" data-target="#toc"><div id="sidebar" class="d-flex flex-column align-items-end"><div class="profile-wrapper text-center"><div id="avatar"> <a href="/" alt="avatar" class="mx-auto"> <img src="/assets/img/m4v3r1ck.jpg" alt="avatar" onerror="this.style.display='none'"> </a></div><div class="site-title mt-3"> <a href="/">Helvio Junior</a></div><div class="site-subtitle font-italic">Cyber security researcher, speaker, low level and binary exploitation entusiast. <br /><br />"I’m just a child who has never grown up. I still keep asking these 'how' & 'why' questions. Occasionally, I find an answer. Stephen Hawking"</div></div><ul class="w-100"><li class="nav-item"> <a href="/" class="nav-link"> <i class="fa-fw fas fa-home ml-xl-3 mr-xl-3 unloaded"></i> <span>HOME</span> </a><li class="nav-item"> <a href="/categories/" class="nav-link"> <i class="fa-fw fas fa-stream ml-xl-3 mr-xl-3 unloaded"></i> <span>CATEGORIES</span> </a><li class="nav-item"> <a href="/tags/" class="nav-link"> <i class="fa-fw fas fa-tags ml-xl-3 mr-xl-3 unloaded"></i> <span>TAGS</span> </a><li class="nav-item"> <a href="/archives/" class="nav-link"> <i class="fa-fw fas fa-archive ml-xl-3 mr-xl-3 unloaded"></i> <span>ARCHIVES</span> </a><li class="nav-item"> <a href="/about/" class="nav-link"> <i class="fa-fw fas fa-info ml-xl-3 mr-xl-3 unloaded"></i> <span>ABOUT</span> </a></ul><div class="sidebar-bottom mt-auto d-flex flex-wrap justify-content-center"> <a href="https://www.linkedin.com/in/helviojunior" aria-label="linkedin" class="order-3" target="_blank" rel="noopener"> <i class="fab fa-linkedin"></i> </a> <a href="https://www.youtube.com/@Sec4US" aria-label="youtube" class="order-4" target="_blank" rel="noopener"> <i class="fab fa-youtube"></i> </a> <a href="https://github.com/helviojunior" aria-label="github" class="order-5" target="_blank" rel="noopener"> <i class="fab fa-github-alt"></i> </a> <a href=" javascript:location.href = 'mailto:' + ['helvio.junior','sec4us.com.br'].join('@')" aria-label="email" class="order-6" > <i class="fas fa-envelope"></i> </a> <span class="icon-border order-2"></span> <span id="mode-toggle-wrapper" class="order-1"> <i class="mode-toggle fas fa-adjust"></i> <script type="text/javascript"> class ModeToggle { static get MODE_KEY() { return "mode"; } static get DARK_MODE() { return "dark"; } static get LIGHT_MODE() { return "light"; } constructor() { if (this.hasMode) { if (this.isDarkMode) { if (!this.isSysDarkPrefer) { this.setDark(); } } else { if (this.isSysDarkPrefer) { this.setLight(); } } } var self = this; /* always follow the system prefers */ this.sysDarkPrefers.addListener(function() { if (self.hasMode) { if (self.isDarkMode) { if (!self.isSysDarkPrefer) { self.setDark(); } } else { if (self.isSysDarkPrefer) { self.setLight(); } } self.clearMode(); } self.updateMermaid(); }); } /* constructor() */ setDark() { $('html').attr(ModeToggle.MODE_KEY, ModeToggle.DARK_MODE); sessionStorage.setItem(ModeToggle.MODE_KEY, ModeToggle.DARK_MODE); } setLight() { $('html').attr(ModeToggle.MODE_KEY, ModeToggle.LIGHT_MODE); sessionStorage.setItem(ModeToggle.MODE_KEY, ModeToggle.LIGHT_MODE); } clearMode() { $('html').removeAttr(ModeToggle.MODE_KEY); sessionStorage.removeItem(ModeToggle.MODE_KEY); } get sysDarkPrefers() { return window.matchMedia("(prefers-color-scheme: dark)"); } get isSysDarkPrefer() { return this.sysDarkPrefers.matches; } get isDarkMode() { return this.mode == ModeToggle.DARK_MODE; } get isLightMode() { return this.mode == ModeToggle.LIGHT_MODE; } get hasMode() { return this.mode != null; } get mode() { return sessionStorage.getItem(ModeToggle.MODE_KEY); } /* get the current mode on screen */ get modeStatus() { if (this.isDarkMode || (!this.hasMode && this.isSysDarkPrefer) ) { return ModeToggle.DARK_MODE; } else { return ModeToggle.LIGHT_MODE; } } updateMermaid() { if (typeof mermaid !== "undefined") { let expectedTheme = (this.modeStatus === ModeToggle.DARK_MODE? "dark" : "default"); let config = { theme: expectedTheme }; /* re-render the SVG › <https://github.com/mermaid-js/mermaid/issues/311#issuecomment-332557344> */ $(".mermaid").each(function() { let svgCode = $(this).prev().children().html(); $(this).removeAttr("data-processed"); $(this).html(svgCode); }); mermaid.initialize(config); mermaid.init(undefined, ".mermaid"); } } flipMode() { if (this.hasMode) { if (this.isSysDarkPrefer) { if (this.isLightMode) { this.clearMode(); } else { this.setLight(); } } else { if (this.isDarkMode) { this.clearMode(); } else { this.setDark(); } } } else { if (this.isSysDarkPrefer) { this.setLight(); } else { this.setDark(); } } this.updateMermaid(); } /* flipMode() */ } /* ModeToggle */ let toggle = new ModeToggle(); $(".mode-toggle").click(function() { toggle.flipMode(); }); </script> </span></div></div><div id="topbar-wrapper" class="row justify-content-center topbar-down"><div id="topbar" class="col-11 d-flex h-100 align-items-center justify-content-between"> <span id="breadcrumb"> <span> <a href="/it"> It </a> </span> <span>Instalando OpenVPN com autenticação em MySQL</span> </span> <i id="sidebar-trigger" class="fas fa-bars fa-fw"></i><div id="topbar-title"> Post</div><i id="search-trigger" class="fas fa-search fa-fw"></i> <span id="search-wrapper" class="align-items-center"> <i class="fas fa-search fa-fw"></i> <input class="form-control" id="search-input" type="search" aria-label="search" autocomplete="off" placeholder="Search..."> <i class="fa fa-times-circle fa-fw" id="search-cleaner"></i> </span> <span id="search-cancel" >Cancel</span></div></div><div id="main-wrapper"><div id="main"><div class="row"><div id="post-wrapper" class="col-12 col-lg-11 col-xl-8"><div class="post pl-1 pr-1 pl-sm-2 pr-sm-2 pl-md-4 pr-md-4"><h1 data-toc-skip>Instalando OpenVPN com autenticação em MySQL</h1><div class="post-meta text-muted d-flex flex-column"><div> <span class="semi-bold"> Helvio Junior (m4v3r1ck) </span> <span class="timeago " data-toggle="tooltip" data-placement="bottom" title="Mon, Jun 22, 2020, 4:38 PM -0300" prep="on" > Jun 22, 2020 <i class="unloaded">2020-06-22T16:38:05-03:00</i> </span></div><div> <span> <span class="timeago lastmod" data-toggle="tooltip" data-placement="bottom" title="Fri, Dec 15, 2023, 1:11 PM -0300" prefix="Updated " > Dec 15, 2023 <i class="unloaded">2023-12-15T13:11:54-03:00</i> </span> </span> <span class="readtime" data-toggle="tooltip" data-placement="bottom" title="3753 words">20 min</span></div></div><div class="post-content"><p>OpenVPN é um software Linux utilizado para criação de túneis VPN. Neste artigo demonstrarei passo-a-passo como instalar o OpenVPN com os seguintes pré-requisitos:</p><ul><li>Versão atualizada do próprio repositório do OpenVPN;<li>Utilização de Certificado digital;<li>Autenticação via banco de dados MySQL;<li>Scripts em python para atualização dos dados em tempo real (usuário conectado, usuário desconectado e dados trafegados)</ul><p>Maiores informações e documentação do OpenVPN pode ser obtida neste endereço: <a href="https://openvpn.net/">https://openvpn.net/</a></p><h2 id="instalando-pacotes-e-dependências"><span class="me-2">Instalando pacotes e dependências</span><a href="#instalando-pacotes-e-dependências" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h2><p>Antes de mais nada se faz necessário realizar a instalação de todas as dependências necessárias para o correto funcionamento do ambiente.</p><p>Adicionando repositório do OpenVPN no ambiente</p><div class="language-shell highlighter-rouge"><div class="code-header"> <span data-label-text="Shell"><i class="fas fa-code fa-fw small"></i></span> <button aria-label="copy" data-title-succeed=""><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+</pre><td class="rouge-code"><pre>root@M4v3r1ck:~# <span class="nb">echo</span> <span class="s2">"deb http://build.openvpn.net/debian/openvpn/stable </span><span class="sb">`</span>lsb_release <span class="nt">--codename</span> <span class="nt">--short</span><span class="sb">`</span><span class="s2"> main"</span> <span class="o">&gt;</span> /etc/apt/sources.list.d/openvpn-aptrepo.list
+root@M4v3r1ck:~# curl <span class="nt">-s</span> https://swupdate.openvpn.net/repos/repo-public.gpg | apt-key add -
+</pre></table></code></div></div><blockquote class="prompt-warning"><p>No momento que criei este tutorial, a instalação do mesmo foi em um Ubuntu 20.04, mas o repositório do OpenVPN ainda não estava aceitando o seu codinome <code class="language-plaintext highlighter-rouge">focal</code>, sendo assim, eu utilizei o repositório do Ubuntu 18.04, ficando conforme a linha de comando abaixo.</p></blockquote><div class="language-shell highlighter-rouge"><div class="code-header"> <span data-label-text="Shell"><i class="fas fa-code fa-fw small"></i></span> <button aria-label="copy" data-title-succeed=""><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre><td class="rouge-code"><pre>root@M4v3r1ck:~# <span class="nb">echo</span> <span class="s2">"deb http://build.openvpn.net/debian/openvpn/stable bionic main"</span> <span class="o">&gt;</span> /etc/apt/sources.list.d/openvpn-aptrepo.list
+</pre></table></code></div></div><p>Atualizando o ambiente</p><div class="language-shell highlighter-rouge"><div class="code-header"> <span data-label-text="Shell"><i class="fas fa-code fa-fw small"></i></span> <button aria-label="copy" data-title-succeed=""><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre><td class="rouge-code"><pre>root@M4v3r1ck:~# apt-get update <span class="o">&amp;&amp;</span> apt-get <span class="nt">-y</span> upgrade
+</pre></table></code></div></div><p>Instalando pacotes e dependências</p><div class="language-shell highlighter-rouge"><div class="code-header"> <span data-label-text="Shell"><i class="fas fa-code fa-fw small"></i></span> <button aria-label="copy" data-title-succeed=""><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+</pre><td class="rouge-code"><pre>root@M4v3r1ck:~# apt <span class="nb">install</span> <span class="nt">-y</span> openvpn easy-rsa libpam-mysql python python3 python3-pip libmariadb-dev python3-dev mariadb-client mariadb-server iptables-persistent
+root@M4v3r1ck:~# pip3 <span class="nb">install </span>mysqlclient
+</pre></table></code></div></div><h2 id="configurando-a-autoridade-certificadora-ca"><span class="me-2">Configurando a Autoridade Certificadora (CA)</span><a href="#configurando-a-autoridade-certificadora-ca" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h2><p>O OpenVPN é uma VPN TLS/SSL. Isso significa que ele utiliza certificados para criptografar o tráfego entre o servidor e os clientes. Para emitir certificados confiáveis, precisaremos configurar nossa própria autoridade de certificação (CA) simples.</p><p>Antes de iniciar os comandos propriamente dito creio ser bem importante entendermos o que estamos fazendo, e como esse assunto de autoridade certificadora é algo complexo recomendo a leitura deste artigo que escrevi sobre o assunto (<a href="https://www.helviojunior.com.br/it/security/introducao-criptografia/">https://www.helviojunior.com.br/it/security/introducao-criptografia/</a>). Para ilustrar o que iremos realizar em termos de autoridade de certificação (CA) observe a imagem abaixo:</p><p><a href="http://www.helviojunior.com.br/wp-content/uploads/2020/06/Certificados.png" class="popup img-link "><img data-src="http://www.helviojunior.com.br/wp-content/uploads/2020/06/Certificados.png" alt="Certificados" class="lazyload" data-proofer-ignore></a></p><p>Observe que na imagem ilustramos 4 certificados:</p><ol><li><strong>Root CA</strong>: Este é a autoridade máxima nessa nossa estrutura, é a partir dela que todos os outros certificados são gerados, sendo assim será o primeiro certificado a ser gerado, e o mais importante, portando no momento que formos criar uma senha para suas chaves provadas, crie uma senha complexa e a guarde com carinho;<li><strong>Servidor</strong>: Este será o segundo certificado a ser gerado, ele é utilizado exclusivamente no servidor e tem a função de que os clientes (OpenVPN) possam confiar em seu servidor;<li><strong>Cliente n</strong>: Os certificados de cliente são para que o servidor possa confiar e ter a certeza que o cliente foi autorizado por você a conectar no seu ambiente. O recomendado é que tenha um certificado para cada cliente, mas dependendo da criticidade do seu ambiente você pode utilizar um único certificado para todos os clientes uma vez que a autenticação (neste nosso caso) se dará através de usuário e senha. Com a utilização de um certificado por cliente você terá na prática dois fatores de autenticação (um deles o certificado e outro o usuário/senha);</ol><p>Para começar, podemos copiar o diretório modelo easy-rsa em nosso diretório home com o comando make-cadir:</p><div class="language-shell highlighter-rouge"><div class="code-header"> <span data-label-text="Shell"><i class="fas fa-code fa-fw small"></i></span> <button aria-label="copy" data-title-succeed=""><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre><td class="rouge-code"><pre>root@M4v3r1ck:~# make-cadir ~/openvpn-ca
+</pre></table></code></div></div><p>Vamos para o diretório recém-criado para começar a configuração do CA:</p><div class="language-shell highlighter-rouge"><div class="code-header"> <span data-label-text="Shell"><i class="fas fa-code fa-fw small"></i></span> <button aria-label="copy" data-title-succeed=""><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre><td class="rouge-code"><pre>root@M4v3r1ck:~# <span class="nb">cd</span> ~/openvpn-ca
+</pre></table></code></div></div><p>Para configurar os valores que nossa CA irá utilizar, precisamos editar o arquivo <strong>var</strong> dentro do diretório. Abra esse arquivo (<strong>~/openvpn-ca/vars</strong>) agora em seu editor de textos.</p><p>Dentro, você encontrará algumas variáveis que podem ser ajustadas para determinar como os seus certificados serão criados. Somente precisamos nos preocupar com algumas delas.</p><p>Na parte inferior do arquivo, localize as configurações que definem padrões de campo para novos certificados. Deve ser algo como isto:</p><div class="language-shell highlighter-rouge"><div class="code-header"> <span data-label-text="Shell"><i class="fas fa-code fa-fw small"></i></span> <button aria-label="copy" data-title-succeed=""><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+</pre><td class="rouge-code"><pre>...
+<span class="c">#set_var EASYRSA_REQ_COUNTRY    "US"</span>
+<span class="c">#set_var EASYRSA_REQ_PROVINCE   "California"</span>
+<span class="c">#set_var EASYRSA_REQ_CITY       "San Francisco"</span>
+<span class="c">#set_var EASYRSA_REQ_ORG        "Copyleft Certificate Co"</span>
+<span class="c">#set_var EASYRSA_REQ_EMAIL      "me@example.net"</span>
+<span class="c">#set_var EASYRSA_REQ_OU         "My Organizational Unit"</span>
+...
+</pre></table></code></div></div><p>Edite os valores para o que você preferir, mas não os deixe em branco:</p><div class="language-shell highlighter-rouge"><div class="code-header"> <span data-label-text="Shell"><i class="fas fa-code fa-fw small"></i></span> <button aria-label="copy" data-title-succeed=""><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+</pre><td class="rouge-code"><pre>...
+set_var EASYRSA_REQ_COUNTRY    <span class="s2">"BR"</span>
+set_var EASYRSA_REQ_PROVINCE   <span class="s2">"SP"</span>
+set_var EASYRSA_REQ_CITY       <span class="s2">"Sao Paulo"</span>
+set_var EASYRSA_REQ_ORG        <span class="s2">"Helvio Junior"</span>
+set_var EASYRSA_REQ_EMAIL      <span class="s2">"contato@helviojunior.com.br"</span>
+set_var EASYRSA_REQ_OU         <span class="s2">"Helvio Junior Treinamentos"</span>
+...
+</pre></table></code></div></div><p>Quando tiver terminado, salve e feche o arquivo.</p><h2 id="construindo-a-autoridade-certificadora-raiz-root-ca"><span class="me-2">Construindo a autoridade certificadora Raiz (Root-CA)</span><a href="#construindo-a-autoridade-certificadora-raiz-root-ca" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h2><p>Agora, podemos utilizar as variáveis que definimos e os utilitários easy-rsa para construir nossa autoridade de certificação.</p><p>Assegure-se de estar em seu diretório CA, e então crie sua estrutura de PKI e CA:</p><div class="language-shell highlighter-rouge"><div class="code-header"> <span data-label-text="Shell"><i class="fas fa-code fa-fw small"></i></span> <button aria-label="copy" data-title-succeed=""><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+</pre><td class="rouge-code"><pre>root@M4v3r1ck:~# <span class="nb">cd</span> ~/openvpn-ca
+root@M4v3r1ck:~/openvpn-ca# ./easyrsa init-pki
+root@M4v3r1ck:~/openvpn-ca# ./easyrsa build-ca
+</pre></table></code></div></div><p>Neste ponto é solicitado uma senha para as chaves da sua CA, bem como o nome da sua CA.</p><div class="language-shell highlighter-rouge"><div class="code-header"> <span data-label-text="Shell"><i class="fas fa-code fa-fw small"></i></span> <button aria-label="copy" data-title-succeed=""><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+</pre><td class="rouge-code"><pre>Note: using Easy-RSA configuration from: ./vars
+
+Using SSL: openssl OpenSSL 1.1.1f 31 Mar 2020
+
+Enter New CA Key Passphrase:
+Re-Enter New CA Key Passphrase:
+Generating RSA private key, 2048 bit long modulus <span class="o">(</span>2 primes<span class="o">)</span>
+......................................................+++++
+..................+++++
+e is 65537 <span class="o">(</span>0x010001<span class="o">)</span>
+Can<span class="s1">'t load /root/openvpn-ca/pki/.rnd into RNG
+140290726450496:error:2406F079:random number generator:RAND_load_file:Cannot open file:../crypto/rand/randfile.c:98:Filename=/root/openvpn-ca/pki/.rnd
+You are about to be asked to enter information that will be incorporated
+into your certificate request.
+What you are about to enter is what is called a Distinguished Name or a DN.
+There are quite a few fields but you can leave some blank
+For some fields there will be a default value,
+If you enter '</span>.<span class="s1">', the field will be left blank.
+-----
+Common Name (eg: your user, host, or server name) [Easy-RSA CA]:Helvio Junior CA
+
+CA creation complete and you may now import and sign cert requests.
+Your new CA certificate file for publishing is at:
+/root/openvpn-ca/pki/ca.crt
+</span></pre></table></code></div></div><p>Ao final deste processo temos o certificado público da nossa CA (Chave pública dentro de um certificado X509) dentro do arquivo <code class="language-plaintext highlighter-rouge">~/openvpn-ca/pki/ca.crt</code> e a sua respectiva chave privada no arquivo <code class="language-plaintext highlighter-rouge">~/openvpn-ca/pki/private/ca.key</code>. Futuramente, no momento em que formos criar o arquivo de configuração do nosso cliente OpenVPN iremos utilizar o conteúdo deste arquivo do certificado X509 <code class="language-plaintext highlighter-rouge">~/openvpn-ca/pki/ca.crt</code>.</p><h2 id="criando-chave-e-arquivos-de-criptografia"><span class="me-2">Criando chave e arquivos de criptografia</span><a href="#criando-chave-e-arquivos-de-criptografia" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h2><p>A seguir, vamos gerar alguns arquivos adicionais utilizados durante o processo de criptografia.</p><p>Primeiro vamos gerar chaves fortes Diffie-Hellman para usar durante a troca de chaves digitando:</p><div class="language-shell highlighter-rouge"><div class="code-header"> <span data-label-text="Shell"><i class="fas fa-code fa-fw small"></i></span> <button aria-label="copy" data-title-succeed=""><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre><td class="rouge-code"><pre>root@M4v3r1ck:~/openvpn-ca# ./easyrsa gen-dh
+</pre></table></code></div></div><p>Posteriormente, podemos gerar uma assinatura HMAC para fortalecer os recursos de verificação de integridade TLS do servidor:</p><div class="language-shell highlighter-rouge"><div class="code-header"> <span data-label-text="Shell"><i class="fas fa-code fa-fw small"></i></span> <button aria-label="copy" data-title-succeed=""><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre><td class="rouge-code"><pre>root@M4v3r1ck:~/openvpn-ca# openvpn <span class="nt">--genkey</span> <span class="nt">--secret</span> ~/openvpn-ca/pki/private/ta.key
+</pre></table></code></div></div><p>Este processo irá gerar como resultado o arquivo <code class="language-plaintext highlighter-rouge">~/openvpn-ca/pki/private/ta.key</code> no qual também o utilizaremos no momento que formos gerar a configuração do cliente OpenVPN.</p><h2 id="criando-o-certificado-do-servidor"><span class="me-2">Criando o certificado do servidor</span><a href="#criando-o-certificado-do-servidor" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h2><p>A seguir, vamos gerar nosso certificado de servidor e sua respectiva chave privada.</p><blockquote class="prompt-warning"><p>Se você escolher um nome diferente de server aqui, você terá que ajustar algumas das instruções abaixo. Por exemplo, quando copiar os arquivos gerados para o diretório /etc/openvpn, você terá que substituir os nomes corretos. Você também terá que modificar o arquivo <code class="language-plaintext highlighter-rouge">/etc/openvpn/server.conf</code> depois para apontar para os arquivos <code class="language-plaintext highlighter-rouge">.crt</code> e <code class="language-plaintext highlighter-rouge">.key</code> corretos.</p></blockquote><p>Comece gerando o certificado do servidor OpenVPN e o par de chaves. Podemos fazer isso digitando:</p><div class="language-shell highlighter-rouge"><div class="code-header"> <span data-label-text="Shell"><i class="fas fa-code fa-fw small"></i></span> <button aria-label="copy" data-title-succeed=""><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre><td class="rouge-code"><pre>root@M4v3r1ck:~/openvpn-ca# ./easyrsa build-server-full server nopass
+</pre></table></code></div></div><p>Este processo gerou 2 arquivos <code class="language-plaintext highlighter-rouge">~/openvpn-ca/pki/issued/server.crt</code> e <code class="language-plaintext highlighter-rouge">~/openvpn-ca/pki/private/server.key</code>.</p><blockquote class="prompt-warning"><p>Observer que neste comando passamos o parâmetro <code class="language-plaintext highlighter-rouge">nopass</code> que irá deixar a chave privada do nosso servidor sem senha, isso tem um certo risco de segurança mas se faz necessário pois caso essa chave tenha senha a cada reboot do servidor ou restart do ser serviço OpenVPN você teria que digitar a senha na console o que poderia ocasionar um falha no serviço.</p></blockquote><h2 id="criando-o-certificado-do-cliente"><span class="me-2">Criando o certificado do cliente</span><a href="#criando-o-certificado-do-cliente" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h2><p>A seguir, vamos gerar nosso certificado de cliente e sua respectiva chave privada. Conforme comentado anteriormente você tem 2 modelos de <em>deploy</em> de clientes, o primeiro deles menos seguro onde você gera somente 1 certificado para todos os clientes, e outro mais seguro onde você gera um certificado para cada cliente, cada modelo tem suas vantagens e desvantagens, segue algumas abaixo:</p><ul><li>Um certificado para TODOS os clientes:<ol><li>Baixo custo de criação de novos clientes, pois basta adicionar no banco de dados (pois o arquivo de configuração é o mesmo para todos);<li>Caso outras pessoas não autorizadas tenham acesso ao arquivo de configuração, poderão realizar um ataque de força bruta no usuário e senha de forma que não há como ter rastreabilidade qual cliente que vazou a configuração;<li>Muito em alinhamento que o item acima, caso necessite revogar o certificado digital de cliente, terá que reenviar a configuração para todos os clientes;</ol><li>Um certificado para CADA cliente:<ol><li>Custo médio de criação de novos clientes, pois para cada cliente novo se faz necessário gerar o certificado digital, chave privada e gerar um novo arquivo de configuração com esse certificado e chave;<li>Fácil rastreabilidade em caso de vazamento de configuração pois o certificado é único para cada cliente;<li>Fácil revogação do certificado digital, pois a regeração da configuração é para somente um cliente, sem impactar nos demais.</ol></ul><p>Desta forma o procedimento técnico para geração de novos clientes sempre será o mesmo, bastando alterar o nome cliente nos comandos a seguir.</p><div class="language-shell highlighter-rouge"><div class="code-header"> <span data-label-text="Shell"><i class="fas fa-code fa-fw small"></i></span> <button aria-label="copy" data-title-succeed=""><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre><td class="rouge-code"><pre>root@M4v3r1ck:~/openvpn-ca# ./easyrsa build-client-full cliente1 nopass
+</pre></table></code></div></div><p>Este processo gerou 2 arquivos <code class="language-plaintext highlighter-rouge">~/openvpn-ca/pki/issued/cliente1.crt** e **~/openvpn-ca/pki/private/cliente1.key</code>. Estes dois arquivos serão utilizados futuramente no momento da criação do arquivo de configuração do cliente OpenVPN.</p><h2 id="configurando-o-serviço-do-openvpn"><span class="me-2">Configurando o serviço do OpenVPN</span><a href="#configurando-o-serviço-do-openvpn" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h2><p>Enfim, podemos começar a configuração do serviço OpenVPN utilizando as credenciais e arquivos que geramos.</p><h3 id="copiar-os-arquivos-para-o-diretório-openvpn"><span class="me-2">Copiar os Arquivos para o Diretório OpenVPN</span><a href="#copiar-os-arquivos-para-o-diretório-openvpn" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h3><p>Para começar, precisamos copiar os arquivos que necessitamos para o diretório de configuração /etc/openvpn.</p><p>Podemos começar com todos os arquivos que acabamos de gerar. Eles foram colocados dentro do diretório <code class="language-plaintext highlighter-rouge">~/openvpn-ca/pki/</code> quando foram criados. Precisamos copiar o certificado e chave de nossa CA, o certificado e chave de nosso servidor, a assinatura HMAC, e o arquivo Diffie-Hellman.</p><div class="language-shell highlighter-rouge"><div class="code-header"> <span data-label-text="Shell"><i class="fas fa-code fa-fw small"></i></span> <button aria-label="copy" data-title-succeed=""><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+</pre><td class="rouge-code"><pre>root@M4v3r1ck:~# <span class="nb">cd</span> ~/openvpn-ca/pki
+root@M4v3r1ck:~/openvpn-ca/pki# <span class="nb">cp </span>ca.crt private/ca.key issued/server.crt private/server.key private/ta.key dh.pem /etc/openvpn
+</pre></table></code></div></div><h3 id="configuração-openvpn-server"><span class="me-2">Configuração OpenVPN Server</span><a href="#configuração-openvpn-server" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h3><p>Agora que nossos arquivos estão no lugar, podemos criar o arquivo de configuração do servidor. Crie o arquivo <code class="language-plaintext highlighter-rouge">/etc/openvpn/server.conf</code> com o conteúdo abaixo:</p><div file="/etc/openvpn/server.conf" class="language-shell highlighter-rouge"><div class="code-header"> <span data-label-text="/etc/openvpn/server.conf"><i class="far fa-file-code fa-fw"></i></span> <button aria-label="copy" data-title-succeed=""><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+</pre><td class="rouge-code"><pre><span class="c">##Configurações gerais</span>
+port 4321
+proto udp
+dev tun
+sndbuf 0
+rcvbuf 0
+topology subnet
+duplicate-cn
+status-version 2
+keepalive 10 120
+persist-key
+persist-tun
+verb 3
+comp-lzo no
+
+<span class="c">##Chaves</span>
+ca ca.crt
+cert server.crt
+key server.key
+dh dh.pem
+tls-auth ta.key 0
+
+<span class="c">##Rede</span>
+server 192.168.50.0 255.255.255.0
+ifconfig-pool-persist ipp_server.txt
+<span class="c">#push "redirect-gateway def1 bypass-dhcp" # Opcional para redirecionar todo tráfego de rede pela VPN</span>
+<span class="c">#push "route 192.168.1.0 255.255.252.0" # rotas adicionais</span>
+
+<span class="c">##Autenticação</span>
+cipher AES-128-CBC
+ncp-ciphers AES-256-GCM:AES-128-GCM
+auth SHA1
+user nobody
+group nogroup
+client-to-client
+username-as-common-name
+
+<span class="c">##user/pass auth from mysql</span>
+plugin /usr/lib/openvpn/openvpn-auth-pam.so openvpn
+
+<span class="c">##script connect-disconnect (opcional)</span>
+script-security 2
+client-connect /etc/openvpn/connected.py
+client-disconnect /etc/openvpn/disconnected.py
+
+<span class="c">##Configurações específicas para cada cliente (opcional)</span>
+<span class="c">#client-config-dir /etc/openvpn/static_clients_server</span>
+
+<span class="c">##Arquivo de status de usuários conectados (opcional)</span>
+status openvpn-status.log
+</pre></table></code></div></div><p>Verifique o local do plugin openvpn-auth-pam.so para ter certeza que o caminho apontado na configuração acima está correto.</p><div class="language-shell highlighter-rouge"><div class="code-header"> <span data-label-text="Shell"><i class="fas fa-code fa-fw small"></i></span> <button aria-label="copy" data-title-succeed=""><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre><td class="rouge-code"><pre>root@M4v3r1ck:~# find / <span class="nt">-name</span> <span class="s2">"*pam*"</span> | <span class="nb">grep</span> <span class="nt">-ioE</span> <span class="s2">".*openvpn.*so"</span>
+</pre></table></code></div></div><p>Em meu ambiente o arquivo foi localizado em <code class="language-plaintext highlighter-rouge">/usr/lib/x86_64-linux-gnu/openvpn/plugins/openvpn-plugin-auth-pam.so</code> sendo assim vamos criar um link simbólico para o local da configuração</p><div class="language-shell highlighter-rouge"><div class="code-header"> <span data-label-text="Shell"><i class="fas fa-code fa-fw small"></i></span> <button aria-label="copy" data-title-succeed=""><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+</pre><td class="rouge-code"><pre>root@M4v3r1ck:~# <span class="nb">mkdir</span> /usr/lib/openvpn/
+root@M4v3r1ck:~# <span class="nb">ln</span> <span class="nt">-s</span> /usr/lib/x86_64-linux-gnu/openvpn/plugins/openvpn-plugin-auth-pam.so /usr/lib/openvpn/openvpn-auth-pam.so
+</pre></table></code></div></div><h2 id="criando-a-base-de-dados-e-configurando-o-conector-do-pam-para-o-mysql"><span class="me-2">Criando a base de dados e configurando o conector do PAM para o MySQL</span><a href="#criando-a-base-de-dados-e-configurando-o-conector-do-pam-para-o-mysql" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h2><p>Para que o módulo do PAM possa se conectar e autenticar os usuários é necessária a criação da base de dados onde os usuários e senhas serão salvos bem como um arquivo de configuração do conector. Desta forma crie a base de dados conforme o script abaixo:</p><div class="language-shell highlighter-rouge"><div class="code-header"> <span data-label-text="Shell"><i class="fas fa-code fa-fw small"></i></span> <button aria-label="copy" data-title-succeed=""><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+</pre><td class="rouge-code"><pre>root@M4v3r1ck:~# mysql <span class="nt">-u</span> root
+
+CREATE DATABASE openvpn<span class="p">;</span>
+USE openvpn<span class="p">;</span>
+
+CREATE USER <span class="s1">'openvpn'</span>@<span class="s1">'localhost'</span> IDENTIFIED BY <span class="s1">'MinhaS3nhASuperSegura'</span><span class="p">;</span>
+GRANT ALL PRIVILEGES ON <span class="sb">`</span>openvpn<span class="sb">`</span>.<span class="k">*</span> TO <span class="s1">'openvpn'</span>@<span class="s1">'localhost'</span><span class="p">;</span>
+FLUSH PRIVILEGES<span class="p">;</span>
+
+CREATE TABLE IF NOT EXISTS <span class="sb">`</span><span class="nb">users</span><span class="sb">`</span> <span class="o">(</span>
+    <span class="sb">`</span>user_id<span class="sb">`</span> varchar<span class="o">(</span>32<span class="o">)</span> COLLATE utf8_unicode_ci NOT NULL,
+    <span class="sb">`</span>user_pass<span class="sb">`</span> varchar<span class="o">(</span>32<span class="o">)</span> COLLATE utf8_unicode_ci NOT NULL,
+    <span class="sb">`</span>user_mail<span class="sb">`</span> varchar<span class="o">(</span>64<span class="o">)</span> COLLATE utf8_unicode_ci DEFAULT NULL,
+    <span class="sb">`</span>user_start_date<span class="sb">`</span> <span class="nb">date </span>NOT NULL,
+    <span class="sb">`</span>user_end_date<span class="sb">`</span> <span class="nb">date </span>NOT NULL,
+    <span class="sb">`</span>user_online<span class="sb">`</span> enum<span class="o">(</span><span class="s1">'yes'</span>,<span class="s1">'no'</span><span class="o">)</span> NOT NULL DEFAULT <span class="s1">'no'</span>,
+    <span class="sb">`</span>user_enable<span class="sb">`</span> enum<span class="o">(</span><span class="s1">'yes'</span>,<span class="s1">'no'</span><span class="o">)</span> NOT NULL DEFAULT <span class="s1">'yes'</span>,
+PRIMARY KEY <span class="o">(</span><span class="sb">`</span>user_id<span class="sb">`</span><span class="o">)</span>,
+KEY <span class="sb">`</span>user_pass<span class="sb">`</span> <span class="o">(</span><span class="sb">`</span>user_pass<span class="sb">`</span><span class="o">)</span>
+<span class="o">)</span> <span class="nv">ENGINE</span><span class="o">=</span>MyISAM DEFAULT <span class="nv">CHARSET</span><span class="o">=</span>utf8 <span class="nv">COLLATE</span><span class="o">=</span>utf8_unicode_ci<span class="p">;</span>
+
+CREATE TABLE IF NOT EXISTS <span class="sb">`</span>log<span class="sb">`</span> <span class="o">(</span>
+    <span class="sb">`</span>log_id<span class="sb">`</span> int<span class="o">(</span>10<span class="o">)</span> unsigned NOT NULL AUTO_INCREMENT,
+    <span class="sb">`</span>user_id<span class="sb">`</span> varchar<span class="o">(</span>32<span class="o">)</span> COLLATE utf8_unicode_ci NOT NULL,
+    <span class="sb">`</span>log_trusted_ip<span class="sb">`</span> varchar<span class="o">(</span>32<span class="o">)</span> COLLATE utf8_unicode_ci DEFAULT NULL,
+    <span class="sb">`</span>log_trusted_port<span class="sb">`</span> varchar<span class="o">(</span>16<span class="o">)</span> COLLATE utf8_unicode_ci DEFAULT NULL,
+    <span class="sb">`</span>log_remote_ip<span class="sb">`</span> varchar<span class="o">(</span>32<span class="o">)</span> COLLATE utf8_unicode_ci DEFAULT NULL,
+    <span class="sb">`</span>log_remote_port<span class="sb">`</span> varchar<span class="o">(</span>16<span class="o">)</span> COLLATE utf8_unicode_ci DEFAULT NULL,
+    <span class="sb">`</span>log_start_time<span class="sb">`</span> timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    <span class="sb">`</span>log_end_time<span class="sb">`</span> timestamp NULL,
+    <span class="sb">`</span>log_received<span class="sb">`</span> float NOT NULL DEFAULT <span class="s1">'0'</span>,
+    <span class="sb">`</span>log_send<span class="sb">`</span> float NOT NULL DEFAULT <span class="s1">'0'</span>,
+PRIMARY KEY <span class="o">(</span><span class="sb">`</span>log_id<span class="sb">`</span><span class="o">)</span>,
+KEY <span class="sb">`</span>user_id<span class="sb">`</span> <span class="o">(</span><span class="sb">`</span>user_id<span class="sb">`</span><span class="o">)</span>
+<span class="o">)</span> <span class="nv">ENGINE</span><span class="o">=</span>MyISAM  DEFAULT <span class="nv">CHARSET</span><span class="o">=</span>utf8 <span class="nv">COLLATE</span><span class="o">=</span>utf8_unicode_ci<span class="p">;</span>
+</pre></table></code></div></div><p>Caso deseje criar um usuário de teste execute os comandos abaixo:</p><div class="language-shell highlighter-rouge"><div class="code-header"> <span data-label-text="Shell"><i class="fas fa-code fa-fw small"></i></span> <button aria-label="copy" data-title-succeed=""><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+</pre><td class="rouge-code"><pre>root@M4v3r1ck:~# mysql <span class="nt">-u</span> root
+mysql&gt; use openvpn<span class="p">;</span>
+Database changed
+mysql&gt; INSERT INTO <span class="nb">users</span> <span class="o">(</span>user_id, user_pass, user_start_date, user_end_date<span class="o">)</span> VALUES <span class="o">(</span><span class="s1">'helvio_junior'</span>,<span class="s1">'@Pass123'</span>, <span class="s1">'2020-05-27'</span>, <span class="s1">'2021-05-27'</span><span class="o">)</span><span class="p">;</span>
+Query OK, 1 row affected <span class="o">(</span>0.00 sec<span class="o">)</span>
+</pre></table></code></div></div><p>Crie o arquivo de configuração do PAM <code class="language-plaintext highlighter-rouge">/etc/pam.d/openvpn</code> com o seguinte conteúdo:</p><div file="/etc/pam.d/openvpn" class="language-shell highlighter-rouge"><div class="code-header"> <span data-label-text="/etc/pam.d/openvpn"><i class="far fa-file-code fa-fw"></i></span> <button aria-label="copy" data-title-succeed=""><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+</pre><td class="rouge-code"><pre>auth sufficient pam_mysql.so <span class="nv">user</span><span class="o">=</span>openvpn <span class="nv">passwd</span><span class="o">=</span>MinhaS3nhASuperSegura <span class="nv">host</span><span class="o">=</span>localhost <span class="nv">db</span><span class="o">=</span>openvpn <span class="o">[</span><span class="nv">table</span><span class="o">=</span><span class="nb">users</span><span class="o">]</span> <span class="nv">usercolumn</span><span class="o">=</span>users.user_id <span class="nv">passwdcolumn</span><span class="o">=</span>users.user_pass <span class="o">[</span><span class="nv">where</span><span class="o">=</span>users.user_enable<span class="o">=</span>1 AND users.user_start_date!<span class="o">=</span>users.user_end_date AND TO_DAYS<span class="o">(</span>now<span class="o">())</span> <span class="o">&gt;=</span> TO_DAYS<span class="o">(</span>users.user_start_date<span class="o">)</span> AND <span class="o">(</span>TO_DAYS<span class="o">(</span>now<span class="o">())</span> &lt;<span class="o">=</span> TO_DAYS<span class="o">(</span>users.user_end_date<span class="o">))]</span> <span class="nv">sqllog</span><span class="o">=</span>0 <span class="nv">crypt</span><span class="o">=</span>0
+
+account required pam_mysql.so <span class="nv">user</span><span class="o">=</span>openvpn <span class="nv">passwd</span><span class="o">=</span>MinhaS3nhASuperSegura <span class="nv">host</span><span class="o">=</span>localhost <span class="nv">db</span><span class="o">=</span>openvpn <span class="o">[</span><span class="nv">table</span><span class="o">=</span><span class="nb">users</span><span class="o">]</span> <span class="nv">usercolumn</span><span class="o">=</span>users.user_id <span class="nv">passwdcolumn</span><span class="o">=</span>users.user_pass <span class="o">[</span><span class="nv">where</span><span class="o">=</span>users.user_enable<span class="o">=</span>1 AND users.user_start_date!<span class="o">=</span>users.user_end_date AND TO_DAYS<span class="o">(</span>now<span class="o">())</span> <span class="o">&gt;=</span> TO_DAYS<span class="o">(</span>users.user_start_date<span class="o">)</span> AND <span class="o">(</span>TO_DAYS<span class="o">(</span>now<span class="o">())</span> &lt;<span class="o">=</span> TO_DAYS<span class="o">(</span>users.user_end_date<span class="o">))]</span> <span class="nv">sqllog</span><span class="o">=</span>0 <span class="nv">crypt</span><span class="o">=</span>0
+</pre></table></code></div></div><h2 id="scripts-de-status"><span class="me-2">Scripts de status</span><a href="#scripts-de-status" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h2><p>Temos 2 scripts que têm por responsabilidade atualizar os status do usuário logo após a sua conexão e desconexão.</p><p>Crie o arquivo <code class="language-plaintext highlighter-rouge">/etc/openvpn/connected.py</code> com o conteúdo abaixo:</p><div file="/etc/openvpn/connected.py" class="language-python highlighter-rouge"><div class="code-header"> <span data-label-text="/etc/openvpn/connected.py"><i class="far fa-file-code fa-fw"></i></span> <button aria-label="copy" data-title-succeed=""><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+</pre><td class="rouge-code"><pre><span class="c1">#!/usr/bin/env python3
+# -*- coding: UTF-8 -*-
+</span>
+<span class="kn">import</span> <span class="n">MySQLdb</span><span class="p">,</span> <span class="n">posix</span><span class="p">,</span> <span class="n">time</span><span class="p">;</span>
+<span class="kn">import</span> <span class="n">logging</span>
+<span class="kn">import</span> <span class="n">logging.handlers</span>
+<span class="kn">import</span> <span class="n">sys</span><span class="p">,</span> <span class="n">datetime</span><span class="p">,</span> <span class="n">os</span>
+
+<span class="n">my_logger</span> <span class="o">=</span> <span class="n">logging</span><span class="p">.</span><span class="nf">getLogger</span><span class="p">(</span><span class="sh">'</span><span class="s">MyLogger</span><span class="sh">'</span><span class="p">)</span>
+<span class="n">my_logger</span><span class="p">.</span><span class="nf">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="p">.</span><span class="n">DEBUG</span><span class="p">)</span>
+
+<span class="n">handler</span> <span class="o">=</span> <span class="n">logging</span><span class="p">.</span><span class="n">handlers</span><span class="p">.</span><span class="nc">SysLogHandler</span><span class="p">(</span><span class="n">address</span> <span class="o">=</span> <span class="sh">'</span><span class="s">/dev/log</span><span class="sh">'</span><span class="p">)</span>
+
+<span class="n">my_logger</span><span class="p">.</span><span class="nf">addHandler</span><span class="p">(</span><span class="n">handler</span><span class="p">)</span>
+
+<span class="n">now</span> <span class="o">=</span> <span class="n">time</span><span class="p">.</span><span class="nf">time</span><span class="p">()</span>
+<span class="n">ts</span> <span class="o">=</span> <span class="nf">int</span><span class="p">(</span><span class="n">now</span><span class="p">)</span>
+<span class="n">timestamp</span> <span class="o">=</span> <span class="n">datetime</span><span class="p">.</span><span class="n">datetime</span><span class="p">.</span><span class="nf">fromtimestamp</span><span class="p">(</span><span class="n">ts</span><span class="p">).</span><span class="nf">strftime</span><span class="p">(</span><span class="sh">'</span><span class="s">%Y-%m-%d %H:%M:%S</span><span class="sh">'</span><span class="p">)</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="n">db</span><span class="o">=</span><span class="n">MySQLdb</span><span class="p">.</span><span class="nf">connect</span><span class="p">(</span><span class="n">host</span><span class="o">=</span><span class="sh">"</span><span class="s">localhost</span><span class="sh">"</span><span class="p">,</span>
+                <span class="n">user</span><span class="o">=</span><span class="sh">"</span><span class="s">openvpn</span><span class="sh">"</span><span class="p">,</span>
+                <span class="n">passwd</span><span class="o">=</span><span class="sh">"</span><span class="s">MinhaS3nhASuperSegura</span><span class="sh">"</span><span class="p">,</span>
+                <span class="n">db</span><span class="o">=</span><span class="sh">"</span><span class="s">openvpn</span><span class="sh">"</span><span class="p">)</span>
+    <span class="n">c</span> <span class="o">=</span> <span class="n">db</span><span class="p">.</span><span class="nf">cursor</span><span class="p">()</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">posix</span><span class="p">.</span><span class="n">environ</span><span class="p">:</span>
+        <span class="n">my_logger</span><span class="p">.</span><span class="nf">debug</span><span class="p">(</span><span class="sh">"</span><span class="s">%s =&gt; %s</span><span class="sh">"</span> <span class="o">%</span> <span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">posix</span><span class="p">.</span><span class="n">environ</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="nf">decode</span><span class="p">(</span><span class="sh">"</span><span class="s">utf-8</span><span class="sh">"</span><span class="p">)))</span>
+
+    <span class="n">c</span><span class="p">.</span><span class="nf">execute</span><span class="p">(</span><span class="sh">"</span><span class="s">UPDATE users SET user_online = </span><span class="sh">'</span><span class="s">yes</span><span class="sh">'</span><span class="s"> WHERE user_id = %s</span><span class="sh">"</span><span class="p">,(</span><span class="n">posix</span><span class="p">.</span><span class="n">environ</span><span class="p">[</span><span class="sa">b</span><span class="sh">'</span><span class="s">username</span><span class="sh">'</span><span class="p">].</span><span class="nf">decode</span><span class="p">(</span><span class="sh">"</span><span class="s">utf-8</span><span class="sh">"</span><span class="p">),))</span>
+    <span class="n">c</span><span class="p">.</span><span class="nf">execute</span><span class="p">(</span><span class="sh">"</span><span class="s">INSERT INTO log (user_id, log_trusted_ip, log_trusted_port, log_remote_ip, log_remote_port) VALUES (%s, %s, %s, %s, %s)</span><span class="sh">"</span><span class="p">,(</span><span class="n">posix</span><span class="p">.</span><span class="n">environ</span><span class="p">[</span><span class="sa">b</span><span class="sh">'</span><span class="s">username</span><span class="sh">'</span><span class="p">].</span><span class="nf">decode</span><span class="p">(</span><span class="sh">"</span><span class="s">utf-8</span><span class="sh">"</span><span class="p">),</span><span class="n">posix</span><span class="p">.</span><span class="n">environ</span><span class="p">[</span><span class="sa">b</span><span class="sh">'</span><span class="s">trusted_ip</span><span class="sh">'</span><span class="p">].</span><span class="nf">decode</span><span class="p">(</span><span class="sh">"</span><span class="s">utf-8</span><span class="sh">"</span><span class="p">),</span><span class="n">posix</span><span class="p">.</span><span class="n">environ</span><span class="p">[</span><span class="sa">b</span><span class="sh">'</span><span class="s">trusted_port</span><span class="sh">'</span><span class="p">].</span><span class="nf">decode</span><span class="p">(</span><span class="sh">"</span><span class="s">utf-8</span><span class="sh">"</span><span class="p">),</span><span class="n">posix</span><span class="p">.</span><span class="n">environ</span><span class="p">[</span><span class="sa">b</span><span class="sh">'</span><span class="s">ifconfig_pool_remote_ip</span><span class="sh">'</span><span class="p">].</span><span class="nf">decode</span><span class="p">(</span><span class="sh">"</span><span class="s">utf-8</span><span class="sh">"</span><span class="p">),</span><span class="n">posix</span><span class="p">.</span><span class="n">environ</span><span class="p">[</span><span class="sa">b</span><span class="sh">'</span><span class="s">remote_port_1</span><span class="sh">'</span><span class="p">].</span><span class="nf">decode</span><span class="p">(</span><span class="sh">"</span><span class="s">utf-8</span><span class="sh">"</span><span class="p">),))</span>
+
+    <span class="n">db</span><span class="p">.</span><span class="nf">commit</span><span class="p">()</span>
+
+<span class="k">except</span> <span class="n">MySQLdb</span><span class="p">.</span><span class="n">Error</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">my_logger</span><span class="p">.</span><span class="nf">critical</span><span class="p">(</span><span class="sh">"</span><span class="s">MySQL Error [%d]: %s</span><span class="sh">"</span> <span class="o">%</span> <span class="p">(</span><span class="n">e</span><span class="p">.</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">e</span><span class="p">.</span><span class="n">args</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+        <span class="k">except</span> <span class="nb">IndexError</span><span class="p">:</span>
+            <span class="n">my_logger</span><span class="p">.</span><span class="nf">critical</span><span class="p">(</span><span class="sh">"</span><span class="s">MySQL Error: %s</span><span class="sh">"</span> <span class="o">%</span> <span class="nf">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
+<span class="k">except</span> <span class="nb">TypeError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+    <span class="n">my_logger</span><span class="p">.</span><span class="nf">critical</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+<span class="k">except</span> <span class="nb">ValueError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">my_logger</span><span class="p">.</span><span class="nf">critical</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+<span class="k">except</span> <span class="nb">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">my_logger</span><span class="p">.</span><span class="nf">critical</span><span class="p">(</span><span class="nf">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
+        <span class="n">my_logger</span><span class="p">.</span><span class="nf">critical</span><span class="p">(</span><span class="nf">str</span><span class="p">(</span><span class="n">sys</span><span class="p">.</span><span class="nf">exc_info</span><span class="p">()[</span><span class="mi">0</span><span class="p">]))</span>
+</pre></table></code></div></div><p>Crie também o arquivo <code class="language-plaintext highlighter-rouge">/etc/openvpn/disconnected.py</code> com o conteúdo abaixo:</p><div file="/etc/openvpn/disconnected.py" class="language-python highlighter-rouge"><div class="code-header"> <span data-label-text="/etc/openvpn/disconnected.py"><i class="far fa-file-code fa-fw"></i></span> <button aria-label="copy" data-title-succeed=""><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+</pre><td class="rouge-code"><pre><span class="c1">#!/usr/bin/env python3
+</span>
+<span class="kn">import</span> <span class="n">MySQLdb</span><span class="p">,</span> <span class="n">posix</span><span class="p">,</span> <span class="n">time</span><span class="p">;</span>
+<span class="kn">import</span> <span class="n">logging</span>
+<span class="kn">import</span> <span class="n">logging.handlers</span>
+<span class="kn">import</span> <span class="n">sys</span><span class="p">,</span> <span class="n">datetime</span>
+
+<span class="n">my_logger</span> <span class="o">=</span> <span class="n">logging</span><span class="p">.</span><span class="nf">getLogger</span><span class="p">(</span><span class="sh">'</span><span class="s">MyLogger</span><span class="sh">'</span><span class="p">)</span>
+<span class="n">my_logger</span><span class="p">.</span><span class="nf">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="p">.</span><span class="n">DEBUG</span><span class="p">)</span>
+
+<span class="n">handler</span> <span class="o">=</span> <span class="n">logging</span><span class="p">.</span><span class="n">handlers</span><span class="p">.</span><span class="nc">SysLogHandler</span><span class="p">(</span><span class="n">address</span> <span class="o">=</span> <span class="sh">'</span><span class="s">/dev/log</span><span class="sh">'</span><span class="p">)</span>
+
+<span class="n">my_logger</span><span class="p">.</span><span class="nf">addHandler</span><span class="p">(</span><span class="n">handler</span><span class="p">)</span>
+
+<span class="n">now</span> <span class="o">=</span> <span class="n">time</span><span class="p">.</span><span class="nf">time</span><span class="p">()</span>
+<span class="n">time</span> <span class="o">=</span> <span class="nf">int</span><span class="p">(</span><span class="n">now</span><span class="p">)</span>
+<span class="n">timestamp</span> <span class="o">=</span> <span class="n">datetime</span><span class="p">.</span><span class="n">datetime</span><span class="p">.</span><span class="nf">fromtimestamp</span><span class="p">(</span><span class="n">time</span><span class="p">).</span><span class="nf">strftime</span><span class="p">(</span><span class="sh">'</span><span class="s">%Y-%m-%d %H:%M:%S</span><span class="sh">'</span><span class="p">)</span>
+
+<span class="k">try</span><span class="p">:</span>
+        <span class="n">db</span><span class="o">=</span><span class="n">MySQLdb</span><span class="p">.</span><span class="nf">connect</span><span class="p">(</span><span class="n">host</span><span class="o">=</span><span class="sh">"</span><span class="s">localhost</span><span class="sh">"</span><span class="p">,</span>
+                <span class="n">user</span><span class="o">=</span><span class="sh">"</span><span class="s">openvpn</span><span class="sh">"</span><span class="p">,</span>
+                <span class="n">passwd</span><span class="o">=</span><span class="sh">"</span><span class="s">MinhaS3nhASuperSegura</span><span class="sh">"</span><span class="p">,</span>
+                <span class="n">db</span><span class="o">=</span><span class="sh">"</span><span class="s">openvpn</span><span class="sh">"</span><span class="p">)</span>
+        <span class="n">c</span> <span class="o">=</span> <span class="n">db</span><span class="p">.</span><span class="nf">cursor</span><span class="p">()</span>
+
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">posix</span><span class="p">.</span><span class="n">environ</span><span class="p">:</span>
+            <span class="n">my_logger</span><span class="p">.</span><span class="nf">debug</span><span class="p">(</span><span class="sh">"</span><span class="s">%s =&gt; %s</span><span class="sh">"</span> <span class="o">%</span> <span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">posix</span><span class="p">.</span><span class="n">environ</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="nf">decode</span><span class="p">(</span><span class="sh">"</span><span class="s">utf-8</span><span class="sh">"</span><span class="p">)))</span>
+
+        <span class="n">c</span><span class="p">.</span><span class="nf">execute</span><span class="p">(</span><span class="sh">"</span><span class="s">UPDATE users SET user_online = </span><span class="sh">'</span><span class="s">no</span><span class="sh">'</span><span class="s"> WHERE user_id = %s</span><span class="sh">"</span><span class="p">,(</span><span class="n">posix</span><span class="p">.</span><span class="n">environ</span><span class="p">[</span><span class="sa">b</span><span class="sh">'</span><span class="s">username</span><span class="sh">'</span><span class="p">].</span><span class="nf">decode</span><span class="p">(</span><span class="sh">"</span><span class="s">utf-8</span><span class="sh">"</span><span class="p">),))</span>
+
+        <span class="n">c</span><span class="p">.</span><span class="nf">execute</span><span class="p">(</span><span class="sh">"</span><span class="s">UPDATE log set log_end_time = CURRENT_TIMESTAMP, log_send = %s, log_received = %s WHERE log_end_time is null and user_id = %s and log_trusted_ip = %s and log_trusted_port = %s</span><span class="sh">"</span><span class="p">,(</span><span class="n">posix</span><span class="p">.</span><span class="n">environ</span><span class="p">[</span><span class="sa">b</span><span class="sh">'</span><span class="s">bytes_sent</span><span class="sh">'</span><span class="p">],</span><span class="n">posix</span><span class="p">.</span><span class="n">environ</span><span class="p">[</span><span class="sa">b</span><span class="sh">'</span><span class="s">bytes_received</span><span class="sh">'</span><span class="p">],</span><span class="n">posix</span><span class="p">.</span><span class="n">environ</span><span class="p">[</span><span class="sa">b</span><span class="sh">'</span><span class="s">username</span><span class="sh">'</span><span class="p">].</span><span class="nf">decode</span><span class="p">(</span><span class="sh">"</span><span class="s">utf-8</span><span class="sh">"</span><span class="p">),</span><span class="n">posix</span><span class="p">.</span><span class="n">environ</span><span class="p">[</span><span class="sa">b</span><span class="sh">'</span><span class="s">trusted_ip</span><span class="sh">'</span><span class="p">].</span><span class="nf">decode</span><span class="p">(</span><span class="sh">"</span><span class="s">utf-8</span><span class="sh">"</span><span class="p">),</span><span class="n">posix</span><span class="p">.</span><span class="n">environ</span><span class="p">[</span><span class="sa">b</span><span class="sh">'</span><span class="s">trusted_port</span><span class="sh">'</span><span class="p">].</span><span class="nf">decode</span><span class="p">(</span><span class="sh">"</span><span class="s">utf-8</span><span class="sh">"</span><span class="p">),))</span>
+
+        <span class="n">db</span><span class="p">.</span><span class="nf">commit</span><span class="p">()</span>
+
+<span class="k">except</span> <span class="n">MySQLdb</span><span class="p">.</span><span class="n">Error</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">my_logger</span><span class="p">.</span><span class="nf">critical</span><span class="p">(</span><span class="sh">"</span><span class="s">MySQL Error [%d]: %s</span><span class="sh">"</span> <span class="o">%</span> <span class="p">(</span><span class="n">e</span><span class="p">.</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">e</span><span class="p">.</span><span class="n">args</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+        <span class="k">except</span> <span class="nb">IndexError</span><span class="p">:</span>
+            <span class="n">my_logger</span><span class="p">.</span><span class="nf">critical</span><span class="p">(</span><span class="sh">"</span><span class="s">MySQL Error: %s</span><span class="sh">"</span> <span class="o">%</span> <span class="nf">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
+<span class="k">except</span> <span class="nb">TypeError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">my_logger</span><span class="p">.</span><span class="nf">critical</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+<span class="k">except</span> <span class="nb">ValueError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">my_logger</span><span class="p">.</span><span class="nf">critical</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+<span class="k">except</span> <span class="nb">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+    <span class="n">my_logger</span><span class="p">.</span><span class="nf">critical</span><span class="p">(</span><span class="sh">'</span><span class="s">Error: %s</span><span class="sh">'</span> <span class="o">%</span> <span class="nf">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
+
+    <span class="n">my_logger</span><span class="p">.</span><span class="nf">critical</span><span class="p">(</span><span class="sh">'</span><span class="s">Full stack trace below</span><span class="sh">'</span><span class="p">)</span>
+    <span class="kn">from</span> <span class="n">traceback</span> <span class="kn">import</span> <span class="n">format_exc</span>
+    <span class="n">err</span> <span class="o">=</span> <span class="nf">format_exc</span><span class="p">().</span><span class="nf">strip</span><span class="p">()</span>
+    <span class="n">err</span> <span class="o">=</span> <span class="n">err</span><span class="p">.</span><span class="nf">replace</span><span class="p">(</span><span class="sh">'</span><span class="s">  File</span><span class="sh">'</span><span class="p">,</span> <span class="sh">'</span><span class="s">File</span><span class="sh">'</span><span class="p">)</span>
+    <span class="n">err</span> <span class="o">=</span> <span class="n">err</span><span class="p">.</span><span class="nf">replace</span><span class="p">(</span><span class="sh">'</span><span class="s">  Exception: </span><span class="sh">'</span><span class="p">,</span> <span class="sh">'</span><span class="s">Exception: </span><span class="sh">'</span><span class="p">)</span>
+    <span class="n">my_logger</span><span class="p">.</span><span class="nf">critical</span><span class="p">(</span><span class="n">err</span><span class="p">)</span>
+</pre></table></code></div></div><p>Ajuste a permissão dos 2 arquivos:</p><div class="language-shell highlighter-rouge"><div class="code-header"> <span data-label-text="Shell"><i class="fas fa-code fa-fw small"></i></span> <button aria-label="copy" data-title-succeed=""><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+</pre><td class="rouge-code"><pre>root@M4v3r1ck:~# <span class="nb">cd</span> /etc/openvpn/
+root@M4v3r1ck:~# <span class="nb">chmod</span> +x <span class="k">*</span>.py
+</pre></table></code></div></div><h2 id="ajustando-a-configuração-de-rede"><span class="me-2">Ajustando a configuração de rede</span><a href="#ajustando-a-configuração-de-rede" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h2><p>A seguir, precisamos ajustar</p><p>alguns aspectos da rede do servidor para que o OpenVPN possa rotear o tráfego corretamente.</p><h3 id="permitir-o-encaminhamento-ip"><span class="me-2">Permitir o Encaminhamento IP</span><a href="#permitir-o-encaminhamento-ip" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h3><p>Primeiro, precisamos permitir ao servidor encaminhar o tráfego. Isso é essencial para a funcionalidade que queremos que nosso servidor de VPN forneça.</p><p>Podemos ajustar essa configuração modificando o arquivo <code class="language-plaintext highlighter-rouge">/etc/sysctl.conf</code>. Dentro dele, procure a linha que define net.ipv4.ip_forward. Remova o caractere <code class="language-plaintext highlighter-rouge">#</code> do início da linha para descomentar/habilitar essa configuração, ficando conforme abaixo:</p><div class="language-shell highlighter-rouge"><div class="code-header"> <span data-label-text="Shell"><i class="fas fa-code fa-fw small"></i></span> <button aria-label="copy" data-title-succeed=""><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+</pre><td class="rouge-code"><pre>...
+net.ipv4.ip_forward<span class="o">=</span>1
+...
+</pre></table></code></div></div><p>Salve e feche o arquivo quando tiver terminado.</p><p>Para ler o arquivo e ajustar os valores para a sessão atual, digite:</p><div class="language-shell highlighter-rouge"><div class="code-header"> <span data-label-text="Shell"><i class="fas fa-code fa-fw small"></i></span> <button aria-label="copy" data-title-succeed=""><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre><td class="rouge-code"><pre>root@M4v3r1ck:~# <span class="nb">sudo </span>sysctl <span class="nt">-p</span>
+</pre></table></code></div></div><h3 id="regras-de-firewall"><span class="me-2">Regras de firewall</span><a href="#regras-de-firewall" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h3><p>Agora precisaremos ajustar as nossas regras de firewall para permitir somente o tráfego desejado do túnel.</p><p>Mas antes de abrir o arquivo de configuração temos de identificar qual é o nome da nossa interface de rede. Para isso, execute o comando abaixo:</p><div class="language-shell highlighter-rouge"><div class="code-header"> <span data-label-text="Shell"><i class="fas fa-code fa-fw small"></i></span> <button aria-label="copy" data-title-succeed=""><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre><td class="rouge-code"><pre>root@M4v3r1ck:~# ip route | <span class="nb">grep </span>default
+</pre></table></code></div></div><p>Você terá um resultado parecido com o abaixo, onde no meu ambiente o nome da minha interface de rede pública é ens33. Geralmente é o nome que está entre o texto “dev” e o texto “proto”:</p><div class="language-shell highlighter-rouge"><div class="code-header"> <span data-label-text="Shell"><i class="fas fa-code fa-fw small"></i></span> <button aria-label="copy" data-title-succeed=""><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre><td class="rouge-code"><pre>root@M4v3r1ck:~# default via 192.168.255.2 dev ens33 proto dhcp src 192.168.255.81 metric 100
+</pre></table></code></div></div><p>Edite/crie o arquivo de configuração do Iptables <code class="language-plaintext highlighter-rouge">/etc/iptables/rules.v4</code> com o seguinte conteúdo:</p><div file="/etc/iptables/rules.v4" class="language-shell highlighter-rouge"><div class="code-header"> <span data-label-text="/etc/iptables/rules.v4"><i class="far fa-file-code fa-fw"></i></span> <button aria-label="copy" data-title-succeed=""><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+</pre><td class="rouge-code"><pre><span class="c"># Generated by Helvio Junior M4v3r1ck</span>
+<span class="k">*</span>mangle
+:PREROUTING ACCEPT <span class="o">[</span>89:22829]
+:INPUT ACCEPT <span class="o">[</span>89:22829]
+:FORWARD ACCEPT <span class="o">[</span>0:0]
+:OUTPUT ACCEPT <span class="o">[</span>88:24171]
+:POSTROUTING ACCEPT <span class="o">[</span>88:24171]
+COMMIT
+<span class="c">#</span>
+<span class="k">*</span>nat
+:PREROUTING ACCEPT <span class="o">[</span>0:0]
+:INPUT ACCEPT <span class="o">[</span>0:0]
+:OUTPUT ACCEPT <span class="o">[</span>15:1119]
+:POSTROUTING ACCEPT <span class="o">[</span>15:1119]
+<span class="nt">-A</span> POSTROUTING <span class="nt">-o</span> ens33 <span class="nt">-j</span> MASQUERADE
+COMMIT
+<span class="c">#</span>
+<span class="k">*</span>filter
+:INPUT DROP <span class="o">[</span>0:0]
+:FORWARD DROP <span class="o">[</span>0:0]
+:OUTPUT ACCEPT <span class="o">[</span>0:0]
+<span class="nt">-A</span> INPUT <span class="nt">-m</span> state <span class="nt">--state</span> RELATED,ESTABLISHED <span class="nt">-j</span> ACCEPT
+<span class="nt">-A</span> INPUT <span class="nt">-i</span> lo <span class="nt">-j</span> ACCEPT
+<span class="nt">-A</span> INPUT <span class="nt">-p</span> udp <span class="nt">-m</span> udp <span class="nt">--sport</span> 1024:65535 <span class="nt">--dport</span> 4321 <span class="nt">-j</span> ACCEPT
+<span class="nt">-A</span> INPUT <span class="nt">-p</span> tcp <span class="nt">-m</span> tcp <span class="nt">--sport</span> 1024:65535 <span class="nt">--dport</span> 22 <span class="nt">-j</span> ACCEPT
+<span class="nt">-A</span> FORWARD <span class="nt">-m</span> state <span class="nt">--state</span> RELATED,ESTABLISHED <span class="nt">-j</span> ACCEPT
+<span class="nt">-A</span> FORWARD <span class="nt">-d</span> 192.168.50.0/24 <span class="nt">-i</span> tun+ <span class="nt">-j</span> DROP
+<span class="nt">-A</span> FORWARD <span class="nt">-d</span> 192.168.1.0/24 <span class="nt">-i</span> tun+ <span class="nt">-j</span> ACCEPT
+<span class="nt">-A</span> FORWARD <span class="nt">-i</span> tun+ <span class="nt">-j</span> DROP
+<span class="nt">-A</span> OUTPUT <span class="nt">-m</span> state <span class="nt">--state</span> NEW,RELATED,ESTABLISHED <span class="nt">-j</span> ACCEPT
+COMMIT
+</pre></table></code></div></div><p>Salve o arquivo de configuração do Iptables e o carregue no sistema com o comando abaixo:</p><div class="language-shell highlighter-rouge"><div class="code-header"> <span data-label-text="Shell"><i class="fas fa-code fa-fw small"></i></span> <button aria-label="copy" data-title-succeed=""><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre><td class="rouge-code"><pre>root@M4v3r1ck:~# iptables-restore &lt; /etc/iptables/rules.v4
+</pre></table></code></div></div><h2 id="habilitando-e-iniciando-o-openvpn"><span class="me-2">Habilitando e iniciando o OpenVPN</span><a href="#habilitando-e-iniciando-o-openvpn" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h2><p>Estamos finalmente prontos para iniciar o serviço OpenVPN em nosso servidor. Podemos fazer isso usando o systemd.</p><p>Precisamos iniciar o servidor OpenVPN especificando o nome do nosso arquivo de configuração como uma variável de instância após o nome do arquivo de unidade systemd. Nosso arquivo de configuração para nosso servidor é chamado /etc/openvpn/server.conf, assim vamos adicionar @server ao final de nosso arquivo de unidade ao chamá-lo:</p><div class="language-shell highlighter-rouge"><div class="code-header"> <span data-label-text="Shell"><i class="fas fa-code fa-fw small"></i></span> <button aria-label="copy" data-title-succeed=""><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+</pre><td class="rouge-code"><pre>root@M4v3r1ck:~# systemctl <span class="nb">enable </span>openvpn@server
+root@M4v3r1ck:~# systemctl start openvpn@server
+</pre></table></code></div></div><p>Verifique novamente se o serviço foi iniciado com êxito, digitando:</p><div class="language-shell highlighter-rouge"><div class="code-header"> <span data-label-text="Shell"><i class="fas fa-code fa-fw small"></i></span> <button aria-label="copy" data-title-succeed=""><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre><td class="rouge-code"><pre>root@M4v3r1ck:~# systemctl status openvpn@server
+</pre></table></code></div></div><p>Se tudo correu bem, sua saída deve ser algo parecido com isso:</p><div class="language-shell highlighter-rouge"><div class="code-header"> <span data-label-text="Shell"><i class="fas fa-code fa-fw small"></i></span> <button aria-label="copy" data-title-succeed=""><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+</pre><td class="rouge-code"><pre>● openvpn@server.service - OpenVPN connection to server
+     Loaded: loaded <span class="o">(</span>/lib/systemd/system/openvpn@.service<span class="p">;</span> enabled<span class="p">;</span> vendor preset: enabled<span class="o">)</span>
+     Active: active <span class="o">(</span>running<span class="o">)</span> since Tue 2020-06-23 01:46:46 UTC<span class="p">;</span> 2min 
+
+14s ago
+       Docs: man:openvpn<span class="o">(</span>8<span class="o">)</span>
+             https://community.openvpn.net/openvpn/wiki/Openvpn24ManPage
+             https://community.openvpn.net/openvpn/wiki/HOWTO
+   Main PID: 1395 <span class="o">(</span>openvpn<span class="o">)</span>
+     Status: <span class="s2">"Initialization Sequence Completed"</span>
+      Tasks: 2 <span class="o">(</span>limit: 2266<span class="o">)</span>
+     Memory: 1.6M
+     CGroup: /system.slice/system-openvpn.slice/openvpn@server.service
+             ├─1395 /usr/sbin/openvpn <span class="nt">--daemon</span> ovpn-server <span class="nt">--status</span> /run/openvpn/server.status 10 <span class="nt">--cd</span> /etc/openvpn <span class="nt">--script-security</span> 2 <span class="nt">--config</span> /etc/openvpn/server.conf <span class="nt">--writepid</span> /run/openvpn/server.pid
+             └─1403 /usr/sbin/openvpn <span class="nt">--daemon</span> ovpn-server <span class="nt">--status</span> /run/openvpn/server.status 10 <span class="nt">--cd</span> /etc/openvpn <span class="nt">--script-security</span> 2 <span class="nt">--config</span> /etc/openvpn/server.conf <span class="nt">--writepid</span> /run/openvpn/server.pid
+</pre></table></code></div></div><p>Você também pode verificar que a interface OpenVPN tun0 está disponível digitando:</p><div class="language-shell highlighter-rouge"><div class="code-header"> <span data-label-text="Shell"><i class="fas fa-code fa-fw small"></i></span> <button aria-label="copy" data-title-succeed=""><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre><td class="rouge-code"><pre>root@M4v3r1ck:~# ip addr show tun0
+</pre></table></code></div></div><p>Você deve ver uma interface configurada:</p><div class="language-shell highlighter-rouge"><div class="code-header"> <span data-label-text="Shell"><i class="fas fa-code fa-fw small"></i></span> <button aria-label="copy" data-title-succeed=""><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+</pre><td class="rouge-code"><pre>4: tun0: &lt;POINTOPOINT,MULTICAST,NOARP,UP,LOWER_UP&gt; mtu 1500 qdisc fq_codel state UNKNOWN group default qlen 100
+    <span class="nb">link</span>/none
+    inet 192.168.50.1/24 brd 192.168.50.255 scope global tun0
+       valid_lft forever preferred_lft forever
+    inet6 fe80::c80f:a8ef:a4ea:f460/64 scope <span class="nb">link </span>stable-privacy
+       valid_lft forever preferred_lft forever
+</pre></table></code></div></div><h2 id="criar-infraestrutura-de-configuração-de-cliente"><span class="me-2">Criar Infraestrutura de Configuração de Cliente</span><a href="#criar-infraestrutura-de-configuração-de-cliente" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h2><p>A seguir, precisamos configurar um sistema que nos permitirá criar arquivos de configuração de cliente facilmente.</p><h3 id="criando-a-estrutura-de-diretório-de-configuração-do-cliente"><span class="me-2">Criando a Estrutura de Diretório de Configuração do Cliente</span><a href="#criando-a-estrutura-de-diretório-de-configuração-do-cliente" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h3><p>Crie uma estrutura de diretório dentro do seu diretório home para armazenar os arquivos:</p><div class="language-shell highlighter-rouge"><div class="code-header"> <span data-label-text="Shell"><i class="fas fa-code fa-fw small"></i></span> <button aria-label="copy" data-title-succeed=""><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre><td class="rouge-code"><pre>root@M4v3r1ck:~# <span class="nb">mkdir</span> <span class="nt">-p</span> ~/client-configs/files
+</pre></table></code></div></div><p>Como nossos arquivos de configuração de cliente terão as chaves de cliente embutidas, devemos bloquear as permissões em nosso diretório interno:</p><div class="language-shell highlighter-rouge"><div class="code-header"> <span data-label-text="Shell"><i class="fas fa-code fa-fw small"></i></span> <button aria-label="copy" data-title-succeed=""><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre><td class="rouge-code"><pre>root@M4v3r1ck:~# <span class="nb">chmod </span>700 ~/client-configs/files
+</pre></table></code></div></div><h3 id="criando-uma-configuração-básica"><span class="me-2">Criando uma Configuração Básica</span><a href="#criando-uma-configuração-básica" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h3><p>Em seguida, vamos copiar um exemplo de configuração de cliente em nosso diretório para usar como nossa configuração base com nome <code class="language-plaintext highlighter-rouge">~/client-configs/base.conf</code> com o seguinte conteúdo:</p><div file="base.conf" class="language-shell highlighter-rouge"><div class="code-header"> <span data-label-text="base.conf"><i class="far fa-file-code fa-fw"></i></span> <button aria-label="copy" data-title-succeed=""><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+</pre><td class="rouge-code"><pre>dev tun
+persist-tun
+persist-key
+cipher AES-128-CBC
+ncp-ciphers AES-256-GCM:AES-128-GCM
+auth SHA1
+tls-client
+client
+resolv-retry infinite
+remote 10.10.10.10 4321 udp
+verify-x509-name <span class="s2">"server"</span> name
+auth-user-pass
+remote-cert-tls server
+comp-lzo no
+key-direction 1
+</pre></table></code></div></div><blockquote class="prompt-warning"><p>Altere na linha remote o IP 10.10.10.10 para o endereço IP externo do seu servidor e altere na linha verify-x509-name onde está server para o nome do certificado digital do seu servidor, caso tenha colocado diferente.</p></blockquote><h3 id="criando-um-script-de-geração-de-configuração"><span class="me-2">Criando um Script de Geração de Configuração</span><a href="#criando-um-script-de-geração-de-configuração" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h3><p>A seguir, vamos criar um script simples para compilar nossa configuração básica com o certificado relevante, chave e arquivos de criptografia. Ele irá colocar os arquivos de configuração gerados no diretório <code class="language-plaintext highlighter-rouge">~/client-configs/files</code>.</p><p>Crie e abra um arquivo chamado <code class="language-plaintext highlighter-rouge">make_config.sh</code> dentro do diretório <code class="language-plaintext highlighter-rouge">~/client-configs</code> com o seguinte conteúdo:</p><div file="make_config.sh" class="language-bash highlighter-rouge"><div class="code-header"> <span data-label-text="make_config.sh"><i class="far fa-file-code fa-fw"></i></span> <button aria-label="copy" data-title-succeed=""><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+</pre><td class="rouge-code"><pre><span class="c">#!/bin/bash</span>
+<span class="c"># First argument: Client identifier</span>
+
+<span class="nv">KEY_DIR</span><span class="o">=</span>~/openvpn-ca/pki
+<span class="nv">OUTPUT_DIR</span><span class="o">=</span>~/client-configs/files
+<span class="nv">BASE_CONFIG</span><span class="o">=</span>~/client-configs/base.conf
+
+<span class="nb">cat</span> <span class="k">${</span><span class="nv">BASE_CONFIG</span><span class="k">}</span> <span class="se">\</span>
+    &lt;<span class="o">(</span><span class="nb">echo</span> <span class="nt">-e</span> <span class="s1">'\n&lt;ca&gt;'</span><span class="o">)</span> <span class="se">\</span>
+    <span class="k">${</span><span class="nv">KEY_DIR</span><span class="k">}</span>/ca.crt <span class="se">\</span>
+    &lt;<span class="o">(</span><span class="nb">echo</span> <span class="nt">-e</span> <span class="s1">'&lt;/ca&gt;\n&lt;cert&gt;'</span><span class="o">)</span> <span class="se">\</span>
+    <span class="k">${</span><span class="nv">KEY_DIR</span><span class="k">}</span>/issued/<span class="k">${</span><span class="nv">1</span><span class="k">}</span>.crt <span class="se">\</span>
+    &lt;<span class="o">(</span><span class="nb">echo</span> <span class="nt">-e</span> <span class="s1">'&lt;/cert&gt;\n&lt;key&gt;'</span><span class="o">)</span> <span class="se">\</span>
+    <span class="k">${</span><span class="nv">KEY_DIR</span><span class="k">}</span>/private/<span class="k">${</span><span class="nv">1</span><span class="k">}</span>.key <span class="se">\</span>
+    &lt;<span class="o">(</span><span class="nb">echo</span> <span class="nt">-e</span> <span class="s1">'&lt;/key&gt;\n&lt;tls-auth&gt;'</span><span class="o">)</span> <span class="se">\</span>
+    <span class="k">${</span><span class="nv">KEY_DIR</span><span class="k">}</span>/private/ta.key <span class="se">\</span>
+    &lt;<span class="o">(</span><span class="nb">echo</span> <span class="nt">-e</span> <span class="s1">'&lt;/tls-auth&gt;'</span><span class="o">)</span> <span class="se">\</span>
+    <span class="o">&gt;</span> <span class="k">${</span><span class="nv">OUTPUT_DIR</span><span class="k">}</span>/<span class="k">${</span><span class="nv">1</span><span class="k">}</span>.ovpn
+</pre></table></code></div></div><p>Salve e feche o arquivo quando tiver terminado.</p><p>Marque o arquivo como executável digitando:</p><div class="language-shell highlighter-rouge"><div class="code-header"> <span data-label-text="Shell"><i class="fas fa-code fa-fw small"></i></span> <button aria-label="copy" data-title-succeed=""><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre><td class="rouge-code"><pre>root@M4v3r1ck:~# <span class="nb">chmod </span>700 ~/client-configs/make_config.sh
+</pre></table></code></div></div><h2 id="gerando-a-configuração-do-cliente"><span class="me-2">Gerando a configuração do cliente</span><a href="#gerando-a-configuração-do-cliente" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h2><p>Agora, podemos gerar facilmente arquivos de configuração de cliente.</p><p>Se você acompanhou o guia, você criou um certificado de cliente e uma chave chamados client1.crt e client1.key respectivamente executando o comando <code class="language-plaintext highlighter-rouge">./build-key client1</code> no passo <code class="language-plaintext highlighter-rouge">Criando certificado do cliente</code>. Podemos gerar uma configuração para essas credenciais movendo-as para dentro de nosso diretório <code class="language-plaintext highlighter-rouge">~/client-configs</code> e utilizando o script que fizemos:</p><div class="language-shell highlighter-rouge"><div class="code-header"> <span data-label-text="Shell"><i class="fas fa-code fa-fw small"></i></span> <button aria-label="copy" data-title-succeed=""><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+</pre><td class="rouge-code"><pre>root@M4v3r1ck:~# <span class="nb">cd</span> ~/client-configs
+root@M4v3r1ck:~# ./make_config.sh cliente1
+</pre></table></code></div></div><p>Se tudo correu bem, devemos ter um arquivo client1.ovpn em nosso diretório <code class="language-plaintext highlighter-rouge">~/client-configs/files</code>:</p><div class="language-shell highlighter-rouge"><div class="code-header"> <span data-label-text="Shell"><i class="fas fa-code fa-fw small"></i></span> <button aria-label="copy" data-title-succeed=""><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+</pre><td class="rouge-code"><pre>root@M4v3r1ck:~# <span class="nb">ls</span> ~/client-configs/files
+cliente1.ovpn
+</pre></table></code></div></div><p>Pronto! Agora basta enviar o arquivo cliente1.ovpn de forma segura ao seu cliente.</p><p>Fontes:</p><ul><li><a href="https://www.digitalocean.com/community/tutorials/como-configurar-um-servidor-openvpn-no-ubuntu-16-04-pt">Como Configurar um Servidor OpenVPN no Ubuntu 16.04</a><li><a href="https://sysadmin.compxtreme.ro/how-to-install-a-openvpn-system-based-on-userpassword-authentication-with-mysql-day-control-libpam-mysql/">How to install a OpenVPN system based on user/password authentication with MySQL day control</a><li><a href="https://github.com/OpenVPN/easy-rsa/blob/master/README.quickstart.md">OpenVPN/easy-rsa README.quickstart.md</a></ul></div><div class="post-tail-wrapper text-muted"><div class="post-meta mb-3"> <i class="far fa-folder-open fa-fw mr-1"></i> <a href='/categories/it/'>IT</a></div><div class="post-tags"> <i class="fa fa-tags fa-fw mr-1"></i> <a href="/tags/openvpn/" class="post-tag no-text-decoration" >OpenVPN</a> <a href="/tags/vpn/" class="post-tag no-text-decoration" >VPN</a></div><div class="post-tail-bottom d-flex justify-content-between align-items-center mt-3 pt-5 pb-2"><div class="share-wrapper"> <span class="share-label text-muted mr-1">Share</span> <span class="share-icons"> <a href="https://twitter.com/intent/tweet?text=Instalando OpenVPN com autenticação em MySQL - Helvio Junior&url=https://www.helviojunior.com.br/it/instalando-openvpn-com-autenticacao-em-mysql/" data-toggle="tooltip" data-placement="top" title="Twitter" target="_blank" rel="noopener" aria-label="Twitter"> <i class="fa-fw fab fa-twitter"></i> </a> <a href="https://www.facebook.com/sharer/sharer.php?title=Instalando OpenVPN com autenticação em MySQL - Helvio Junior&u=https://www.helviojunior.com.br/it/instalando-openvpn-com-autenticacao-em-mysql/" data-toggle="tooltip" data-placement="top" title="Facebook" target="_blank" rel="noopener" aria-label="Facebook"> <i class="fa-fw fab fa-facebook-square"></i> </a> <a href="https://telegram.me/share?text=Instalando OpenVPN com autenticação em MySQL - Helvio Junior&url=https://www.helviojunior.com.br/it/instalando-openvpn-com-autenticacao-em-mysql/" data-toggle="tooltip" data-placement="top" title="Telegram" target="_blank" rel="noopener" aria-label="Telegram"> <i class="fa-fw fab fa-telegram"></i> </a> <a href="https://www.linkedin.com/sharing/share-offsite/?url=https://www.helviojunior.com.br/it/instalando-openvpn-com-autenticacao-em-mysql/" data-toggle="tooltip" data-placement="top" title="Linkedin" target="_blank" rel="noopener" aria-label="Linkedin"> <i class="fa-fw fab fa-linkedin"></i> </a> <i class="fa-fw fas fa-link small" onclick="copyLink()" data-toggle="tooltip" data-placement="top" title="Copy link"></i> </span></div></div></div></div></div><div id="panel-wrapper" class="col-xl-3 pl-2 text-muted topbar-down"><div class="access"><div id="access-lastmod" class="post"> <span>Recent Update</span><ul class="post-content pl-0 pb-1 ml-1 mt-2"><li><a href="/security/osint/localizando-ips-que-respondem-para-uma-url/">Localizando IPs que respondem para uma URL</a><li><a href="/security/osint/locating-url-ips-bypass-waf/">Locating IPs that respond to a URL</a><li><a href="/security/edr/instalando-elasticsearch-edr/">Instalando Elasticsearch EDR</a><li><a href="/it/instalando-openvpn-com-autenticacao-em-mysql/">Instalando OpenVPN com autenticação em MySQL</a><li><a href="/it/osce-osed-e-ecxd-certificacoes-de-desenvolvimento-de-exploits/">OSCE, OSED e eCXD: Certificações de desenvolvimento de Exploits</a></ul></div><div id="access-tags"> <span>Trending Tags</span><div class="d-flex flex-wrap mt-3 mb-1 mr-3"> <a class="post-tag" href="/tags/offensive-security/">Offensive Security</a> <a class="post-tag" href="/tags/pentest/">Pentest</a> <a class="post-tag" href="/tags/autoridade-certificadora/">autoridade certificadora</a> <a class="post-tag" href="/tags/ca/">ca</a> <a class="post-tag" href="/tags/certificate-authority/">certificate authority</a> <a class="post-tag" href="/tags/openssl/">openssl</a> <a class="post-tag" href="/tags/osce3/">OSCE3</a> <a class="post-tag" href="/tags/buffer-overflow/">Buffer Overflow</a> <a class="post-tag" href="/tags/osed/">OSED</a> <a class="post-tag" href="/tags/osee/">OSEE</a></div></div></div><script src="https://cdn.jsdelivr.net/gh/afeld/bootstrap-toc@1.0.1/dist/bootstrap-toc.min.js"></script><div id="toc-wrapper" class="pl-0 pr-4 mb-5"> <span class="pl-3 pt-2 mb-2">Contents</span><nav id="toc" data-toggle="toc"></nav></div></div></div><div class="row"><div class="col-12 col-lg-11 col-xl-8"><div id="post-extend-wrapper" class="pl-1 pr-1 pl-sm-2 pr-sm-2 pl-md-4 pr-md-4"><div id="related-posts" class="mt-5 mb-2 mb-sm-4"><h3 class="pt-2 mt-1 mb-4 ml-1" data-toc-skip>Further Reading</h3><div class="card-deck mb-4"><div class="card"> <a href="/it/instalando-openvpn-2-4-x-em-ubuntu-debian/"><div class="card-body"> <span class="timeago small" > May 27, 2020 <i class="unloaded">2020-05-27T16:17:48-03:00</i> </span><h3 class="pt-0 mt-1 mb-3" data-toc-skip>Instalando OpenVPN 2.4.x em Ubuntu/Debian</h3><div class="text-muted small"><p> curl -s https://swupdate.openvpn.net/repos/repo-public.gpg | apt-key add - echo "deb http://build.openvpn.net/debian/openvpn/stable `lsb_release --codename --short` main" &gt; /etc/apt/sources.list...</p></div></div></a></div><div class="card"> <a href="/en/it/installing-openvpn-with-mysql-authentication/"><div class="card-body"> <span class="timeago small" > Jun 22, 2020 <i class="unloaded">2020-06-22T16:38:05-03:00</i> </span><h3 class="pt-0 mt-1 mb-3" data-toc-skip>Installing OpenVPN with MySQL Authentication</h3><div class="text-muted small"><p> OpenVPN is a Linux software used for creating VPN tunnels. In this article, I will demonstrate step-by-step how to install OpenVPN with the following prerequisites: The updated version of the O...</p></div></div></a></div><div class="card"> <a href="/it/configurando-802-1q-vlan-tagging/"><div class="card-body"> <span class="timeago small" > Mar 13, 2013 <i class="unloaded">2013-03-13T21:14:35-03:00</i> </span><h3 class="pt-0 mt-1 mb-3" data-toc-skip>Configurando 802.1q VLAN Tagging no linux</h3><div class="text-muted small"><p> 1 - Verifique se o módulo está carregado no kernel [sourcecode language="csharp"]lsmod | grep 8021q[/sourcecode] 2 - Se o módulo não tiver carregado, carregue com o seguinte comando: [sourcecode la...</p></div></div></a></div></div></div><div class="post-navigation d-flex justify-content-between"> <a href="/it/instalando-ctfd-no-ubuntu-20-04-com-nginx-e-uwsgi/" class="btn btn-outline-primary" prompt="Older"><p>Instalando CTFd no Ubuntu 20.04 com Nginx e uWSGI</p></a> <a href="/en/it/installing-openvpn-with-mysql-authentication/" class="btn btn-outline-primary" prompt="Newer"><p>Installing OpenVPN with MySQL Authentication</p></a></div><div id="disqus" class="pt-2 pb-2"><p class="text-center text-muted small pb-5"> Comments powered by <a href="https://disqus.com/">Disqus</a>.</p></div><script src="/assets/js/lib/jquery.disqusloader.min.js"></script> <script> const options = { scriptUrl: '//.disqus.com/embed.js', disqusConfig: function() { this.page.title = 'Instalando OpenVPN com autenticação em MySQL'; this.page.url = 'https://www.helviojunior.com.br/it/instalando-openvpn-com-autenticacao-em-mysql/'; this.page.identifier = '/it/instalando-openvpn-com-autenticacao-em-mysql/'; } }; $.disqusLoader('#disqus', options); </script></div></div></div><footer class="d-flex w-100 justify-content-center"><div class="d-flex justify-content-between align-items-center"><div class="footer-left"><p class="mb-0"> © 2024 <a href="https://github.com/helviojunior">Helvio junior (aka M4v3r1ck)</a>. <span data-toggle="tooltip" data-placement="top" title="Some rights reserved.">Some rights reserved.</span></p></div><div class="footer-right"><p class="mb-0"> Powered by <a href="https://jekyllrb.com" target="_blank" rel="noopener">Jekyll</a> with <a href="https://github.com/cotes2020/jekyll-theme-chirpy" target="_blank" rel="noopener">Chirpy</a> theme.</p></div></div></footer></div><div id="search-result-wrapper" class="d-flex justify-content-center unloaded"><div class="col-12 col-sm-11 post-content"><div id="search-hints"><h4 class="text-muted mb-4">Trending Tags</h4><a class="post-tag" href="/tags/offensive-security/">Offensive Security</a> <a class="post-tag" href="/tags/pentest/">Pentest</a> <a class="post-tag" href="/tags/autoridade-certificadora/">autoridade certificadora</a> <a class="post-tag" href="/tags/ca/">ca</a> <a class="post-tag" href="/tags/certificate-authority/">certificate authority</a> <a class="post-tag" href="/tags/openssl/">openssl</a> <a class="post-tag" href="/tags/osce3/">OSCE3</a> <a class="post-tag" href="/tags/buffer-overflow/">Buffer Overflow</a> <a class="post-tag" href="/tags/osed/">OSED</a> <a class="post-tag" href="/tags/osee/">OSEE</a></div><div id="search-results" class="d-flex flex-wrap justify-content-center text-muted mt-3"></div></div></div></div><div id="mask"></div><a id="back-to-top" href="#" aria-label="back-to-top" class="btn btn-lg btn-box-shadow" role="button"> <i class="fas fa-angle-up"></i> </a> <script src="https://cdn.jsdelivr.net/npm/simple-jekyll-search@1.7.3/dest/simple-jekyll-search.min.js"></script> <script> SimpleJekyllSearch({ searchInput: document.getElementById('search-input'), resultsContainer: document.getElementById('search-results'), json: '/assets/js/data/search.json', searchResultTemplate: '<div class="pl-1 pr-1 pl-sm-2 pr-sm-2 pl-lg-4 pr-lg-4 pl-xl-0 pr-xl-0"> <a href="https://www.helviojunior.com.br{url}">{title}</a><div class="post-meta d-flex flex-column flex-sm-row text-muted mt-1 mb-1"> {categories} {tags}</div><p>{snippet}</p></div>', noResultsText: '<p class="mt-5">Oops! No result founds.</p>', templateMiddleware: function(prop, value, template) { if (prop === 'categories') { if (value === '') { return `${value}`; } else { return `<div class="mr-sm-4"><i class="far fa-folder fa-fw"></i>${value}</div>`; } } if (prop === 'tags') { if (value === '') { return `${value}`; } else { return `<div><i class="fa fa-tag fa-fw"></i>${value}</div>`; } } } }); </script>
