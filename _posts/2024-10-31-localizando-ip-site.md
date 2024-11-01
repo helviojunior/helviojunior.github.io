@@ -157,7 +157,7 @@ Selecione todo o texto/html do site, copie e cole em um arquivo texto.
 
 Salve todo o conteúdo obtido anteriormente em um único arquivo de texto.
 
-Para fins de ulustração segue um comando grep p/ filtrar somente as linhas com endereçamento IPv4.
+Para fins de ilustração segue um comando `grep` para filtrar somente as linhas com endereçamento IPv4.
 
 [![]({{site.baseurl}}/assets/2024/10/e60c561c311d427950957071b85c32ae.png)]({{site.baseurl}}/assets/2024/10/e60c561c311d427950957071b85c32ae.png)
 
@@ -166,13 +166,12 @@ Para fins de ulustração segue um comando grep p/ filtrar somente as linhas com
 cat tmp.txt | grep -E '[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}'
 ```
 
-Agora vamos obter somente os endereços IP, ordena-los e filtrar somente os endereços únicos.
+Agora vamos obter os endereços IP, ordena-los e filtrar por endereços únicos.
 
 
 ```bash
 cat tmp.txt | grep -oE '[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | sort -u > tst.txt
 ```
-
 
 [![]({{site.baseurl}}/assets/2024/10/d15cfa665415a650552fbe06a6a90514.png)]({{site.baseurl}}/assets/2024/10/d15cfa665415a650552fbe06a6a90514.png)
 
