@@ -18,7 +18,7 @@ author: Helvio Junior (m4v3r1ck)
 permalink: "/security/osint/locating-url-ips-bypass-waf/"
 excerpt: "Perform the WAF bypass using Web Finder to locate addresses that respond to the site without WAF."
 image:
-  src: /assets/2024/10/cc13eab9f01750e2a810a84e80e5bb5d.png
+  src: /assets/2024/10/e52cfdb1d4783a4b933ba33b548f54a4.png
   alt: Web Finder
 ---
 
