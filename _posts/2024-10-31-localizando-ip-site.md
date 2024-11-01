@@ -177,7 +177,12 @@ cat tmp.txt | grep -oE '[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | sort -
 
 ## Expandindo a busca
 
-Em alguns cenários se faz necessário expandir a busca para todas as subnets /24 dos IPs encontrados. Para isso vamos extrair somente as subnets:
+Em alguns cenários se faz necessário expandir a busca para todas as subnets `/24` dos IPs encontrados. 
+
+> Este passo não é obrigatório, mas pode ser importante para expandir a busca e encontrar outros endereçamentos que não foram listados nos passos anteriores. Em ambiente clould certamente virá bastante IP que possivelmente não faz parte do escopo do teste, mas em ambiente on-premisses a acertividade é bem alta.
+{: .prompt-tip }
+
+Para isso vamos extrair somente as subnets:
 
 ```bash
 for net in $(cat *.txt | grep -oE '[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.'):; do echo "${net}0/24"; done | sort -u > subnets.txt
@@ -191,7 +196,9 @@ nmap -Pn -v -T4 -sTV -p80,443 -iL subnets.txt | tee -a nmap_subnets_1.txt
 
 Após a finalização podemos filtrar os endereços
 
+```bash
 cat nmap_subnets_1.txt | grep 'open port' | grep '443\|80' | grep -oE '[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | sort -u > tst.txt
+```
 
 ## Utilizando o WebFinder
 
