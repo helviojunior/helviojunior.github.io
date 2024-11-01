@@ -175,6 +175,24 @@ cat tmp.txt | grep -oE '[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | sort -
 
 [![]({{site.baseurl}}/assets/2024/10/d15cfa665415a650552fbe06a6a90514.png)]({{site.baseurl}}/assets/2024/10/d15cfa665415a650552fbe06a6a90514.png)
 
+## Expandindo a busca
+
+Em alguns cenários se faz necessário expandir a busca para todas as subnets /24 dos IPs encontrados. Para isso vamos extrair somente as subnets:
+
+```bash
+for net in $(cat *.txt | grep -oE '[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.'):; do echo "${net}0/24"; done | sort -u > subnets.txt
+```
+
+Posteriormente realizar um NMAP para localizar os endereços que respondem por HTTP e HTTPS.
+
+```bash
+nmap -Pn -v -T4 -sTV -p80,443 -iL subnets.txt | tee -a nmap_subnets_1.txt
+```
+
+Após a finalização podemos filtrar os endereços
+
+cat nmap_subnets_1.txt | grep 'open port' | grep '443\|80' | grep -oE '[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | sort -u > tst.txt
+
 ## Utilizando o WebFinder
 
 Agora que temos uma lista de IPs, podemos utiliza-la para verificar quais servidores respondem pelo serviço desejado.
