@@ -49,7 +49,7 @@ Te: trailers
 Connection: close
 ```
 
-Como podemos observar no cabeçalho ‘Host’ temos o nome completo do servidor. Com o advento do HTTP 1.1 em diante o servidor leva em consideração este campo para rotear internamente em qual site deve responder, sendo que se o servidor estiver preparado para responder por este host (www.helviojunior.com.br) o mesmo o fará.
+Como podemos observar no cabeçalho `Host` temos o nome completo do servidor. Com o advento do HTTP 1.1 em diante o servidor leva em consideração este campo para rotear internamente em qual site deve responder, sendo que se o servidor estiver preparado para responder por este host (www.helviojunior.com.br) o mesmo o fará.
 
 Porém nós podemos realizar o mesmo processo de forma diferente, onde direcionamos o cliente em qual endereço IP o mesmo deve conectar e forçamos o host no cabeçalho do HTTP conforme o comando abaixo:
 
@@ -64,6 +64,18 @@ Porém deste modo podemos alterar o endereço IP para qualquer outro, como por e
 ```bash
 curl -k -H 'Host: www.helviojunior.com.br' https://10.10.10.10
 ```
+
+> Porém, no cenário acima o `Subject Name` informado via `SNI` será o IP ao invés do `host`, sendo assim em cenários onde o TLS exige SNI o comando acima não irá funcionar, desta forma precisaremos utilizar outra estratégia.
+{: .prompt-warning }
+
+
+Para isso utilizaremos o parâmetro `--resolve [DOMAIN]:[PORT]:[IP]` do CURL
+
+```bash
+curl -k --resolve www.helviojunior.com.br:443:54.244.151.52 https://www.helviojunior.com.br
+```
+
+Deste modo, igualmente no cenário anterior, obrigatoriamente a conexão TCP ocorrerá para o IP 54.244.151.52 pois o parâmetro `--resolve` ignora a resolução de nome via DNS. Adicionalmente desta forma o cabeçalho `host` e o `Subject Name` do `SNI` serão definidos corretamente.
 
 Sendo assim podemos utilizar essa técnica para passar uma lista de IPs e verificar se eles estão configurados para responder por um determinado site.
 

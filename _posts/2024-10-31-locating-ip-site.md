@@ -65,6 +65,18 @@ However, we can change the IP address to any other, such as 10.10.10.10. If the 
 curl -k -H 'Host: www.helviojunior.com.br' https://10.10.10.10
 ```
 
+> However, in the scenario above, the `Subject Name` provided via `SNI` will be the IP instead of the `host`, so in cases where TLS requires SNI, the command above will not work. Therefore, we will need to use another strategy.
+{: .prompt-warning }
+
+
+For this, we will use the `--resolve [DOMAIN]:[PORT]:[IP]` parameter of CURL.
+
+```bash
+curl -k --resolve www.helviojunior.com.br:443:54.244.151.52 https://www.helviojunior.com.br
+```
+
+This way, just like in the previous scenario, the TCP connection will necessarily occur to the IP 54.244.151.52 since the `--resolve` parameter ignores name resolution via DNS. Additionally, this way the `host` header and the `Subject Name` of the `SNI` will be set correctly."
+
 Thus, we can use this technique to provide a list of IPs and check if they are configured to respond to a specific site.
 
 ## Setup
