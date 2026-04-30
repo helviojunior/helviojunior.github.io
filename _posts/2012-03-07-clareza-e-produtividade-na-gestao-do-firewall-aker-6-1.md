@@ -29,7 +29,7 @@ Quando se fala em segurança de informação, é imprescindível entender, prime
 
 Uma delas, é a figura a seguir intitulada “pirâmide do conhecimento”:
 
-[![Pirâmide do conhecimento]({{ site.baseurl }}/assets/2012/03/low_image1-300x291.jpg)]({{ site.baseurl }}/assets/2012/03/low_image1.jpg)
+[![Pirâmide do conhecimento]({{ site.baseurl }}/assets/2012/03/low_image1-300x291.jpg)]({{ site.baseurl }}/assets/2012/03/low_image1-300x291.jpg)
 
 Figura1: Pirâmide do conhecimento
 

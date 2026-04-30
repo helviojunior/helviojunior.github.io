@@ -45,7 +45,7 @@ Agora que conhecemos um pouco mais da estruturação da telefonia podemos entrar
 
 A base CNL pode ser baixada a qualquer momento através do link [http://sistemas.anatel.gov.br/areaarea/N_Download/Tela.asp?varMod=Publico&SISQSmodulo=7179](http://sistemas.anatel.gov.br/areaarea/N_Download/Tela.asp?varMod=Publico&SISQSmodulo=7179) selecionando como tipo de arquivo Central CNL, tipo de central Fixo e sigla UF Todas conforme a imagem abaixo:
 
-[![asterisk_cnl_001]({{ site.baseurl }}/assets/2016/07/asterisk_cnl_001-300x215.png)]({{ site.baseurl }}/assets/2016/07/asterisk_cnl_001.png)
+[![asterisk_cnl_001]({{ site.baseurl }}/assets/2016/07/asterisk_cnl_001-300x215.png)]({{ site.baseurl }}/assets/2016/07/asterisk_cnl_001-300x215.png)
 
 Este processo realizará o download de um arquivo ZIP e detro deste conterá 2 arquivos: Um documento com o layout do arquivo texto, e o arquivo texto contendo a base de dados CNL completa.
 

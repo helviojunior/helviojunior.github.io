@@ -405,9 +405,7 @@ ntdll!_PEB_LDR_DATA
 +0x02c ShutdownThreadId : (null)
 ```
 
-[![]({{site.baseurl}}/assets/2021/08/8d5afbd757e84622bee6ac7587f5d806.png)]({{site.baseurl}}/assets/2021/08
-
-/8d5afbd757e84622bee6ac7587f5d806.png)
+[![]({{site.baseurl}}/assets/2021/08/8d5afbd757e84622bee6ac7587f5d806.png)]({{site.baseurl}}/assets/2021/08/8d5afbd757e84622bee6ac7587f5d806.png)
 
 At this point, EDX contains the VRA of the first element in the doubly-linked list **InMemoryOrderModuleList**.
 

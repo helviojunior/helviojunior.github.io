@@ -18,7 +18,7 @@ Este post foge um pouco do que comumente posto, que é relacionado a TI e fotogr
 
 O objetivo deste post é mostrar o esquema elétrico do som (imagem abaixo) utilizado em alguns carros da Citroen e Peugeot. A Motivação deste post foi a necessidade de instalar um Subwoofer no Citroen C4.
 
-[![Som]({{ site.baseurl }}/assets/2015/10/Som.png)]({{ site.baseurl }}/assets/2015/12/Som.png)
+[![Som]({{ site.baseurl }}/assets/2015/10/Som.png)]({{ site.baseurl }}/assets/2015/10/Som.png)
 
 <!--more-->
 
@@ -26,15 +26,15 @@ Alguns termos que me ajudaram no processo de busca na internet.
 
 Geralmente este aparelho tem uma etiqueta na lateral conforme a imagem abaixo:
 
-[![Etiqueta_som]({{ site.baseurl }}/assets/2015/10/Etiqueta_som-300x169.jpg)]({{ site.baseurl }}/assets/2015/12/Etiqueta_som.jpg)
+[![Etiqueta_som]({{ site.baseurl }}/assets/2015/10/Etiqueta_som-300x169.jpg)]({{ site.baseurl }}/assets/2015/10/Etiqueta_som-300x169.jpg)
 
 Este som (RD4) utiliza o padrão de conector, conforme a imagem abaixo:
 
-[![008_RD4_Todas_Vias_s]({{ site.baseurl }}/assets/2015/10/008_RD4_Todas_Vias_s-300x225.jpg)]({{ site.baseurl }}/assets/2015/12/008_RD4_Todas_Vias_s.jpg)
+[![008_RD4_Todas_Vias_s]({{ site.baseurl }}/assets/2015/10/008_RD4_Todas_Vias_s-300x225.jpg)]({{ site.baseurl }}/assets/2015/10/008_RD4_Todas_Vias_s-300x225.jpg)
 
 Este conector utiliza a seguinte pinagem:
 
-[![anschluss]({{ site.baseurl }}/assets/2015/10/anschluss.jpg)]({{ site.baseurl }}/assets/2015/12/anschluss.jpg)
+[![anschluss]({{ site.baseurl }}/assets/2015/10/anschluss.jpg)]({{ site.baseurl }}/assets/2015/10/anschluss.jpg)
 
 Onde:
 

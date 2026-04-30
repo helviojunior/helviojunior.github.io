@@ -18,7 +18,7 @@ Após muita pesquisa em fóruns on-line, bem como muitas configurações erradas
 
 O balanceamento de carga, neste nosso ambiente, tem o objetivo de possibilidar que você tenha 2 ou mais provedores de acesso a internet (ex.: ADSL, Cable, etc...) balanceanco o seu tráfego de rede balanceado entre eles.
 
-<!--more-->![Mais...]({{ site.baseurl }}/assets/2015/09/trans.gif)
+<!--more-->
 
 ## Preparação do ambiente
 

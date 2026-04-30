@@ -32,7 +32,7 @@ Segue abaixo como realizar a importação:
 
 Clique em Configuration > Templates > Import
 
-[![nfs.import.template]({{ site.baseurl }}/assets/2017/04/nfs.import.template-1030x99.jpg)]({{ site.baseurl }}/assets/2017/04/nfs.import.template.jpg)
+[![nfs.import.template]({{ site.baseurl }}/assets/2017/04/nfs.import.template-1030x99.jpg)]({{ site.baseurl }}/assets/2017/04/nfs.import.template-1030x99.jpg)
 
 Realize o download do arquivo, descompacte o conteudo e selecione o arquivo XML.
 
@@ -44,4 +44,4 @@ Pronto!
 
 Caso não tenha dado erro sua importação ocorreu com sucesso, caso deseje ver os itens inseridos basta ir no **Template OS Linux** conforme imagem abaixo.
 
-[![nfs.import.template3]({{ site.baseurl }}/assets/2017/04/nfs.import.template3-1030x274.jpg)]({{ site.baseurl }}/assets/2017/04/nfs.import.template3.jpg)
+[![nfs.import.template3]({{ site.baseurl }}/assets/2017/04/nfs.import.template3-1030x274.jpg)]({{ site.baseurl }}/assets/2017/04/nfs.import.template3-1030x274.jpg)

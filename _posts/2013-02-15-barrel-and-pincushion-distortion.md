@@ -22,7 +22,7 @@ O inverso da distorção em barril é conhecido como pincushion distortion ( dis
 
 Para ilustrar estes 2 tipos de distorção vamos utilizar uma imagem com gradeado. Ao lado esquerdo tem-se a imagem original seguida dos efeitos barrel e pincushion respectivamente.
 
-[![001]({{ site.baseurl }}/assets/2013/02/001-300x214.png)]({{ site.baseurl }}/assets/2013/02/001.png)[![002 (0.1)]({{ site.baseurl }}/assets/2013/02/002-0.1-300x214.png)]({{ site.baseurl }}/assets/2013/02/002-0.1.png)[![003 (-0.1)]({{ site.baseurl }}/assets/2013/02/003-0.1-300x214.png)]({{ site.baseurl }}/assets/2013/02/003-0.1.png)
+[![001]({{ site.baseurl }}/assets/2013/02/001-300x214.png)]({{ site.baseurl }}/assets/2013/02/001-300x214.png)[![002 (0.1)]({{ site.baseurl }}/assets/2013/02/002-0.1-300x214.png)]({{ site.baseurl }}/assets/2013/02/002-0.1-300x214.png)[![003 (-0.1)]({{ site.baseurl }}/assets/2013/02/003-0.1-300x214.png)]({{ site.baseurl }}/assets/2013/02/003-0.1-300x214.png)
 
 A motivação deste post foi não encontrar nenhum algoritmo interessante para C# (CSharp) realizando estas duas distorções, desta forma após realizar algumas leituras pela internet, e achar muitas formulas que não funcionavam ou estavam incompletas, resolvi criar meu próprio algoritmo. Neste post não entrarei em detalhes do algoritmo, mas somente na forma de utilização final dele, porém o código dele está completo e funcional abaixo.
 
@@ -55,7 +55,7 @@ bmp.Save("images_distorcida.jpg");
 bmp.Dispose();
 ```
 
-[![002 (0.1)]({{ site.baseurl }}/assets/2013/02/002-0.1-300x214.png)]({{ site.baseurl }}/assets/2013/02/002-0.1.png)
+[![002 (0.1)]({{ site.baseurl }}/assets/2013/02/002-0.1-300x214.png)]({{ site.baseurl }}/assets/2013/02/002-0.1-300x214.png)
 
 Pode-se observar que o resultado foi uma leve distorção pincushion.
 
@@ -70,7 +70,7 @@ bmp.Save("images_distorcida.jpg");
 bmp.Dispose();
 ```
 
-[![003 (-0.1)]({{ site.baseurl }}/assets/2013/02/003-0.1-300x214.png)]({{ site.baseurl }}/assets/2013/02/003-0.1.png)
+[![003 (-0.1)]({{ site.baseurl }}/assets/2013/02/003-0.1-300x214.png)]({{ site.baseurl }}/assets/2013/02/003-0.1-300x214.png)
 
 Pode-se observar que o resultado foi uma leve distorção de barril.
 
@@ -87,7 +87,7 @@ bmp.Save("images_distorcida.jpg");
 bmp.Dispose();
 ```
 
-[![004 (0.5)]({{ site.baseurl }}/assets/2013/02/004-0.5-300x214.png)]({{ site.baseurl }}/assets/2013/02/004-0.5.png)
+[![004 (0.5)]({{ site.baseurl }}/assets/2013/02/004-0.5-300x214.png)]({{ site.baseurl }}/assets/2013/02/004-0.5-300x214.png)
 
 **Exemplo 4:**
 
@@ -100,7 +100,7 @@ bmp.Save("images_distorcida.jpg");
 bmp.Dispose();
 ```
 
-[![005 (-0.5)]({{ site.baseurl }}/assets/2013/02/005-0.5-300x214.png)]({{ site.baseurl }}/assets/2013/02/005-0.5.png)
+[![005 (-0.5)]({{ site.baseurl }}/assets/2013/02/005-0.5-300x214.png)]({{ site.baseurl }}/assets/2013/02/005-0.5-300x214.png)
 
 **Exemplo de corte:**
 
@@ -117,7 +117,7 @@ bmp.Save("images_distorcida.jpg");
 bmp.Dispose();
 ```
 
-[![006 (0.1)]({{ site.baseurl }}/assets/2013/02/006-0.1-300x214.png)]({{ site.baseurl }}/assets/2013/02/006-0.1.png)[![010 (0.1)]({{ site.baseurl }}/assets/2013/02/010-0.1-300x214.png)]({{ site.baseurl }}/assets/2013/02/010-0.1.png)
+[![006 (0.1)]({{ site.baseurl }}/assets/2013/02/006-0.1-300x214.png)]({{ site.baseurl }}/assets/2013/02/006-0.1-300x214.png)[![010 (0.1)]({{ site.baseurl }}/assets/2013/02/010-0.1-300x214.png)]({{ site.baseurl }}/assets/2013/02/010-0.1-300x214.png)
 
 **Exemplo 6:**
 
@@ -130,7 +130,7 @@ bmp.Save("images_distorcida.jpg");
 bmp.Dispose();
 ```
 
-[![007 (-0.1)]({{ site.baseurl }}/assets/2013/02/007-0.1-300x214.png)]({{ site.baseurl }}/assets/2013/02/007-0.1.png)[![011 (-0.1)]({{ site.baseurl }}/assets/2013/02/011-0.1-300x214.png)]({{ site.baseurl }}/assets/2013/02/011-0.1.png)
+[![007 (-0.1)]({{ site.baseurl }}/assets/2013/02/007-0.1-300x214.png)]({{ site.baseurl }}/assets/2013/02/007-0.1-300x214.png)[![011 (-0.1)]({{ site.baseurl }}/assets/2013/02/011-0.1-300x214.png)]({{ site.baseurl }}/assets/2013/02/011-0.1-300x214.png)
 
 **Exemplo 7:**
 
@@ -143,7 +143,7 @@ bmp.Save("images_distorcida.jpg");
 bmp.Dispose();
 ```
 
-[![008 (0.5)]({{ site.baseurl }}/assets/2013/02/008-0.5-300x214.png)]({{ site.baseurl }}/assets/2013/02/008-0.5.png)[![012 (0.5)]({{ site.baseurl }}/assets/2013/02/012-0.5-300x214.png)]({{ site.baseurl }}/assets/2013/02/012-0.5.png)
+[![008 (0.5)]({{ site.baseurl }}/assets/2013/02/008-0.5-300x214.png)]({{ site.baseurl }}/assets/2013/02/008-0.5-300x214.png)[![012 (0.5)]({{ site.baseurl }}/assets/2013/02/012-0.5-300x214.png)]({{ site.baseurl }}/assets/2013/02/012-0.5-300x214.png)
 
 **Exemplo 8:**
 
@@ -156,29 +156,29 @@ bmp.Save("images_distorcida.jpg");
 bmp.Dispose();
 ```
 
-[![009 (-0.5)]({{ site.baseurl }}/assets/2013/02/009-0.5-300x214.png)]({{ site.baseurl }}/assets/2013/02/009-0.5.png)[![013 (-0.5)]({{ site.baseurl }}/assets/2013/02/013-0.5-300x214.png)]({{ site.baseurl }}/assets/2013/02/013-0.5.png)
+[![009 (-0.5)]({{ site.baseurl }}/assets/2013/02/009-0.5-300x214.png)]({{ site.baseurl }}/assets/2013/02/009-0.5-300x214.png)[![013 (-0.5)]({{ site.baseurl }}/assets/2013/02/013-0.5-300x214.png)]({{ site.baseurl }}/assets/2013/02/013-0.5-300x214.png)
 
 **Exemplo com fotos reais:**
 
 Nestes exemplos será utilizado a foto abaixo:
 
-[![foto1]({{ site.baseurl }}/assets/2013/02/foto1-300x199.jpg)]({{ site.baseurl }}/assets/2013/02/foto1.jpg)
+[![foto1]({{ site.baseurl }}/assets/2013/02/foto1-300x199.jpg)]({{ site.baseurl }}/assets/2013/02/foto1-300x199.jpg)
 
 **Fator 0.1 sem corte:**
 
-[![014 (0.1)]({{ site.baseurl }}/assets/2013/02/014-0.1-300x199.jpg)]({{ site.baseurl }}/assets/2013/02/014-0.1.jpg)
+[![014 (0.1)]({{ site.baseurl }}/assets/2013/02/014-0.1-300x199.jpg)]({{ site.baseurl }}/assets/2013/02/014-0.1-300x199.jpg)
 
 Fator 0.1 com corte:
 
-[![015 (0.1)]({{ site.baseurl }}/assets/2013/02/015-0.1-300x199.jpg)]({{ site.baseurl }}/assets/2013/02/015-0.1.jpg)
+[![015 (0.1)]({{ site.baseurl }}/assets/2013/02/015-0.1-300x199.jpg)]({{ site.baseurl }}/assets/2013/02/015-0.1-300x199.jpg)
 
 **Fator -0.1 sem corte:**
 
-[![016 (0.1)]({{ site.baseurl }}/assets/2013/02/016-0.1-300x199.jpg)]({{ site.baseurl }}/assets/2013/02/016-0.1.jpg)
+[![016 (0.1)]({{ site.baseurl }}/assets/2013/02/016-0.1-300x199.jpg)]({{ site.baseurl }}/assets/2013/02/016-0.1-300x199.jpg)
 
 **Fator -0.1 com corte:**
 
-[![017 (0.1)]({{ site.baseurl }}/assets/2013/02/017-0.1-300x199.jpg)]({{ site.baseurl }}/assets/2013/02/017-0.1.jpg)
+[![017 (0.1)]({{ site.baseurl }}/assets/2013/02/017-0.1-300x199.jpg)]({{ site.baseurl }}/assets/2013/02/017-0.1-300x199.jpg)
 
 Para finalizar segue o código completo do aplicativo.
 
