@@ -135,8 +135,8 @@ sda                         8:0    0   60G  0 disk
 
 Desta forma teremos que primeiramente expandir essa partição.
 
-> [!WARNING] 
 > Este procedimento pode destruir todos os dados do servidor, então tenha um backup antes de executar esta operação.
+{: .prompt-warning }
 
 ```shell
 root@image-base:~# growpart /dev/sda 3
