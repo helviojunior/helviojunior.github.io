@@ -80,6 +80,112 @@ systemctl status docker
 docker run --rm hello-world
 ```
 
+## Alterando o local de armazenamento das imagens e caches
+
+Por padrão o Docker grava tudo dentro de `/var/lib`, ou seja, na partição raiz (`/`). Em servidores que fazem build de imagens com frequência ou que mantêm muitos containers, esse diretório cresce rapidamente (facilmente centenas de GB) e acaba lotando o `/`, o que derruba não só o Docker, mas o sistema operacional inteiro (logs, apt, sessões SSH etc.). A boa prática é manter o sistema operacional em um disco pequeno e colocar os dados do Docker em um disco/partição dedicado, que pode ser dimensionado e expandido de forma independente.
+
+Nas versões atuais do Docker (a partir da 29) o armazenamento de imagens passou a ser feito pelo **containerd** (*containerd image store*, com o storage driver `overlayfs` do tipo `io.containerd.snapshotter.v1`). Na prática isso significa que os dados ficam divididos em **dois** diretórios diferentes, e ambos precisam ser movidos:
+
+| Diretório padrão     | Quem utiliza | O que armazena |
+|----------------------|--------------|----------------|
+| `/var/lib/containerd` | containerd  | Imagens, camadas (snapshots) e o conteúdo baixado dos registries — normalmente a maior parte do espaço |
+| `/var/lib/docker`     | dockerd     | Volumes, metadados dos containers, redes, logs dos containers e cache do BuildKit |
+
+Alterar apenas o `data-root` do Docker (dica que ainda aparece na maioria dos tutoriais) não é mais suficiente: as imagens continuariam sendo gravadas em `/var/lib/containerd`, na partição raiz.
+
+Nos exemplos abaixo o disco dedicado está montado em `/u01`, portanto os diretórios de destino serão `/u01/docker` e `/u01/containerd`.
+
+> O disco de destino deve estar montado de forma persistente (via `/etc/fstab`) **antes** de iniciar os serviços. Caso contrário, se o disco não montar durante o boot, o Docker e o containerd irão criar os diretórios vazios na partição raiz.
+{: .prompt-warning }
+
+### Parando os serviços
+
+```bash
+systemctl stop docker.socket docker containerd
+```
+
+### Customização 1: diretório do containerd
+
+A configuração do containerd fica em `/etc/containerd/config.toml` (o pacote `containerd.io` já cria este arquivo). Altere/adicione o parâmetro `root`, que define onde o containerd armazena seus dados persistentes:
+
+```bash
+mkdir -p /u01/containerd
+vi /etc/containerd/config.toml
+```
+
+```toml
+disabled_plugins = ["cri"]
+root = "/u01/containerd"
+```
+
+> O parâmetro `root` deve ficar no início do arquivo (nível raiz do TOML), e não dentro de alguma seção `[...]`. Não altere o parâmetro `state` (padrão `/run/containerd`), pois ele contém apenas dados temporários em memória e o socket utilizado pelo Docker.
+{: .prompt-tip }
+
+### Customização 2: diretório do Docker
+
+A configuração do daemon do Docker fica em `/etc/docker/daemon.json`. O parâmetro `data-root` define onde o dockerd armazena volumes, metadados e caches:
+
+```bash
+mkdir -p /u01/docker
+vi /etc/docker/daemon.json
+```
+
+```json
+{
+  "data-root": "/u01/docker"
+}
+```
+
+> Caso também deseje definir o parâmetro `hosts` no `daemon.json`, será necessário remover o `-H fd://` da linha de execução do serviço, pois o Docker não inicia quando a mesma opção é definida nos dois locais. Isso é feito criando o arquivo `/etc/systemd/system/docker.service.d/override.conf` com o conteúdo abaixo e executando `systemctl daemon-reload`:
+>
+> ```ini
+> [Service]
+> ExecStart=
+> ExecStart=/usr/bin/dockerd
+> ```
+{: .prompt-info }
+
+### Migrando os dados existentes (opcional)
+
+Caso o Docker já esteja em uso e você deseje manter as imagens, containers e volumes existentes, copie os dados preservando permissões, hard links, ACLs e atributos estendidos:
+
+```bash
+rsync -aHAX --numeric-ids /var/lib/containerd/ /u01/containerd/
+rsync -aHAX --numeric-ids /var/lib/docker/ /u01/docker/
+```
+
+Se for uma instalação nova, basta pular este passo.
+
+### Iniciando os serviços e validando
+
+```bash
+systemctl start containerd docker
+docker info | grep -Ei "root dir|storage driver"
+containerd config dump | grep -E "^root"
+```
+
+A saída deve apontar para os novos diretórios:
+
+```
+ Storage Driver: overlayfs
+ Docker Root Dir: /u01/docker
+root = '/u01/containerd'
+```
+
+Por fim, faça o `pull` de uma imagem e confirme que o espaço foi consumido no novo disco (e não no `/`):
+
+```bash
+docker pull ubuntu:24.04
+du -sh /u01/containerd /u01/docker
+df -h / /u01
+```
+
+Após validar que tudo funciona corretamente, os diretórios antigos podem ser removidos para liberar espaço na partição raiz:
+
+```bash
+rm -rf /var/lib/containerd /var/lib/docker
+```
+
 ## Utilizando o Docker sem root
 
 Por padrão o socket do Docker pertence ao grupo `docker`, portanto apenas o root consegue executar os comandos. Para permitir o uso com o seu usuário comum:
